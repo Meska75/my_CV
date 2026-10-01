@@ -1,86 +1,82 @@
-{% load static %}
+{% load static cv_extras %}
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="{{ HTML_LANG }}" dir="{{ HTML_DIR }}">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="{% static 'images/favicon.png' %}" rel="icon">
-  <title>{% block title %}محمد اسکندرلو — مهندس بک‌اند و هوش مصنوعی{% endblock %}</title>
-  <meta name="description" content="{% block description %}مهندس بک‌اند پایتون/جنگو و هوش مصنوعی — سازنده‌ی پلتفرم‌های داده‌محور و راه‌حل‌های هوشمند برای کسب‌وکارها.{% endblock %}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="{% static 'snapfolio/img/favicon.png' %}" rel="icon">
+  <link href="{% static 'snapfolio/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
 
-  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
-  <link href="{% static 'vendor/font-awesome/css/all.min.css' %}" rel="stylesheet">
+  <title>{% block title %}{% if nav_profile %}{% loc nav_profile 'full_name' %} — {% endif %}{% t 'meta.title_suffix' %}{% endblock %}</title>
+  <meta name="description" content="{% block description %}{% t 'meta.description' %}{% endblock %}">
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            bg:      '#0B1220',
-            bg2:     '#0E1A33',
-            surface: '#16243F',
-            surface2:'#1E3252',
-            amber:   '#F5A524',
-            amber2:  '#FFC55C',
-            ivory:   '#F4EFE7',
-            ink:     '#F1EBE0',
-            muted:   '#9FB0C6',
-          },
-          fontFamily: { sans: ['Vazirmatn', 'system-ui', 'sans-serif'] },
-          boxShadow: { glow: '0 0 60px -12px rgba(245,165,36,.45)' },
-        },
-      },
-    };
-  </script>
-  <style>
-    html { scroll-behavior: smooth; }
-    body { background: #0B1220; }
-    /* warm/cool depth glows */
-    .ambient::before, .ambient::after {
-      content:""; position:absolute; border-radius:9999px; filter:blur(90px); z-index:0; pointer-events:none;
-    }
-    .ambient::before { width:38rem; height:38rem; background:rgba(245,165,36,.16); top:-10rem; right:-8rem; }
-    .ambient::after  { width:34rem; height:34rem; background:rgba(46,86,150,.30); bottom:-12rem; left:-10rem; }
-    .link-underline { position:relative; }
-    .link-underline::after { content:""; position:absolute; right:0; bottom:-4px; height:2px; width:0; background:#F5A524; transition:width .25s ease; }
-    .link-underline:hover::after { width:100%; }
-    /* scroll reveal */
-    [data-reveal]{ opacity:0; transform:translateY(26px); transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
-    [data-reveal].in{ opacity:1; transform:none; }
-    [data-reveal][data-delay="1"]{ transition-delay:.08s; }
-    [data-reveal][data-delay="2"]{ transition-delay:.16s; }
-    [data-reveal][data-delay="3"]{ transition-delay:.24s; }
-    .lift{ transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
-    .lift:hover{ transform:translateY(-6px); }
-    [x-cloak]{ display:none !important; }
-    @media (prefers-reduced-motion: reduce){
-      html{ scroll-behavior:auto; }
-      [data-reveal]{ opacity:1; transform:none; transition:none; }
-      .lift{ transition:none; }
-    }
-  </style>
+  {% block canonical %}<link rel="canonical" href="{{ request.build_absolute_uri }}">{% endblock %}
 
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="{% if IS_RTL %}fa_IR{% else %}en_US{% endif %}">
+  <meta property="og:title" content="{% block og_title %}{% if nav_profile %}{% loc nav_profile 'full_name' %} — {% endif %}{% t 'meta.title_suffix' %}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{% t 'meta.description' %}{% endblock %}">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'snapfolio/img/profile/profile-2.webp' %}{% endblock %}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  {% if IS_RTL %}
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/shabnam-font@v5.0.1/dist/font-face.css" rel="stylesheet">
+  {% endif %}
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  {% if IS_RTL %}
+  <link href="{% static 'snapfolio/vendor/bootstrap/css/bootstrap.rtl.min.css' %}" rel="stylesheet">
+  {% else %}
+  <link href="{% static 'snapfolio/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  {% endif %}
+  <link href="{% static 'snapfolio/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'snapfolio/vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'snapfolio/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'snapfolio/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+  <link href="{% static 'snapfolio/css/main.css' %}" rel="stylesheet">
+  <link href="{% static 'snapfolio/css/overrides.css' %}" rel="stylesheet">
+
   {% block head_extra %}{% endblock %}
+
+  {% block structured_data %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "{% if nav_profile %}{{ nav_profile.full_name|escapejs }}{% else %}محمد اسکندرلو{% endif %}",
+    "jobTitle": "{% if nav_profile %}{{ nav_profile.headline|escapejs }}{% else %}مهندس بک‌اند و هوش مصنوعی{% endif %}",
+    "url": "{{ request.scheme }}://{{ request.get_host }}/",
+    "email": "{% if nav_profile and nav_profile.email %}{{ nav_profile.email }}{% else %}mohammad.eska34@gmail.com{% endif %}",
+    "sameAs": ["https://github.com/Meska75"]
+  }
+  </script>
+  {% endblock %}
 </head>
-<body class="font-sans text-ink bg-bg antialiased selection:bg-amber/30">
+<body class="{% block body_class %}index-page{% endblock %}">
 
   {% include "partials/nav.html" %}
 
   {% block body %}{% endblock %}
+  {% block content %}{% endblock %}
 
   {% include "partials/footer.html" %}
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-        });
-      }, { threshold: 0.12 });
-      document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
-    });
-  </script>
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <div id="preloader"></div>
+
+  <script src="{% static 'snapfolio/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'snapfolio/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'snapfolio/vendor/typed.js/typed.umd.js' %}"></script>
+  <script src="{% static 'snapfolio/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+  <script src="{% static 'snapfolio/vendor/waypoints/noframework.waypoints.js' %}"></script>
+  <script src="{% static 'snapfolio/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'snapfolio/vendor/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
+  <script src="{% static 'snapfolio/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'snapfolio/vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'snapfolio/js/main.js' %}"></script>
+  {% block body_extra %}{% endblock %}
 </body>
 </html>

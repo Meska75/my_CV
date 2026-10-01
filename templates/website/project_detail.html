@@ -1,70 +1,101 @@
 {% extends "base.html" %}
-{% load static %}
-{% block title %}{{ project.title }} — محمد اسکندرلو{% endblock %}
-{% block description %}{{ project.summary }}{% endblock %}
+{% load static cv_extras %}
+
+{% block title %}{% loc project 'title' %} — {% if profile %}{% loc profile 'full_name' %}{% endif %}{% endblock %}
+{% block description %}{% loc project 'summary' %}{% endblock %}
+{% block body_class %}portfolio-details-page{% endblock %}
 
 {% block body %}
-<div class="max-w-3xl mx-auto px-5 py-12 md:py-16">
-
-  <a href="{% url 'my_cv:index' %}#projects" class="font-mono text-sm text-muted hover:text-amber transition-colors inline-flex items-center gap-1">
-    <span>→</span> بازگشت به پروژه‌ها
-  </a>
-
-  <div class="mt-8 flex flex-wrap items-center gap-3">
-    <span class="font-mono text-xs px-2.5 py-1 rounded-md bg-amber/10 text-amber">{{ project.get_category_display }}</span>
-    {% if project.status == 'in_progress' %}<span class="font-mono text-xs text-yellow-400">در حال توسعه</span>{% endif %}
-    {% if project.is_private %}<span class="font-mono text-xs text-muted">🔒 پروژه‌ی خصوصی</span>{% endif %}
-  </div>
-
-  <h1 class="text-3xl md:text-4xl font-extrabold mt-4 mb-3">{{ project.title }}</h1>
-  <p class="text-muted text-lg leading-relaxed">{{ project.summary }}</p>
-
-  {% if project.cover_image %}
-  <img src="{{ project.cover_image.url }}" alt="{{ project.title }}" class="w-full rounded-2xl border border-surface2/50 mt-8">
-  {% endif %}
-
-  <div class="mt-10 space-y-8">
-    {% if project.problem %}
-    <div class="bg-surface/40 border border-surface2/50 rounded-2xl p-6 md:p-8">
-      <h2 class="font-mono text-amber text-sm mb-3">// مشکل</h2>
-      <p class="leading-loose text-ink/90">{{ project.problem }}</p>
-    </div>
-    {% endif %}
-    {% if project.solution %}
-    <div class="bg-surface/40 border border-surface2/50 rounded-2xl p-6 md:p-8">
-      <h2 class="font-mono text-amber text-sm mb-3">// راه‌حل</h2>
-      <p class="leading-loose text-ink/90">{{ project.solution }}</p>
-    </div>
-    {% endif %}
-    {% if project.outcome %}
-    <div class="bg-surface/40 border border-surface2/50 rounded-2xl p-6 md:p-8">
-      <h2 class="font-mono text-amber text-sm mb-3">// نتیجه</h2>
-      <p class="leading-loose text-ink/90">{{ project.outcome }}</p>
-    </div>
-    {% endif %}
-  </div>
-
-  <div class="mt-10">
-    <h2 class="font-mono text-amber text-sm mb-3">// تک‌استک</h2>
-    <div class="flex flex-wrap gap-2">
-      {% for s in project.skills.all %}
-      <span class="font-mono text-sm text-muted bg-bg border border-surface2/50 px-3 py-1.5 rounded">{{ s.name }}</span>
-      {% endfor %}
+<main class="main">
+  <div class="page-title dark-background">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+      <h1 class="mb-2 mb-lg-0">{% loc project 'title' %}</h1>
+      <nav class="breadcrumbs">
+        <ol>
+          <li><a href="{{ HOME_URL }}">{% t 'nav.home' %}</a></li>
+          <li><a href="{{ HOME_URL }}#portfolio">{% t 'nav.portfolio' %}</a></li>
+          <li class="current">{% loc project 'title' %}</li>
+        </ol>
+      </nav>
     </div>
   </div>
 
-  {% if project.github_url or project.live_url %}
-  <div class="mt-10 flex flex-wrap gap-3">
-    {% if project.live_url %}
-    <a href="{{ project.live_url }}" target="_blank" rel="noopener" class="bg-amber text-bg font-medium px-5 py-3 rounded-lg hover:bg-amber2 transition-colors">مشاهده‌ی زنده</a>
-    {% endif %}
-    {% if project.github_url %}
-    <a href="{{ project.github_url }}" target="_blank" rel="noopener" class="border border-surface2 px-5 py-3 rounded-lg hover:border-amber transition-colors inline-flex items-center gap-2"><i class="fab fa-github"></i> کد روی گیت‌هاب</a>
-    {% endif %}
-  </div>
-  {% elif project.is_private %}
-  <p class="mt-10 text-muted text-sm font-mono">// این پروژه خصوصی است و کدش به‌صورت عمومی در دسترس نیست.</p>
-  {% endif %}
-
-</div>
+  <section id="portfolio-details" class="portfolio-details section">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="row gy-4">
+        <div class="col-lg-8">
+          {% if project.cover_image %}
+          <img src="{{ project.cover_image.url }}" alt="{% loc project 'title' %}" class="img-fluid rounded">
+          {% else %}
+          <img src="{% static project.placeholder_image %}" alt="{% loc project 'title' %}" class="img-fluid rounded">
+          {% endif %}
+        </div>
+        <div class="col-lg-4">
+          <div class="portfolio-info" data-aos="fade-left" data-aos-delay="200">
+            <h3>{% t 'project.info' %}</h3>
+            <ul>
+              <li><strong>{% t 'project.category' %}</strong>: {{ project.category_label }}</li>
+              <li><strong>{% t 'project.status' %}</strong>: {{ project.status_label }}</li>
+              {% if project.skills.all %}
+              <li><strong>{% t 'project.stack' %}</strong>: {% for s in project.skills.all %}{% loc s 'name' %}{% if not forloop.last %}, {% endif %}{% endfor %}</li>
+              {% endif %}
+              {% if project.live_url %}
+              <li><strong>{% t 'project.url' %}</strong>: <a href="{{ project.live_url }}" target="_blank" rel="noopener noreferrer">{{ project.live_url }}</a></li>
+              {% endif %}
+              {% if project.github_url %}
+              <li><strong>{% t 'project.github' %}</strong>: <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+              {% endif %}
+              {% if project.is_private %}
+              <li>{% t 'project.private' %}</li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="portfolio-description" data-aos="fade-up" data-aos-delay="300">
+            <h2>{% t 'project.overview' %}</h2>
+            <p>{% loc project 'summary' %}</p>
+            <div class="features mt-4">
+              <div class="row gy-3">
+                {% if project.problem %}
+                <div class="col-md-6">
+                  <div class="feature-item" data-aos="fade-up" data-aos-delay="400">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <h4>{% t 'project.problem' %}</h4>
+                    <p>{% loc project 'problem' %}</p>
+                  </div>
+                </div>
+                {% endif %}
+                {% if project.solution %}
+                <div class="col-md-6">
+                  <div class="feature-item" data-aos="fade-up" data-aos-delay="500">
+                    <i class="bi bi-gear-fill"></i>
+                    <h4>{% t 'project.solution' %}</h4>
+                    <p>{% loc project 'solution' %}</p>
+                  </div>
+                </div>
+                {% endif %}
+                {% if project.outcome %}
+                <div class="col-md-6">
+                  <div class="feature-item" data-aos="fade-up" data-aos-delay="600">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <h4>{% t 'project.outcome' %}</h4>
+                    <p>{% loc project 'outcome' %}</p>
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+            <p class="mt-4">
+              <a href="{{ HOME_URL }}#portfolio" class="btn btn-outline">{% t 'project.back' %}</a>
+              {% if project.live_url %}
+              <a href="{{ project.live_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">{% t 'project.live' %}</a>
+              {% endif %}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
 {% endblock %}

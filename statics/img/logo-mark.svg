@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 -2 584 204" fill="none" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="lg-mark" x1="0" y1="-2" x2="0" y2="202" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8EA2FF"/>
+      <stop offset="1" stop-color="#6E45F0"/>
+    </linearGradient>
+    <linearGradient id="rg-mark" x1="0" y1="-2" x2="0" y2="202" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFD2B4"/>
+      <stop offset="0.48" stop-color="#FF8C3C"/>
+      <stop offset="1" stop-color="#FF5714"/>
+    </linearGradient>
+  </defs>
+  <path fill="#F4F2F7" d="M 127 0 H 173 L 225 86.62 L 277 0 H 323 V 200 H 277 V 89.38 L 225 176 L 173 89.38 V 200 H 127 Z"/>
+  <path fill="url(#rg-mark)" d="M 361 0 H 449 A 22 22 0 0 1 449 44 H 361 A 22 22 0 0 1 361 0 Z M 361 78 H 449 A 22 22 0 0 1 449 122 H 361 A 22 22 0 0 1 361 78 Z M 361 156 H 449 A 22 22 0 0 1 449 200 H 361 A 22 22 0 0 1 361 156 Z"/>
+  <path fill="none" stroke="url(#lg-mark)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round" d="M 86 23 L 31 100 L 86 177"/>
+  <path fill="none" stroke="url(#rg-mark)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round" d="M 510 23 L 565 100 L 510 177"/>
+</svg>
