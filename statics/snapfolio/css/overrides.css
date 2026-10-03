@@ -1,13 +1,16 @@
 /* SnapFolio local overrides — bilingual RTL/LTR + Django contact form */
 
-[dir="rtl"] {
-  --default-font: "Shabnam", "Roboto", system-ui, sans-serif;
-  --heading-font: "Shabnam", "Ubuntu", sans-serif;
-  --nav-font: "Shabnam", "Nunito", sans-serif;
+:root {
+  --default-font: "Shabnam", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --heading-font: "Shabnam", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --nav-font: "Shabnam", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  font-family: var(--default-font);
 }
 
 [dir="rtl"] body {
-  font-family: var(--default-font);
   text-align: right;
 }
 
@@ -182,7 +185,7 @@
   width: 100%;
   height: 100%;
   min-height: 280px;
-  background: linear-gradient(145deg, #3a3a3a, #1b1b1b);
+  background: linear-gradient(145deg, #213a56, #0f1e3f);
   color: var(--accent-color);
   font-family: var(--heading-font);
   font-size: clamp(4rem, 10vw, 7rem);
@@ -198,4 +201,142 @@
   min-height: 240px;
   border-radius: 12px;
   font-size: 5rem;
+}
+
+.contact .errorlist {
+  color: #fecaca;
+  list-style: none;
+  padding: 6px 0 0;
+  margin: 0;
+  font-size: 13px;
+}
+
+/* Content breathing room + justified body copy */
+.main .container {
+  padding-left: clamp(1.25rem, 4vw, 2.5rem);
+  padding-right: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+.section {
+  padding-top: clamp(4rem, 8vw, 5.5rem);
+  padding-bottom: clamp(4rem, 8vw, 5.5rem);
+}
+
+.about .description p,
+.about .about-content p,
+.resume-side p,
+.resume-item p,
+.resume-item li,
+.resume-section p,
+.services p,
+.service-card p,
+.service-summary p,
+.testimonials .testimonial-item p,
+.contact .content p,
+.contact-form p,
+.skills .skills-category p,
+.portfolio .portfolio-info p,
+.section-title p,
+.hero .hero-text p {
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+}
+
+/* Skills: clearer category cards + spacing */
+.skills .row {
+  --bs-gutter-x: 1.75rem;
+  --bs-gutter-y: 1.75rem;
+}
+
+.skills .skills-category {
+  height: 100%;
+  margin-bottom: 0;
+  padding: 1.75rem 1.5rem;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 86%);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--background-color), #ffffff 3%);
+}
+
+.skills .skills-category h3 {
+  margin-bottom: 1.25rem;
+}
+
+.skills .skill-item {
+  margin-bottom: 1.15rem;
+}
+
+.stats .stat-plus {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  margin-inline-start: 2px;
+}
+
+/* Resume page */
+.resume-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.resume-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.resume-actions .btn-primary {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  border: none;
+}
+
+.resume-actions .btn-outline {
+  background: transparent;
+  color: var(--default-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 60%);
+}
+
+.resume-page .resume-main {
+  padding-inline-start: clamp(0.5rem, 2vw, 2rem);
+}
+
+.resume-item ul {
+  text-align: justify;
+  padding-inline-start: 1.2rem;
+}
+
+@media print {
+  .header,
+  .header-toggle,
+  .page-title,
+  .no-print,
+  #footer,
+  .footer {
+    display: none !important;
+  }
+
+  .header ~ main,
+  [dir="rtl"] .header ~ main {
+    margin: 0 !important;
+  }
+
+  body,
+  .main,
+  .resume.section {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  .resume.section {
+    padding-top: 0;
+  }
 }

@@ -131,6 +131,145 @@
     return id;
   }
 
+  (function initCircularTestimonials() {
+    var root = document.querySelector("[data-circular-testimonials]");
+    if (!root) return;
+
+    var stage = root.querySelector("[data-ct-stage]");
+    var images = Array.prototype.slice.call(root.querySelectorAll("[data-ct-image]"));
+    var prevBtn = root.querySelector("[data-ct-prev]");
+    var nextBtn = root.querySelector("[data-ct-next]");
+    var autoplay = root.getAttribute("data-autoplay") !== "false";
+    var length = images.length;
+    if (!stage || length < 2) return;
+
+    var active = 0;
+    var timer = null;
+    var rtl = document.documentElement.getAttribute("dir") === "rtl";
+    var ease = "transform 1.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.35s ease";
+
+    function measureGap() {
+      var card = images[0];
+      var cardW = (card && card.offsetWidth) || 248;
+      return Math.round(cardW * 0.42);
+    }
+
+    function styleFor(index) {
+      var gap = measureGap();
+      var lift = Math.round(gap * 0.5);
+      var isActive = index === active;
+      var isLeft = (active - 1 + length) % length === index;
+      var isRight = (active + 1) % length === index;
+      var leftX = rtl ? gap : -gap;
+      var rightX = rtl ? -gap : gap;
+
+      if (isActive) {
+        return {
+          zIndex: 3,
+          opacity: 1,
+          pointerEvents: "auto",
+          transform: "translate(-50%, -50%) translateX(0px) translateY(8px) scale(1) rotateY(0deg)"
+        };
+      }
+      if (isLeft) {
+        return {
+          zIndex: 2,
+          opacity: 1,
+          pointerEvents: "auto",
+          transform: "translate(-50%, -50%) translateX(" + leftX + "px) translateY(-" + lift + "px) scale(0.78) rotateY(" + (rtl ? -16 : 16) + "deg)"
+        };
+      }
+      if (isRight) {
+        return {
+          zIndex: 2,
+          opacity: 1,
+          pointerEvents: "auto",
+          transform: "translate(-50%, -50%) translateX(" + rightX + "px) translateY(-" + lift + "px) scale(0.78) rotateY(" + (rtl ? 16 : -16) + "deg)"
+        };
+      }
+      return {
+        zIndex: 1,
+        opacity: 0,
+        pointerEvents: "none",
+        transform: "translate(-50%, -50%) translateX(0px) translateY(28px) scale(0.65) rotateY(0deg)"
+      };
+    }
+
+    function applyImageStyles() {
+      images.forEach(function (img, index) {
+        var style = styleFor(index);
+        img.style.zIndex = String(style.zIndex);
+        img.style.opacity = String(style.opacity);
+        img.style.pointerEvents = style.pointerEvents;
+        img.style.transform = style.transform;
+        img.style.transition = reduced ? "none" : ease;
+      });
+    }
+
+    function show(nextIndex) {
+      active = (nextIndex + length) % length;
+      applyImageStyles();
+    }
+
+    function stopAutoplay() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    function startAutoplay() {
+      stopAutoplay();
+      if (!autoplay || reduced) return;
+      timer = setInterval(function () { show(active + 1); }, 10000);
+    }
+
+    function go(delta) {
+      show(active + delta);
+      startAutoplay();
+    }
+
+    if (prevBtn) prevBtn.addEventListener("click", function () { go(-1); });
+    if (nextBtn) nextBtn.addEventListener("click", function () { go(1); });
+
+    images.forEach(function (img, index) {
+      img.addEventListener("click", function () {
+        if (index === active) return;
+        var left = (active - 1 + length) % length;
+        var right = (active + 1) % length;
+        if (index === left) go(-1);
+        else if (index === right) go(1);
+        else {
+          show(index);
+          startAutoplay();
+        }
+      });
+    });
+
+    window.addEventListener("keydown", function (event) {
+      var tag = (event.target && event.target.tagName) || "";
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      var about = document.getElementById("about");
+      if (!about) return;
+      var rect = about.getBoundingClientRect();
+      if (rect.bottom < 80 || rect.top > window.innerHeight - 80) return;
+      if (event.key === "ArrowLeft") go(rtl ? 1 : -1);
+      if (event.key === "ArrowRight") go(rtl ? -1 : 1);
+    });
+
+    window.addEventListener("resize", function () {
+      applyImageStyles();
+    }, { passive: true });
+
+    // Wait for layout so card width is measurable before first fan placement.
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        show(0);
+        startAutoplay();
+      });
+    });
+  })();
+
   function typeInto(node, text, speed, done) {
     var i = 0;
     function step() {

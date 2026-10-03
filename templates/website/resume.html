@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static cv_extras %}
+
+{% block title %}{% t 'resume.title' %} — {% if profile %}{% loc profile 'full_name' %}{% endif %}{% endblock %}
+{% block description %}{% t 'resume.page_lead' %}{% endblock %}
+{% block body_class %}resume-page{% endblock %}
+
+{% block body %}
+<main class="main">
+  <div class="page-title dark-background">
+    <div class="container d-lg-flex justify-content-between align-items-center">
+      <h1 class="mb-2 mb-lg-0">{% t 'resume.title' %}</h1>
+      <nav class="breadcrumbs">
+        <ol>
+          <li><a href="{{ HOME_URL }}">{% t 'nav.home' %}</a></li>
+          <li class="current">{% t 'resume.breadcrumb' %}</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <section id="resume" class="resume section">
+    <div class="container section-title" data-aos="fade-up">
+      <h2>{% t 'resume.title' %}</h2>
+      <p>{% t 'resume.page_lead' %}</p>
+      <div class="resume-actions no-print">
+        {% if profile and profile.resume_file %}
+        <a href="{{ profile.resume_file.url }}" class="btn btn-primary" download>
+          <i class="bi bi-download"></i>
+          {% t 'resume.download' %}
+        </a>
+        {% endif %}
+        <button type="button" class="btn btn-outline" onclick="window.print()">
+          <i class="bi bi-printer"></i>
+          {% if profile and profile.resume_file %}{% t 'resume.print' %}{% else %}{% t 'resume.download' %}{% endif %}
+        </button>
+      </div>
+    </div>
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      {% include "partials/resume_body.html" %}
+    </div>
+  </section>
+</main>
+{% endblock %}

@@ -16,22 +16,23 @@ from .models import (
 )
 
 
-def _index_context(request, form=None):
+def _shared_context(request, form=None):
     profile = Profile.objects.first()
     skill_categories = SkillCategory.objects.prefetch_related('skills').all()
     return {
         'profile': profile,
         'skill_categories': skill_categories,
-        'projects': Project.objects.prefetch_related('skills').all(),
+        'projects': Project.objects.exclude(live_url='').prefetch_related('skills'),
         'experiences': Experience.objects.all(),
         'certificates': Certificate.objects.all(),
         'social_links': SocialLink.objects.all(),
         'contact_form': form or ContactForm(),
-        'years_experience': 7,
-        'project_count': Project.objects.count(),
+        'years_experience': 4,
+        # Public portfolio is smaller; total delivered work is shown as 20+.
+        'project_count': 20,
         'certificate_count': Certificate.objects.count(),
         'skill_count': Skill.objects.filter(featured=True).count(),
-        'top_skills': Skill.objects.filter(featured=True).order_by('-level', 'order')[:4],
+        'top_skills': Skill.objects.filter(featured=True).order_by('-level', 'order')[:6],
     }
 
 
@@ -56,8 +57,12 @@ def index_view(request):
             messages.success(request, t('contact.success'))
             return redirect(f"{request.path}#contact")
         messages.error(request, t('contact.error'))
-        return render(request, 'website/index.html', _index_context(request, form))
-    return render(request, 'website/index.html', _index_context(request))
+        return render(request, 'website/index.html', _shared_context(request, form))
+    return render(request, 'website/index.html', _shared_context(request))
+
+
+def resume_view(request):
+    return render(request, 'website/resume.html', _shared_context(request))
 
 
 def project_detail_view(request, slug):

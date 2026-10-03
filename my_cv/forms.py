@@ -22,8 +22,8 @@ class ContactForm(forms.ModelForm):
         model = ContactMessage
         fields = ('name', 'email', 'subject', 'message')
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'field', 'autocomplete': 'name'}),
-            'email': forms.EmailInput(attrs={'class': 'field', 'autocomplete': 'email'}),
-            'subject': forms.TextInput(attrs={'class': 'field'}),
-            'message': forms.Textarea(attrs={'class': 'field', 'rows': 5}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'name'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'autocomplete': 'email'}),
+            'subject': forms.TextInput(attrs={'class': 'form-control'}),
+            'message': forms.Textarea(attrs={'class': 'form-control', 'rows': 6}),
         }

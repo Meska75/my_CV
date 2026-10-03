@@ -147,7 +147,9 @@ class Skill(TranslatableMixin, models.Model):
 
     @property
     def percent(self):
-        return max(0, min(100, int(self.level) * 20))
+        # Cap below 100 so bars read as strong but not exaggerated.
+        mapping = {1: 48, 2: 62, 3: 74, 4: 84, 5: 92}
+        return mapping.get(int(self.level), 70)
 
 
 class Experience(TranslatableMixin, models.Model):

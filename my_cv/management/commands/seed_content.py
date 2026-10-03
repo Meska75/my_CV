@@ -18,57 +18,65 @@ from my_cv.models import (
 )
 
 ABOUT = (
-    "مسیر من از دنیای فروش و مدیریت دفتر شروع شد، اما در هر نقش، چیزی که همیشه جذبم "
-    "می‌کرد «داده» بود — ساخت سیستم‌های اطلاعاتی، داشبوردهای مدیریتی و گزارش‌های "
-    "تحلیلی. همین علاقه من را به علم داده، یادگیری ماشین و در نهایت مهندسی نرم‌افزار "
-    "کشاند. امروز همان کاری را که سال‌ها به‌صورت دستی در کسب‌وکار انجام می‌دادم، با "
-    "Python، Django و هوش مصنوعی، خودکار و مقیاس‌پذیر می‌سازم."
+    "با Django وب‌سایت و بک‌اند می‌سازم، داده را تحلیل می‌کنم تا به تصمیم برسد، و عامل "
+    "هوشمند، RAG و اتوماسیون n8n را به جریان کار تیم وصل می‌کنم. در انتشارات، سیستم "
+    "فروش، انبار و تولید کتاب را از نو چیدم و بخش‌های پژوهش، اجرا، بازرگانی و حسابداری "
+    "را به هم وصل کردم؛ برای همین قبل از نوشتن کد، فرآیند کسب‌وکار را دقیق می‌بینم. "
+    "چهار وب‌سایت منتشرشده نمونه‌ی همین کار است."
 )
 
 ABOUT_EN = (
-    "My path began in sales and office management, but in every role what always "
-    "drew me in was data — building information systems, management dashboards, "
-    "and analytical reports. That interest led me to data science, machine learning, "
-    "and eventually software engineering. Today I automate and scale the same work "
-    "I used to do by hand, using Python, Django, and AI."
+    "I build websites and backends with Django, analyze data until it supports a "
+    "decision, and wire AI agents, RAG, and n8n automation into how a team actually "
+    "works. At a publishing house I rebuilt the sales, warehouse, and book-production "
+    "systems and connected research, operations, commerce, and accounting, so I read "
+    "the business process carefully before I write code. Four live websites show "
+    "that work."
 )
 
 # (name, name_en, icon, order, [(skill, skill_en, level, featured), ...])
+# level 1–5 maps to ~48–92% (never 100).
 SKILLS = [
-    ("بک‌اند", "Backend", "fas fa-server", 1, [
+    ("کدنویسی", "Coding", "fas fa-code", 1, [
         ("Python", "", 5, True),
         ("Django", "", 5, True),
+        ("REST API", "", 4, True),
+        ("الگوریتم", "Algorithms", 3, True),
+    ]),
+    ("پایگاه داده", "Database", "fas fa-database", 2, [
         ("PostgreSQL", "", 4, True),
         ("SQL Server", "", 3, True),
         ("اصول پایگاه داده", "Database fundamentals", 4, True),
-        ("REST API", "", 4, True),
+        ("ChromaDB", "", 4, True),
     ]),
-    ("هوش مصنوعی و داده", "AI & Data", "fas fa-brain", 2, [
+    ("تحلیل داده", "Data Analysis", "fas fa-chart-line", 3, [
+        ("تحلیل داده", "Data analysis", 4, True),
+        ("Power BI", "", 4, True),
+    ]),
+    ("هوش مصنوعی", "Artificial Intelligence", "fas fa-brain", 4, [
         ("LangChain", "", 4, True),
         ("RAG", "", 4, True),
         ("OpenAI API", "", 4, True),
-        ("ChromaDB", "", 4, True),
         ("سیستم توصیه‌گر", "Recommender systems", 3, True),
-        ("تحلیل داده", "Data analysis", 4, True),
-        ("Power BI", "", 3, True),
     ]),
-    ("DevOps و ابزارها", "DevOps & Tools", "fas fa-cubes", 3, [
+    ("DevOps", "DevOps", "fas fa-cubes", 5, [
         ("Docker", "", 4, True),
-        ("Git", "", 4, True),
+        ("Git", "", 5, True),
         ("Liara", "", 4, True),
-        ("n8n", "", 3, True),
         ("مبانی شبکه", "Networking basics", 3, True),
     ]),
-    ("وب‌اسکرپینگ", "Web Scraping", "fas fa-spider", 4, [
+    ("اتوماسیون", "Automation", "fas fa-robot", 6, [
+        ("n8n", "", 4, True),
+    ]),
+    ("وب‌اسکرپینگ", "Web Scraping", "fas fa-spider", 7, [
         ("BeautifulSoup", "", 4, True),
         ("Camoufox", "", 4, True),
         ("یکپارچه‌سازی API", "API integration", 4, True),
     ]),
-    ("مهارت‌های پایه", "Core skills", "fas fa-lightbulb", 5, [
-        ("الگوریتم", "Algorithms", 3, True),
-        ("حل مسئله", "Problem solving", 5, True),
-        ("کار تیمی", "Teamwork", 5, True),
-        ("ارتباط مؤثر", "Communication", 5, True),
+    ("مهارت‌های نرم", "Soft skills", "fas fa-lightbulb", 8, [
+        ("حل مسئله", "Problem solving", 4, True),
+        ("کار تیمی", "Teamwork", 4, True),
+        ("ارتباط مؤثر", "Communication", 4, True),
     ]),
 ]
 
@@ -85,17 +93,20 @@ EXPERIENCES = [
         "is_current": True,
         "order": 1,
         "description": (
-            "به‌عنوان کارشناس مالی، با تسلط بر اصول انبارداری و انبارگردانی یک سیستم "
-            "ساختارمند ایجاد کردم که به جلوگیری از فساد در فروش و کاهش هزینه‌های "
-            "انبارداری و تولید کمک کرد. مسئول ارائه‌ی گزارش‌های فروش به سطوح بالای "
-            "مدیریتی بودم و با ساخت یک سیستم داده‌ی محصولات، تولید و فروش، اطلاعات دقیقی "
-            "برای تصمیم‌گیری‌های استراتژیک فراهم کردم."
+            "سیستم فروش موجود را بازطراحی کردم و یک سیستم تازه برای فروش ساختم.\n"
+            "انبارداری را از دستورالعمل نگهداری تا ثبت ورود، خروج و سفارش پوشش دادم.\n"
+            "سیستم طراحی و تولید کتاب را چیدم.\n"
+            "ارتباط پایدار بین معاونت پژوهشی، بخش اجرایی، بازرگانی و حسابداری را برقرار کردم.\n"
+            "ساختارهای مالی را شفاف کردم.\n"
+            "کالاهای امانی و نمایندگی فروش را قابل رصد کردم."
         ),
         "description_en": (
-            "As a finance specialist, I built a structured inventory system that helped "
-            "prevent sales leakage and cut warehousing and production costs. I reported "
-            "sales to senior management and created a product, production, and sales "
-            "data system that supported strategic decisions."
+            "I redesigned the existing sales system and built a new one.\n"
+            "Warehousing covered storage rules through recording inbound, outbound, and orders.\n"
+            "I set up the book design and production system.\n"
+            "I connected research, operations, commerce, and accounting so the link would hold.\n"
+            "I made the financial structure easier to see through.\n"
+            "Consignment goods and sales representation became trackable."
         ),
     },
     {
@@ -109,15 +120,8 @@ EXPERIENCES = [
         "period_en": "January 2021 – December 2022",
         "is_current": False,
         "order": 2,
-        "description": (
-            "همزمان با دوران خدمت سربازی، درک عمیق‌تری از محیط‌های کاری اداری بزرگ و "
-            "مسئولیت‌های حساس به دست آوردم که به دریافت تقدیرنامه از این سازمان منجر شد."
-        ),
-        "description_en": (
-            "During military service I gained a deeper understanding of large administrative "
-            "environments and sensitive responsibilities, which led to a commendation from "
-            "the organization."
-        ),
+        "description": "کار اداری دبیرخانه در دوران خدمت.",
+        "description_en": "Registry work during military service.",
     },
     {
         "role": "دستیار داخلی حوزه‌ی افغانستان (بخش بین‌الملل)",
@@ -130,16 +134,8 @@ EXPERIENCES = [
         "period_en": "May 2019 – November 2020",
         "is_current": False,
         "order": 3,
-        "description": (
-            "وظیفه‌ی نظارت و هماهنگی میان بخش‌های مختلف حوزه را بر عهده داشتم. در این "
-            "دوره با داده و تحلیل داده‌ها و تهیه‌ی داشبوردهای مدیریتی برای گزارش به "
-            "مدیران آشنا شدم — همین نقطه‌ی آغاز علاقه‌ام به علم داده و یادگیری ماشین بود."
-        ),
-        "description_en": (
-            "I coordinated across desk units and, in this period, started working with data "
-            "analysis and management dashboards for reporting to leadership — the start of "
-            "my interest in data science and machine learning."
-        ),
+        "description": "هماهنگی داخلی بخش بین‌الملل.",
+        "description_en": "Internal coordination on an international desk.",
     },
     {
         "role": "مسئول دفتر",
@@ -152,14 +148,8 @@ EXPERIENCES = [
         "period_en": "October 2018 – August 2019",
         "is_current": False,
         "order": 4,
-        "description": (
-            "مدیریت برنامه‌ی ملاقات‌ها، برگزاری جلسات و همایش‌های داخلی و بین‌المللی و "
-            "تنظیم مستندات اداری. این تجربه مهارت‌های سازماندهی و ارتباطی‌ام را تقویت کرد."
-        ),
-        "description_en": (
-            "Managed meeting schedules, domestic and international events, and administrative "
-            "documentation. This role strengthened my organization and communication skills."
-        ),
+        "description": "مدیریت دفتر و هماهنگی جلسه‌ها.",
+        "description_en": "Office management and meeting coordination.",
     },
 ]
 
@@ -296,10 +286,47 @@ PROJECTS = [
         "outcome": "سایت سه‌زبانه‌ی مستقرشده؛ دستیار هوش مصنوعی در دست توسعه.",
         "outcome_en": "Trilingual site in production; AI assistant still in development.",
         "github_url": "https://github.com/Meska75/drvahidabdolrahimi",
-        "is_featured": False,
+        "live_url": "https://drabdolrahimi.ir",
+        "is_featured": True,
         "is_private": False,
-        "order": 5,
+        "order": 1,
         "skills": ["Django", "Liara"],
+    },
+    {
+        "title": "راهکار ۱۸۰",
+        "title_en": "Rahkar 180",
+        "summary": "وب‌سایت منتشرشده.",
+        "summary_en": "A published website.",
+        "category": Project.Category.WEB,
+        "status": Project.Status.COMPLETED,
+        "live_url": "https://rahkar180.ir",
+        "is_featured": True,
+        "is_private": False,
+        "order": 2,
+    },
+    {
+        "title": "آراز دید نورا",
+        "title_en": "Araz Did Noura",
+        "summary": "وب‌سایت پروتز چشم سفارشی در تهران.",
+        "summary_en": "Website for custom ocular prostheses in Tehran.",
+        "category": Project.Category.WEB,
+        "status": Project.Status.COMPLETED,
+        "live_url": "https://arazdid.com",
+        "is_featured": True,
+        "is_private": False,
+        "order": 3,
+    },
+    {
+        "title": "Pop360",
+        "title_en": "Pop360",
+        "summary": "وب‌سایت منتشرشده.",
+        "summary_en": "A published website.",
+        "category": Project.Category.WEB,
+        "status": Project.Status.COMPLETED,
+        "live_url": "https://pop360.ir",
+        "is_featured": True,
+        "is_private": False,
+        "order": 4,
     },
 ]
 
@@ -416,8 +443,8 @@ class Command(BaseCommand):
                 "full_name_en": "Mohammad Eskandarloo",
                 "headline": "مهندس بک‌اند پایتون/جنگو و هوش مصنوعی",
                 "headline_en": "Python/Django backend engineer & AI builder",
-                "tagline": "ساخت پلتفرم‌های داده‌محور و هوشمند — از جمع‌آوری داده تا لایه‌ی هوش مصنوعی.",
-                "tagline_en": "Building data-driven, intelligent platforms — from collection to the AI layer.",
+                "tagline": "وب‌سایت و بک‌اند با Django می‌سازم، داده را به تصمیم تبدیل می‌کنم و هوش مصنوعی را وارد کار روزمره‌ی کسب‌وکار می‌کنم.",
+                "tagline_en": "I build websites and backends with Django, turn data into decisions, and bring AI into everyday business work.",
                 "about": ABOUT,
                 "about_en": ABOUT_EN,
                 "location": "تهران",
@@ -434,14 +461,26 @@ class Command(BaseCommand):
                 label=label, defaults={"url": url, "icon": icon, "order": order})
 
         skill_by_name = {}
+        keep_category_names = {item[0] for item in SKILLS}
+        keep_skill_names = set()
         for cat_name, cat_en, icon, order, skills in SKILLS:
             category, _ = SkillCategory.objects.update_or_create(
                 name=cat_name, defaults={"name_en": cat_en, "icon": icon, "order": order})
             for s_order, (s_name, s_en, level, featured) in enumerate(skills, start=1):
+                keep_skill_names.add(s_name)
                 skill, _ = Skill.objects.update_or_create(
-                    category=category, name=s_name,
-                    defaults={"name_en": s_en, "level": level, "featured": featured, "order": s_order})
+                    name=s_name,
+                    defaults={
+                        "category": category,
+                        "name_en": s_en,
+                        "level": level,
+                        "featured": featured,
+                        "order": s_order,
+                    },
+                )
                 skill_by_name[s_name] = skill
+        Skill.objects.exclude(name__in=keep_skill_names).delete()
+        SkillCategory.objects.exclude(name__in=keep_category_names).delete()
 
         for exp in EXPERIENCES:
             Experience.objects.update_or_create(

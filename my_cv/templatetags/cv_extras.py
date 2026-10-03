@@ -17,3 +17,8 @@ def loc(obj, field):
     if hasattr(obj, 'loc'):
         return obj.loc(field)
     return getattr(obj, field, '') or ''
+
+
+@register.filter
+def nonempty_lines(value):
+    return [line.strip() for line in str(value or '').splitlines() if line.strip()]

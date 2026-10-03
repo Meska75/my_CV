@@ -1,0 +1,94 @@
+{% load static cv_extras %}
+<div class="row gy-4">
+  <div class="col-lg-4">
+    <div class="resume-side" data-aos="fade-right" data-aos-delay="100">
+      <div class="profile-img mb-4">
+        {% if profile and profile.photo %}
+        <img src="{{ profile.photo.url }}" alt="{% loc profile 'full_name' %}" class="img-fluid rounded">
+        {% else %}
+        <img src="{% static 'snapfolio/img/profile/profile-square-2.webp' %}" alt="" class="img-fluid rounded">
+        {% endif %}
+      </div>
+      <h3>{% t 'resume.summary' %}</h3>
+      <p>{% if profile and profile.about %}{% loc profile 'about' %}{% else %}{% t 'home.about_bio' %}{% endif %}</p>
+
+      <h3 class="mt-4">{% t 'resume.contact_info' %}</h3>
+      <ul class="contact-info list-unstyled">
+        {% if profile and profile.location %}
+        <li><i class="bi bi-geo-alt"></i> {% loc profile 'location' %}</li>
+        {% endif %}
+        <li><i class="bi bi-envelope"></i> {% if profile and profile.email %}{{ profile.email }}{% else %}mohammad.eska34@gmail.com{% endif %}</li>
+        {% if profile and profile.show_phone and profile.phone %}
+        <li><i class="bi bi-phone"></i> {{ profile.phone }}</li>
+        {% endif %}
+        {% for link in social_links %}
+        {% if 'mailto:' not in link.url %}
+        <li><i class="bi {{ link.bootstrap_icon }}"></i> <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.label }}</a></li>
+        {% endif %}
+        {% endfor %}
+      </ul>
+
+      {% if top_skills %}
+      <div class="skills-animation mt-4">
+        <h3>{% t 'resume.tech_skills' %}</h3>
+        {% for skill in top_skills %}
+        <div class="skill-item">
+          <div class="d-flex justify-content-between">
+            <span>{% loc skill 'name' %}</span>
+            <span>{{ skill.percent }}%</span>
+          </div>
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="{{ skill.percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-8 resume-main">
+    <div class="resume-section" data-aos="fade-up">
+      <h3><i class="bi bi-briefcase me-2"></i>{% t 'resume.experience' %}</h3>
+      {% for exp in experiences %}
+      <div class="resume-item">
+        <h4>{% loc exp 'role' %}</h4>
+        <h5>{% loc exp 'period' %}</h5>
+        <p class="company"><i class="bi bi-building"></i> {% loc exp 'organization' %}{% if exp.location %} — {% loc exp 'location' %}{% endif %}</p>
+        {% loc exp 'description' as exp_body %}
+        {% if exp_body %}
+        <ul>
+          {% for line in exp_body|nonempty_lines %}
+          <li>{{ line }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="resume-section" data-aos="fade-up" data-aos-delay="100">
+      <h3><i class="bi bi-mortarboard me-2"></i>{% t 'resume.learning' %}</h3>
+      <div class="resume-item">
+        <h4>{% t 'resume.learn_title' %}</h4>
+        <h5>{% t 'resume.learn_period' %}</h5>
+        <p>{% t 'resume.learn_body' %}</p>
+      </div>
+    </div>
+
+    <div class="resume-section" data-aos="fade-up" data-aos-delay="200">
+      <h3><i class="bi bi-award me-2"></i>{% t 'resume.certificates' %}</h3>
+      {% for cert in certificates %}
+      <div class="resume-item">
+        <h4>{% loc cert 'title' %}</h4>
+        {% if cert.year or cert.hours %}
+        <h5>{% loc cert 'year' %}{% if cert.hours %}{% if cert.year %} · {% endif %}{{ cert.hours }} {% t 'resume.hours' %}{% endif %}</h5>
+        {% endif %}
+        {% if cert.issuer or cert.instructor %}
+        <p class="company"><i class="bi bi-building"></i> {% loc cert 'issuer' %}{% if cert.instructor %} — {% loc cert 'instructor' %}{% endif %}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>

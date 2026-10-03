@@ -1,0 +1,19 @@
+{% load static %}
+<div class="pixel-hero__track-wrap">
+  <div class="pixel-hero__track">
+    {% for copy in "1234"|make_list %}
+    <div class="pixel-hero__logos"{% if not forloop.first %} aria-hidden="true"{% endif %}>
+      <img src="{% static 'img/stack/python.svg' %}" alt="{% if forloop.first %}Python{% endif %}">
+      <img src="{% static 'img/stack/django.svg' %}" alt="{% if forloop.first %}Django{% endif %}">
+      <img src="{% static 'img/stack/postgresql.svg' %}" alt="{% if forloop.first %}PostgreSQL{% endif %}">
+      <img src="{% static 'img/stack/langchain.svg' %}" alt="{% if forloop.first %}LangChain{% endif %}">
+      <img src="{% static 'img/stack/docker.svg' %}" alt="{% if forloop.first %}Docker{% endif %}">
+      <img src="{% static 'img/stack/n8n.svg' %}" alt="{% if forloop.first %}n8n{% endif %}">
+      <img src="{% static 'img/stack/openai.svg' %}" alt="{% if forloop.first %}OpenAI{% endif %}">
+      <img src="{% static 'img/stack/huggingface.svg' %}" alt="{% if forloop.first %}Hugging Face{% endif %}">
+      <img src="{% static 'img/stack/powerbi.svg' %}" alt="{% if forloop.first %}Power BI{% endif %}">
+      <img src="{% static 'img/stack/github.svg' %}" alt="{% if forloop.first %}GitHub{% endif %}">
+    </div>
+    {% endfor %}
+  </div>
+</div>

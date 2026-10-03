@@ -20,9 +20,10 @@
       <ul>
         <li><a href="{% if on_home == 'index' %}#hero{% else %}{{ HOME_URL }}#hero{% endif %}" class="{% if on_home == 'index' %}active{% endif %}"><i class="bi bi-house navicon"></i>{% t 'nav.home' %}</a></li>
         <li><a href="{% if on_home == 'index' %}#about{% else %}{{ HOME_URL }}#about{% endif %}"><i class="bi bi-person navicon"></i> {% t 'nav.about' %}</a></li>
-        <li><a href="{% if on_home == 'index' %}#resume{% else %}{{ HOME_URL }}#resume{% endif %}"><i class="bi bi-file-earmark-text navicon"></i> {% t 'nav.resume' %}</a></li>
+        <li><a href="{% url 'my_cv:resume' %}" class="{% if on_home == 'resume' %}active{% endif %}"><i class="bi bi-file-earmark-text navicon"></i> {% t 'nav.resume' %}</a></li>
         <li><a href="{% if on_home == 'index' %}#portfolio{% else %}{{ HOME_URL }}#portfolio{% endif %}"><i class="bi bi-images navicon"></i> {% t 'nav.portfolio' %}</a></li>
         <li><a href="{% if on_home == 'index' %}#services{% else %}{{ HOME_URL }}#services{% endif %}"><i class="bi bi-hdd-stack navicon"></i> {% t 'nav.services' %}</a></li>
+        <li><a href="{% if on_home == 'index' %}#skills{% else %}{{ HOME_URL }}#skills{% endif %}"><i class="bi bi-bar-chart navicon"></i> {% t 'nav.skills' %}</a></li>
         <li><a href="{% if on_home == 'index' %}#contact{% else %}{{ HOME_URL }}#contact{% endif %}"><i class="bi bi-envelope navicon"></i> {% t 'nav.contact' %}</a></li>
       </ul>
     </nav>
