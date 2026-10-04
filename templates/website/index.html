@@ -5,6 +5,7 @@
 
 {% block head_extra %}
 <link href="{% static 'css/pixel-hero.css' %}" rel="stylesheet">
+<link href="{% static 'css/card-stack.css' %}?v=5" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
@@ -278,52 +279,100 @@
     </div>
   </section>
 
-  <section id="portfolio" class="portfolio section">
+  <section id="portfolio" class="portfolio section card-stack-section">
     <div class="container section-title" data-aos="fade-up">
       <h2>{% t 'portfolio.title' %}</h2>
       <p>{% t 'portfolio.lead' %}</p>
     </div>
     <div class="container" data-aos="fade-up" data-aos-delay="100">
       {% if projects %}
-      <div class="isotope-layout" data-default-filter="*" data-layout="masonry" data-sort="original-order">
-        <div class="row">
-          <div class="col-lg-3 filter-sidebar">
-            <div class="filters-wrapper" data-aos="fade-right" data-aos-delay="150">
-              <ul class="portfolio-filters isotope-filters">
-                <li data-filter="*" class="filter-active">{% t 'portfolio.all' %}</li>
-                <li data-filter=".filter-ai">{% t 'portfolio.filter_ai' %}</li>
-                <li data-filter=".filter-backend">{% t 'portfolio.filter_backend' %}</li>
-                <li data-filter=".filter-data">{% t 'portfolio.filter_data' %}</li>
-                <li data-filter=".filter-web">{% t 'portfolio.filter_web' %}</li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-lg-9">
-            <div class="row gy-4 portfolio-container isotope-container" data-aos="fade-up" data-aos-delay="200">
-              {% for p in projects %}
-              <div class="col-lg-6 col-md-6 portfolio-item isotope-item filter-{{ p.category }}">
-                <div class="portfolio-wrap">
-                  {% if p.cover_image %}
-                  <img src="{{ p.cover_image.url }}" class="img-fluid" alt="{% loc p 'title' %}" loading="lazy">
-                  {% else %}
-                  <img src="{% static p.placeholder_image %}" class="img-fluid" alt="{% loc p 'title' %}" loading="lazy">
+      <div
+        class="card-stack"
+        data-card-stack
+        data-loop="true"
+        data-auto="true"
+        data-interval="2800"
+      >
+        <div
+          class="card-stack__stage"
+          tabindex="0"
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="{% t 'portfolio.stack' %}"
+        >
+          <div class="card-stack__wash card-stack__wash--top" aria-hidden="true"></div>
+          <div class="card-stack__wash card-stack__wash--bottom" aria-hidden="true"></div>
+          <div class="card-stack__fan">
+            {% for p in projects %}
+            <article
+              class="card-stack__card"
+              data-index="{{ forloop.counter0 }}"
+              data-title="{% loc p 'title' %}"
+              data-href="{{ p.live_url }}"
+            >
+              <div class="card-stack__inner">
+                {% if p.cover_image %}
+                <img src="{{ p.cover_image.url }}" alt="{% loc p 'title' %}" draggable="false">
+                {% else %}
+                <img
+                  src="{% cycle 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1400&q=80' 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1400&q=80' 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=1400&q=80' 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=1400&q=80' 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=80' %}"
+                  alt="{% loc p 'title' %}"
+                  draggable="false"
+                >
+                {% endif %}
+                <div class="card-stack__shade" aria-hidden="true"></div>
+                <div class="card-stack__body">
+                  <span class="card-stack__tag">{{ p.category_label }}</span>
+                  <h3>{% loc p 'title' %}</h3>
+                  {% if p.summary or p.summary_en %}
+                  <p>{% loc p 'summary' %}</p>
                   {% endif %}
-                  <div class="portfolio-info">
-                    <div class="content">
-                      <span class="category">{{ p.category_label }}</span>
-                      <h4>{% loc p 'title' %}</h4>
-                      <div class="portfolio-links">
-                        <a href="{% if p.cover_image %}{{ p.cover_image.url }}{% else %}{% static p.placeholder_image %}{% endif %}" class="glightbox" title="{% loc p 'title' %}"><i class="bi bi-plus-lg"></i></a>
-                        <a href="{% url 'my_cv:project_detail' p.slug %}" title="{% t 'portfolio.details' %}"><i class="bi bi-arrow-right"></i></a>
-                      </div>
-                    </div>
-                  </div>
+                  <a class="card-stack__details" href="{% url 'my_cv:project_detail' p.slug %}">{% t 'portfolio.details' %}</a>
                 </div>
               </div>
-              {% endfor %}
-            </div>
+            </article>
+            {% endfor %}
           </div>
         </div>
+
+        <div class="card-stack__nav">
+          <div class="card-stack__dots" role="tablist" aria-label="{% t 'portfolio.stack' %}">
+            {% for p in projects %}
+            <button
+              type="button"
+              class="card-stack__dot"
+              data-index="{{ forloop.counter0 }}"
+              aria-label="{% loc p 'title' %}"
+            ></button>
+            {% endfor %}
+          </div>
+          <a
+            class="card-stack__open"
+            href="{{ projects.0.live_url }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="{% t 'portfolio.open_site' %}"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15 3h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M10 14 21 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <button
+            type="button"
+            class="card-stack__pause"
+            aria-pressed="false"
+            data-label-pause="{% t 'portfolio.pause' %}"
+            data-label-play="{% t 'portfolio.play' %}"
+            aria-label="{% t 'portfolio.pause' %}"
+          >
+            <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5v14M14 5v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 12 7-12 7V5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <p class="card-stack__hint">{% t 'portfolio.hint' %}</p>
+        <p class="visually-hidden" aria-live="polite" data-card-stack-live></p>
       </div>
       {% else %}
       <p class="portfolio-empty">{% t 'portfolio.empty' %}</p>
@@ -563,4 +612,5 @@
 
 {% block body_extra %}
 <script src="{% static 'js/pixel-hero.js' %}"></script>
+<script src="{% static 'js/card-stack.js' %}?v=5"></script>
 {% endblock %}
