@@ -166,4 +166,5 @@ cython_debug/
 media/
 # collectstatic output
 staticfiles/
+node_modules/
 

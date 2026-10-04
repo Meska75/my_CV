@@ -1,72 +1,55 @@
-{% load static %}
-<header x-data="{ open:false }">
+{% load static cv_extras %}
+{% with on_home=request.resolver_match.url_name %}
+<header id="header" class="header dark-background d-flex flex-column justify-content-center">
+  <i class="header-toggle d-xl-none bi bi-list"></i>
 
-  <!-- top bar: brand + CTA + mobile toggle -->
-  <div class="fixed top-0 inset-x-0 z-50">
-    <div class="max-w-7xl mx-auto px-5 h-[68px] flex items-center justify-between">
-      <a href="#hero" class="flex items-center gap-2.5">
-        <span class="grid place-items-center w-9 h-9 rounded-xl bg-gradient-to-br from-amber to-amber2 text-bg font-extrabold shadow-glow">م</span>
-        <span class="font-bold tracking-tight">محمد اسکندرلو</span>
-      </a>
+  <div class="header-container d-flex flex-column align-items-start">
+    <a href="{% if on_home == 'index' %}#hero{% else %}{{ HOME_URL }}#hero{% endif %}" class="header-identity">
+      {% if nav_profile and nav_profile.photo %}
+      <img src="{{ nav_profile.photo.url }}" alt="{% loc nav_profile 'full_name' %}">
+      {% else %}
+      <span class="header-avatar">{% if nav_profile %}{{ nav_profile.first_name|make_list|first }}{% else %}{% if IS_RTL %}م{% else %}M{% endif %}{% endif %}</span>
+      {% endif %}
+      <span>
+        <strong>{% if nav_profile %}{% loc nav_profile 'full_name' %}{% elif IS_RTL %}محمد اسکندرلو{% else %}Mohammad Eskandarloo{% endif %}</strong>
+        <span>{% if nav_profile %}{% loc nav_profile 'headline' %}{% else %}{% t 'meta.title_suffix' %}{% endif %}</span>
+      </span>
+    </a>
 
-      <a href="#contact"
-         class="hidden lg:inline-flex items-center gap-2 text-sm font-semibold bg-amber text-bg px-5 py-2.5 rounded-xl hover:bg-amber2 transition-colors shadow-glow">
-        شروع همکاری <i class="fas fa-arrow-left text-xs"></i>
-      </a>
+    <nav id="navmenu" class="navmenu">
+      <ul>
+        <li><a href="{% if on_home == 'index' %}#hero{% else %}{{ HOME_URL }}#hero{% endif %}" class="{% if on_home == 'index' %}active{% endif %}"><i class="bi bi-house navicon"></i>{% t 'nav.home' %}</a></li>
+        <li><a href="{% if on_home == 'index' %}#about{% else %}{{ HOME_URL }}#about{% endif %}"><i class="bi bi-person navicon"></i> {% t 'nav.about' %}</a></li>
+        <li><a href="{% url 'my_cv:resume' %}" class="{% if on_home == 'resume' %}active{% endif %}"><i class="bi bi-file-earmark-text navicon"></i> {% t 'nav.resume' %}</a></li>
+        <li><a href="{% if on_home == 'index' %}#portfolio{% else %}{{ HOME_URL }}#portfolio{% endif %}"><i class="bi bi-images navicon"></i> {% t 'nav.portfolio' %}</a></li>
+        <li><a href="{% if on_home == 'index' %}#services{% else %}{{ HOME_URL }}#services{% endif %}"><i class="bi bi-hdd-stack navicon"></i> {% t 'nav.services' %}</a></li>
+        <li><a href="{% if on_home == 'index' %}#skills{% else %}{{ HOME_URL }}#skills{% endif %}"><i class="bi bi-bar-chart navicon"></i> {% t 'nav.skills' %}</a></li>
+        <li><a href="{% if on_home == 'index' %}#contact{% else %}{{ HOME_URL }}#contact{% endif %}"><i class="bi bi-envelope navicon"></i> {% t 'nav.contact' %}</a></li>
+      </ul>
+    </nav>
 
-      <button @click="open=!open" class="lg:hidden text-ink p-2" aria-label="منو">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
+    <div class="social-links text-center">
+      {% for link in nav_social_links %}
+      <a href="{{ link.url }}"{% if 'mailto:' not in link.url %} target="_blank" rel="noopener noreferrer"{% endif %} aria-label="{{ link.label }}"><i class="bi {{ link.bootstrap_icon }}"></i></a>
+      {% empty %}
+      <a href="https://github.com/Meska75" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="bi bi-github"></i></a>
+      {% endfor %}
+    </div>
+
+    <div class="lang-switch" aria-label="Language">
+      <form action="{% url 'set_language' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <input type="hidden" name="language" value="fa">
+        <button type="submit" class="{% if CURRENT_LANG == 'fa' %}active{% endif %}">{% t 'lang.fa' %}</button>
+      </form>
+      <form action="{% url 'set_language' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <input type="hidden" name="language" value="en">
+        <button type="submit" class="{% if CURRENT_LANG == 'en' %}active{% endif %}">{% t 'lang.en' %}</button>
+      </form>
     </div>
   </div>
-
-  <!-- vertical right rail with scroll-spy (desktop) -->
-  <nav id="side-nav" class="hidden lg:flex fixed right-7 top-1/2 -translate-y-1/2 z-50 flex-col items-end gap-5">
-    <a data-spy="hero"     href="#hero"     class="spy-link">خانه <span class="line"></span></a>
-    <a data-spy="intro"    href="#intro"    class="spy-link">معرفی <span class="line"></span></a>
-    <a data-spy="services" href="#services" class="spy-link">خدمات <span class="line"></span></a>
-    <a data-spy="about"    href="#about"    class="spy-link">درباره <span class="line"></span></a>
-    <a data-spy="projects" href="#projects" class="spy-link">نمونه‌کارها <span class="line"></span></a>
-    <a data-spy="contact"  href="#contact"  class="spy-link">تماس <span class="line"></span></a>
-  </nav>
-
-  <!-- mobile menu -->
-  <div x-show="open" x-cloak @click="open=false"
-       class="lg:hidden fixed top-[68px] inset-x-0 z-40 bg-bg2/95 backdrop-blur border-y border-white/5 px-5 py-5 flex flex-col gap-4 text-muted">
-    <a href="#services">خدمات</a>
-    <a href="#about">درباره</a>
-    <a href="#projects">نمونه‌کارها</a>
-    <a href="#contact">تماس</a>
-    <a href="#contact" class="bg-amber text-bg text-center font-semibold px-5 py-2.5 rounded-xl">شروع همکاری</a>
-  </div>
 </header>
-
-<style>
-  .spy-link{ display:flex; align-items:center; gap:.55rem; color:#9FB0C6; font-size:14px; transition:color .3s ease; }
-  .spy-link .line{ display:block; height:2px; width:14px; background:currentColor; opacity:.35; border-radius:2px; transition:width .3s ease, opacity .3s ease; }
-  .spy-link:hover{ color:#F1EBE0; }
-  .spy-link.active{ font-weight:700; }
-  .spy-link.active .line{ width:34px; opacity:1; }
-</style>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var links = {};
-    document.querySelectorAll('#side-nav .spy-link').forEach(function (a) { links[a.getAttribute('data-spy')] = a; });
-    // each section lights its nav item in its own color
-    var colors = { hero:'#F5A524', intro:'#F5A524', services:'#34D399', about:'#38BDF8', projects:'#A78BFA', contact:'#FB7185' };
-    var ids = Object.keys(links);
-
-    function setActive(id) {
-      ids.forEach(function (k) { links[k].classList.remove('active'); links[k].style.color = ''; });
-      var a = links[id];
-      if (a) { a.classList.add('active'); a.style.color = colors[id] || '#F5A524'; }
-    }
-
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) { if (e.isIntersecting) setActive(e.target.id); });
-    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
-
-    ids.forEach(function (id) { var el = document.getElementById(id); if (el) io.observe(el); });
-  });
-</script>
+{% endwith %}

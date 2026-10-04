@@ -1,108 +1,526 @@
 {% extends "base.html" %}
-{% load static custom_filters %}
+{% load static cv_extras %}
+
+{% block body_class %}index-page intro-active{% endblock %}
 
 {% block head_extra %}
-<style>
-  #neural-net .nn-line{ stroke:#F5A524; stroke-width:1.2; fill:none; stroke-dasharray:1; stroke-dashoffset:1; opacity:0;
-    animation: nn-draw var(--d,7s) ease-in-out infinite; animation-delay: var(--dl,0s); }
-  #neural-net .nn-node{ fill:#FFC55C; opacity:.2;
-    animation: nn-pulse var(--d,4s) ease-in-out infinite; animation-delay: var(--dl,0s); }
-  @keyframes nn-draw{ 0%{stroke-dashoffset:1; opacity:0;} 20%{opacity:.6;} 50%{stroke-dashoffset:0; opacity:.45;} 80%{opacity:.55;} 100%{stroke-dashoffset:0; opacity:0;} }
-  @keyframes nn-pulse{ 0%,100%{opacity:.2;} 50%{opacity:.7;} }
-  @media (prefers-reduced-motion: reduce){
-    #neural-net .nn-line{ animation:none; stroke-dashoffset:0; opacity:.28; }
-    #neural-net .nn-node{ animation:none; opacity:.4; }
-  }
-</style>
+<link href="{% static 'css/pixel-hero.css' %}" rel="stylesheet">
+<link href="{% static 'css/card-stack.css' %}?v=5" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
-<main id="top">
+<main class="main">
 
-  <!-- ===================== FULL-SCREEN HERO ===================== -->
-  <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
-    <!-- ambient depth -->
-    <div class="absolute -top-40 -right-24 w-[40rem] h-[40rem] rounded-full bg-amber/15 blur-[100px] pointer-events-none"></div>
-    <div class="absolute -bottom-40 -left-32 w-[38rem] h-[38rem] rounded-full bg-[#2E5696]/25 blur-[100px] pointer-events-none"></div>
-    <!-- animated neural network background -->
-    <svg id="neural-net" class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
-    <!-- legibility overlay -->
-    <div class="absolute inset-0 bg-gradient-to-b from-bg/50 via-transparent to-bg pointer-events-none"></div>
+  <section id="hero" class="pixel-hero" data-pixel-hero>
+    <div class="pixel-hero__canvas" data-pixel-canvas aria-hidden="true"></div>
+    <div class="pixel-hero__veil" aria-hidden="true"></div>
 
-    <div class="relative z-10 text-center px-5 max-w-4xl mx-auto" data-reveal>
-      <span class="inline-flex items-center gap-2 text-sm text-amber bg-amber/10 border border-amber/20 rounded-full px-4 py-1.5 mb-8">
-        <span class="relative flex h-2 w-2"><span class="animate-ping absolute h-2 w-2 rounded-full bg-amber opacity-75"></span><span class="relative rounded-full h-2 w-2 bg-amber"></span></span>
-        مهندس بک‌اند و هوش مصنوعی
-      </span>
-      <h1 class="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.15] mb-7">
-        <span class="text-transparent bg-clip-text bg-gradient-to-l from-ivory via-amber2 to-amber">محمد اسکندرلو</span>
+    <div class="pixel-hero__title">
+      <h1>
+        <span class="pixel-hero__word pixel-hero__word--soft">{% if profile %}{{ profile.first_name }}{% elif IS_RTL %}محمد{% else %}Mohammad{% endif %}</span>
+        <span class="pixel-hero__word pixel-hero__word--strong">{% if profile and profile.last_name %}{{ profile.last_name }}{% elif IS_RTL %}اسکندرلو{% else %}Eskandarloo{% endif %}</span>
       </h1>
-      <p class="text-muted text-lg md:text-xl leading-loose max-w-2xl mx-auto">
-        <span class="text-ink">[ متنِ هیرو را بعداً نهایی می‌کنی ]</span> — جایی که داده، هوش مصنوعی و مهندسی به هم می‌رسند.
-      </p>
+    </div>
 
-      <a href="#intro" class="inline-flex flex-col items-center gap-2 mt-16 text-muted hover:text-amber transition-colors">
-        <span class="text-xs">اسکرول کن</span>
-        <span class="grid place-items-center w-9 h-9 rounded-full border border-white/15 animate-bounce"><i class="fas fa-arrow-down text-xs"></i></span>
+    <div class="pixel-hero__copy">
+      <p>{% if profile and profile.tagline %}{% loc profile 'tagline' %}{% else %}{% t 'home.line' %}{% endif %}</p>
+      <div class="pixel-hero__marquee pixel-hero__marquee--mobile">
+        <span class="pixel-hero__kicker">{% t 'hero.tools' %}</span>
+        {% include "partials/stack_marquee.html" %}
+      </div>
+    </div>
+
+    <div class="pixel-hero__actions">
+      <a class="pixel-hero__btn pixel-hero__btn--primary" href="#portfolio">
+        <span class="pixel-hero__btn-short">{% t 'hero.cta_work_short' %}</span>
+        <span class="pixel-hero__btn-full">{% t 'hero.cta_work' %}</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
+      <a class="pixel-hero__btn pixel-hero__btn--ghost" href="https://github.com/Meska75" target="_blank" rel="noopener noreferrer">
+        <i class="bi bi-github" aria-hidden="true"></i>
+        <span class="pixel-hero__btn-short">{% t 'hero.github' %}</span>
+        <span class="pixel-hero__btn-full">{% t 'hero.github' %}</span>
+      </a>
+    </div>
+
+    <div class="pixel-hero__marquee pixel-hero__marquee--desktop">
+      <span class="pixel-hero__kicker">{% t 'hero.tools' %}</span>
+      {% include "partials/stack_marquee.html" %}
     </div>
   </section>
 
-  <!-- ===================== INTRO (moved block) ===================== -->
-  <section id="intro" class="relative overflow-hidden">
-    <div class="absolute -top-24 left-1/4 w-[30rem] h-[30rem] rounded-full bg-amber/10 blur-[100px] pointer-events-none"></div>
-    <div class="relative z-10 max-w-6xl mx-auto px-5 py-20 md:py-28">
-      <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+  <section id="portrait" class="hero section">
+    <div class="background-elements">
+      <div class="bg-circle circle-1"></div>
+      <div class="bg-circle circle-2"></div>
+    </div>
 
-        <!-- text -->
-        <div data-reveal>
-          <span class="inline-flex items-center gap-2 text-sm text-amber bg-amber/10 border border-amber/20 rounded-full px-4 py-1.5 mb-6">
-            <span class="relative flex h-2 w-2"><span class="animate-ping absolute h-2 w-2 rounded-full bg-amber opacity-75"></span><span class="relative rounded-full h-2 w-2 bg-amber"></span></span>
-            آماده‌ی همکاری با کسب‌وکارها
-          </span>
+    <div class="hero-content">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6" data-aos="fade-right" data-aos-delay="100">
+            <div class="hero-text">
+              <h1>
+                {% if profile %}{{ profile.first_name }}{% if profile.last_name %} <span class="accent-text">{{ profile.last_name }}</span>{% endif %}
+                {% elif IS_RTL %}محمد <span class="accent-text">اسکندرلو</span>{% else %}Mohammad <span class="accent-text">Eskandarloo</span>{% endif %}
+              </h1>
+              <h2>{% if profile and profile.headline %}{% loc profile 'headline' %}{% else %}{% t 'meta.title_suffix' %}{% endif %}</h2>
+              <p class="lead">{% t 'hero.im' %} <span class="typed" data-typed-items="{% t 'hero.typed' %}"></span></p>
+              <p class="description">{% if profile and profile.tagline %}{% loc profile 'tagline' %}{% else %}{% t 'home.line' %}{% endif %}</p>
 
-          <h2 class="text-4xl md:text-[3.4rem] font-extrabold leading-[1.25] mb-6">
-            کسب‌وکارت را با
-            <span class="text-transparent bg-clip-text bg-gradient-to-l from-amber to-amber2">داده و هوش مصنوعی</span>
-            یک قدم جلو می‌برم.
-          </h2>
+              <div class="hero-actions">
+                <a href="#portfolio" class="btn btn-primary">{% t 'hero.cta_work' %}</a>
+                <a href="#contact" class="btn btn-outline">{% t 'hero.cta_contact' %}</a>
+              </div>
 
-          <p class="text-muted text-lg leading-loose max-w-xl mb-9">
-            مهندس بک‌اند و هوش مصنوعی‌ام؛ از طراحی سامانه‌های پایدار و خط‌لوله‌های جمع‌آوری داده تا راه‌حل‌های هوشمند —
-            چیزهایی می‌سازم که <span class="text-ink">مشکل واقعی کسب‌وکارت را حل می‌کنند</span>، نه فقط کد.
-          </p>
-
-          <div class="flex flex-wrap gap-4">
-            <a href="#contact" class="inline-flex items-center gap-2 bg-amber text-bg font-semibold px-7 py-3.5 rounded-xl hover:bg-amber2 transition-colors shadow-glow">
-              بریم همکاری کنیم <i class="fas fa-arrow-left text-sm"></i>
-            </a>
-            <a href="#projects" class="inline-flex items-center gap-2 border border-white/15 px-7 py-3.5 rounded-xl hover:border-amber/50 hover:text-amber transition-colors">
-              دیدن نمونه‌کارها
-            </a>
+              <div class="social-links">
+                {% for link in social_links %}
+                <a href="{{ link.url }}"{% if 'mailto:' not in link.url %} target="_blank" rel="noopener noreferrer"{% endif %} aria-label="{{ link.label }}"><i class="bi {{ link.bootstrap_icon }}"></i></a>
+                {% empty %}
+                <a href="https://github.com/Meska75" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="bi bi-github"></i></a>
+                {% endfor %}
+              </div>
+            </div>
           </div>
 
-          <!-- trust mini-stats -->
-          <div class="grid grid-cols-3 gap-4 mt-12 max-w-md">
-            <div><div class="text-2xl md:text-3xl font-extrabold text-amber">۷+</div><div class="text-xs text-muted mt-1">سال تجربه‌ی کاری</div></div>
-            <div><div class="text-2xl md:text-3xl font-extrabold text-amber">۵+</div><div class="text-xs text-muted mt-1">پروژه‌ی واقعی</div></div>
-            <div><div class="text-2xl md:text-3xl font-extrabold text-amber">۱۵+</div><div class="text-xs text-muted mt-1">تکنولوژی و ابزار</div></div>
+          <div class="col-lg-6" data-aos="fade-left" data-aos-delay="200">
+            <div class="hero-visual">
+              <div class="profile-container">
+                <div class="profile-background"></div>
+                {% if profile and profile.photo %}
+                <img src="{{ profile.photo.url }}" alt="{% loc profile 'full_name' %}" class="profile-image">
+                {% else %}
+                <img src="{% static 'snapfolio/img/profile/profile-2.webp' %}" alt="{% if profile %}{% loc profile 'full_name' %}{% elif IS_RTL %}محمد اسکندرلو{% else %}Mohammad Eskandarloo{% endif %}" class="profile-image">
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="about section">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="row">
+        <div class="col-lg-5" data-aos="zoom-in" data-aos-delay="200">
+          <div class="profile-card">
+            <div class="profile-header">
+              <div class="profile-image">
+                {% if profile and profile.photo %}
+                <img src="{{ profile.photo.url }}" alt="{% loc profile 'full_name' %}" class="img-fluid">
+                {% else %}
+                <img src="{% static 'snapfolio/img/profile/profile-square-3.webp' %}" alt="" class="img-fluid">
+                {% endif %}
+              </div>
+              {% if profile and profile.available_for_work %}
+              <div class="profile-badge">
+                <i class="bi bi-check-circle-fill"></i>
+              </div>
+              {% endif %}
+            </div>
+            <div class="profile-content">
+              <h3>{% if profile %}{% loc profile 'full_name' %}{% elif IS_RTL %}محمد اسکندرلو{% else %}Mohammad Eskandarloo{% endif %}</h3>
+              <p class="profession">{% if profile and profile.headline %}{% loc profile 'headline' %}{% else %}{% t 'home.quote_role' %}{% endif %}</p>
+              <div class="contact-links">
+                <a href="mailto:{% if profile and profile.email %}{{ profile.email }}{% else %}mohammad.eska34@gmail.com{% endif %}" class="contact-item">
+                  <i class="bi bi-envelope"></i>
+                  {% if profile and profile.email %}{{ profile.email }}{% else %}mohammad.eska34@gmail.com{% endif %}
+                </a>
+                {% if profile and profile.show_phone and profile.phone %}
+                <a href="tel:{{ profile.phone }}" class="contact-item">
+                  <i class="bi bi-telephone"></i>
+                  {{ profile.phone }}
+                </a>
+                {% endif %}
+                {% if profile and profile.location %}
+                <span class="contact-item">
+                  <i class="bi bi-geo-alt"></i>
+                  {% loc profile 'location' %}
+                </span>
+                {% endif %}
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- photo -->
-        <div class="relative flex justify-center lg:justify-start" data-reveal data-delay="1">
-          <div class="relative">
-            <div class="absolute -inset-6 bg-gradient-to-tr from-amber/30 via-amber/5 to-transparent blur-3xl rounded-full"></div>
-            <img src="{% static 'images/profile.jpg' %}" alt="محمد اسکندرلو"
-                 class="relative w-72 h-80 md:w-80 md:h-[26rem] object-cover rounded-[2rem] ring-1 ring-white/10 shadow-2xl">
-            <!-- floating card -->
-            <div class="absolute -bottom-5 -left-5 bg-surface/90 backdrop-blur border border-white/10 rounded-2xl px-5 py-3.5 shadow-2xl">
-              <div class="flex items-center gap-3">
-                <span class="grid place-items-center w-10 h-10 rounded-xl bg-amber/15 text-amber"><i class="fas fa-bolt"></i></span>
-                <div>
-                  <div class="text-sm font-bold leading-tight">بک‌اند · داده · AI</div>
-                  <div class="text-xs text-muted">Python · Django</div>
+        <div class="col-lg-7" data-aos="fade-left" data-aos-delay="300">
+          <div class="about-content">
+            <div class="section-header">
+              <span class="badge-text">{% t 'about.badge' %}</span>
+              <h2>{% t 'about.heading' %}</h2>
+            </div>
+            <div class="description">
+              <p>{% if profile and profile.about %}{% loc profile 'about' %}{% else %}{% t 'home.about_bio' %}{% endif %}</p>
+              {% if profile and profile.tagline %}
+              <p>{% loc profile 'tagline' %}</p>
+              {% endif %}
+            </div>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-number">{{ project_count }}+</div>
+                <div class="stat-label">{% t 'stats.projects' %}</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">{{ years_experience }}+</div>
+                <div class="stat-label">{% t 'stats.experience' %}</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">{{ certificate_count }}</div>
+                <div class="stat-label">{% t 'stats.certificates' %}</div>
+              </div>
+            </div>
+            <div class="details-grid">
+              <div class="detail-row">
+                <div class="detail-item">
+                  <span class="detail-label">{% t 'about.spec' %}</span>
+                  <span class="detail-value">{% t 'about.spec_value' %}</span>
                 </div>
+                <div class="detail-item">
+                  <span class="detail-label">{% t 'about.level' %}</span>
+                  <span class="detail-value">{% t 'about.level_value' %}</span>
+                </div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-item">
+                  <span class="detail-label">{% t 'about.education' %}</span>
+                  <span class="detail-value">{% t 'about.education_value' %}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">{% t 'about.languages' %}</span>
+                  <span class="detail-value">{% t 'about.languages_value' %}</span>
+                </div>
+              </div>
+            </div>
+            <div class="cta-section">
+              <a href="{% url 'my_cv:resume' %}" class="btn btn-primary">
+                <i class="bi bi-file-earmark-text"></i>
+                {% t 'nav.resume' %}
+              </a>
+              <a href="#contact" class="btn btn-outline">
+                <i class="bi bi-chat-dots"></i>
+                {% t 'about.talk' %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stats" class="stats section light-background">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <div class="stats-wrapper">
+            <div class="stats-item" data-aos="zoom-in" data-aos-delay="150">
+              <div class="icon-wrapper"><i class="bi bi-briefcase"></i></div>
+              <span data-purecounter-start="0" data-purecounter-end="{{ years_experience }}" data-purecounter-duration="1" class="purecounter"></span>
+              <p>{% t 'stats.experience' %}</p>
+            </div>
+            <div class="stats-item" data-aos="zoom-in" data-aos-delay="200">
+              <div class="icon-wrapper"><i class="bi bi-journal-richtext"></i></div>
+              <span data-purecounter-start="0" data-purecounter-end="{{ project_count }}" data-purecounter-duration="1" class="purecounter"></span><span class="stat-plus">+</span>
+              <p>{% t 'stats.projects' %}</p>
+            </div>
+            <div class="stats-item" data-aos="zoom-in" data-aos-delay="250">
+              <div class="icon-wrapper"><i class="bi bi-award"></i></div>
+              <span data-purecounter-start="0" data-purecounter-end="{{ certificate_count }}" data-purecounter-duration="1" class="purecounter"></span>
+              <p>{% t 'stats.certificates' %}</p>
+            </div>
+            <div class="stats-item" data-aos="zoom-in" data-aos-delay="300">
+              <div class="icon-wrapper"><i class="bi bi-cpu"></i></div>
+              <span data-purecounter-start="0" data-purecounter-end="{{ skill_count }}" data-purecounter-duration="1" class="purecounter"></span>
+              <p>{% t 'stats.skills' %}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills" class="skills section">
+    <div class="container section-title" data-aos="fade-up">
+      <h2>{% t 'skills.title' %}</h2>
+      <p>{% t 'skills.lead' %}</p>
+    </div>
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="row">
+        {% for cat in skill_categories %}
+        <div class="col-lg-6">
+          <div class="skills-category" data-aos="fade-up" data-aos-delay="200">
+            <h3>{% loc cat 'name' %}</h3>
+            <div class="skills-animation">
+              {% for skill in cat.skills.all %}
+              {% if skill.featured %}
+              <div class="skill-item">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h4>{% loc skill 'name' %}</h4>
+                  <span class="skill-percentage">{{ skill.percent }}%</span>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar" role="progressbar" aria-valuenow="{{ skill.percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+              {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="col-lg-6">
+          <div class="skills-category">
+            <h3>{% t 'skills.python_title' %}</h3>
+            <p>{% t 'skills.python_body' %}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section id="portfolio" class="portfolio section card-stack-section">
+    <div class="container section-title" data-aos="fade-up">
+      <h2>{% t 'portfolio.title' %}</h2>
+      <p>{% t 'portfolio.lead' %}</p>
+    </div>
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      {% if projects %}
+      <div
+        class="card-stack"
+        data-card-stack
+        data-loop="true"
+        data-auto="true"
+        data-interval="2800"
+      >
+        <div
+          class="card-stack__stage"
+          tabindex="0"
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="{% t 'portfolio.stack' %}"
+        >
+          <div class="card-stack__wash card-stack__wash--top" aria-hidden="true"></div>
+          <div class="card-stack__wash card-stack__wash--bottom" aria-hidden="true"></div>
+          <div class="card-stack__fan">
+            {% for p in projects %}
+            <article
+              class="card-stack__card"
+              data-index="{{ forloop.counter0 }}"
+              data-title="{% loc p 'title' %}"
+              data-href="{{ p.live_url }}"
+            >
+              <div class="card-stack__inner">
+                {% if p.cover_image %}
+                <img src="{{ p.cover_image.url }}" alt="{% loc p 'title' %}" draggable="false">
+                {% else %}
+                <img
+                  src="{% cycle 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1400&q=80' 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1400&q=80' 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=1400&q=80' 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=1400&q=80' 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=80' %}"
+                  alt="{% loc p 'title' %}"
+                  draggable="false"
+                >
+                {% endif %}
+                <div class="card-stack__shade" aria-hidden="true"></div>
+                <div class="card-stack__body">
+                  <span class="card-stack__tag">{{ p.category_label }}</span>
+                  <h3>{% loc p 'title' %}</h3>
+                  {% if p.summary or p.summary_en %}
+                  <p>{% loc p 'summary' %}</p>
+                  {% endif %}
+                  <a class="card-stack__details" href="{% url 'my_cv:project_detail' p.slug %}">{% t 'portfolio.details' %}</a>
+                </div>
+              </div>
+            </article>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="card-stack__nav">
+          <div class="card-stack__dots" role="tablist" aria-label="{% t 'portfolio.stack' %}">
+            {% for p in projects %}
+            <button
+              type="button"
+              class="card-stack__dot"
+              data-index="{{ forloop.counter0 }}"
+              aria-label="{% loc p 'title' %}"
+            ></button>
+            {% endfor %}
+          </div>
+          <a
+            class="card-stack__open"
+            href="{{ projects.0.live_url }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="{% t 'portfolio.open_site' %}"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15 3h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M10 14 21 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <button
+            type="button"
+            class="card-stack__pause"
+            aria-pressed="false"
+            data-label-pause="{% t 'portfolio.pause' %}"
+            data-label-play="{% t 'portfolio.play' %}"
+            aria-label="{% t 'portfolio.pause' %}"
+          >
+            <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5v14M14 5v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 12 7-12 7V5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <p class="card-stack__hint">{% t 'portfolio.hint' %}</p>
+        <p class="visually-hidden" aria-live="polite" data-card-stack-live></p>
+      </div>
+      {% else %}
+      <p class="portfolio-empty">{% t 'portfolio.empty' %}</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <section id="services" class="services section">
+    <div class="container section-title" data-aos="fade-up">
+      <h2>{% t 'services.title' %}</h2>
+      <p>{% t 'services.lead' %}</p>
+    </div>
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="service-header">
+        <div class="row align-items-center">
+          <div class="col-lg-8 col-md-12">
+            <div class="service-intro">
+              <h2 class="service-heading">
+                <div>{% t 'services.title' %}</div>
+                <div><span>{% t 'home.scale_title' %}</span></div>
+              </h2>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-12">
+            <div class="service-summary">
+              <p>{% t 'home.scale_lead' %}</p>
+              <a href="#contact" class="service-btn">
+                {% t 'hero.cta_contact' %}
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="service-card position-relative z-1">
+            <div class="service-icon"><i class="bi bi-code-slash"></i></div>
+            <a href="#contact" class="card-action d-flex align-items-center justify-content-center rounded-circle"><i class="bi bi-arrow-up-right"></i></a>
+            <h3><a href="#contact">{% t 'services.s1_title' %} <span>{% t 'services.s1_span' %}</span></a></h3>
+            <p>{% t 'services.s1_body' %}</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="service-card position-relative z-1">
+            <div class="service-icon"><i class="bi bi-database"></i></div>
+            <a href="#contact" class="card-action d-flex align-items-center justify-content-center rounded-circle"><i class="bi bi-arrow-up-right"></i></a>
+            <h3><a href="#contact">{% t 'services.s2_title' %} <span>{% t 'services.s2_span' %}</span></a></h3>
+            <p>{% t 'services.s2_body' %}</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+          <div class="service-card position-relative z-1">
+            <div class="service-icon"><i class="bi bi-cpu"></i></div>
+            <a href="#contact" class="card-action d-flex align-items-center justify-content-center rounded-circle"><i class="bi bi-arrow-up-right"></i></a>
+            <h3><a href="#contact">{% t 'services.s3_title' %} <span>{% t 'services.s3_span' %}</span></a></h3>
+            <p>{% t 'services.s3_body' %}</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="service-card position-relative z-1">
+            <div class="service-icon"><i class="bi bi-search"></i></div>
+            <a href="#contact" class="card-action d-flex align-items-center justify-content-center rounded-circle"><i class="bi bi-arrow-up-right"></i></a>
+            <h3><a href="#contact">{% t 'home.p1_name' %}</a></h3>
+            <p>{% t 'home.p1_fit' %} — {% t 'home.p1_i1' %}. {% t 'home.p1_i2' %}. {% t 'home.p1_i3' %}.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="service-card position-relative z-1">
+            <div class="service-icon"><i class="bi bi-hammer"></i></div>
+            <a href="#contact" class="card-action d-flex align-items-center justify-content-center rounded-circle"><i class="bi bi-arrow-up-right"></i></a>
+            <h3><a href="#contact">{% t 'home.p2_name' %}</a></h3>
+            <p>{% t 'home.p2_fit' %} — {% t 'home.p2_i1' %}. {% t 'home.p2_i2' %}. {% t 'home.p2_i3' %}.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+          <div class="service-card position-relative z-1">
+            <div class="service-icon"><i class="bi bi-arrow-repeat"></i></div>
+            <a href="#contact" class="card-action d-flex align-items-center justify-content-center rounded-circle"><i class="bi bi-arrow-up-right"></i></a>
+            <h3><a href="#contact">{% t 'home.p3_name' %}</a></h3>
+            <p>{% t 'home.p3_fit' %} — {% t 'home.p3_i1' %}. {% t 'home.p3_i2' %}. {% t 'home.p3_i3' %}.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="testimonials" class="testimonials section light-background">
+    <div class="container section-title" data-aos="fade-up">
+      <h2>{% t 'home.quote_title' %}</h2>
+      <p>{% t 'home.scale_lead' %}</p>
+    </div>
+    <div class="container">
+      <div class="testimonial-masonry">
+        <div class="testimonial-item" data-aos="fade-up">
+          <div class="testimonial-content">
+            <div class="quote-pattern"><i class="bi bi-quote"></i></div>
+            <p>{% t 'home.q1' %}</p>
+            <div class="client-info">
+              <div class="client-image">
+                {% if profile and profile.photo %}
+                <img src="{{ profile.photo.url }}" alt="{% loc profile 'full_name' %}">
+                {% else %}
+                <img src="{% static 'snapfolio/img/person/person-m-7.webp' %}" alt="">
+                {% endif %}
+              </div>
+              <div class="client-details">
+                <h3>{% if profile %}{% loc profile 'full_name' %}{% elif IS_RTL %}محمد اسکندرلو{% else %}Mohammad Eskandarloo{% endif %}</h3>
+                <span class="position">{% if profile and profile.headline %}{% loc profile 'headline' %}{% else %}{% t 'home.quote_role' %}{% endif %}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-item highlight" data-aos="fade-up" data-aos-delay="100">
+          <div class="testimonial-content">
+            <div class="quote-pattern"><i class="bi bi-quote"></i></div>
+            <p>{% t 'home.q2' %}</p>
+            <div class="client-info">
+              <div class="client-image">
+                {% if profile and profile.photo %}
+                <img src="{{ profile.photo.url }}" alt="">
+                {% else %}
+                <img src="{% static 'snapfolio/img/person/person-m-8.webp' %}" alt="">
+                {% endif %}
+              </div>
+              <div class="client-details">
+                <h3>{% if profile %}{% loc profile 'full_name' %}{% elif IS_RTL %}محمد اسکندرلو{% else %}Mohammad Eskandarloo{% endif %}</h3>
+                <span class="position">{% t 'home.quote_role' %}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-item" data-aos="fade-up" data-aos-delay="200">
+          <div class="testimonial-content">
+            <div class="quote-pattern"><i class="bi bi-quote"></i></div>
+            <p>{% t 'home.q3' %}</p>
+            <div class="client-info">
+              <div class="client-image">
+                {% if profile and profile.photo %}
+                <img src="{{ profile.photo.url }}" alt="">
+                {% else %}
+                <img src="{% static 'snapfolio/img/person/person-m-13.webp' %}" alt="">
+                {% endif %}
+              </div>
+              <div class="client-details">
+                <h3>{% if profile %}{% loc profile 'full_name' %}{% elif IS_RTL %}محمد اسکندرلو{% else %}Mohammad Eskandarloo{% endif %}</h3>
+                <span class="position">{% t 'home.quote_role' %}</span>
               </div>
             </div>
           </div>
@@ -112,152 +530,87 @@
     </div>
   </section>
 
-  <!-- ===================== SERVICES ===================== -->
-  <section id="services" class="max-w-6xl mx-auto px-5 py-20 md:py-24">
-    <div class="max-w-2xl mb-14" data-reveal>
-      <span class="text-amber font-semibold text-sm">خدمات</span>
-      <h2 class="text-3xl md:text-4xl font-extrabold mt-3 mb-4">چه کاری برای کسب‌وکارت انجام می‌دهم؟</h2>
-      <p class="text-muted text-lg leading-relaxed">تمرکزم روی نتیجه است: سامانه‌هایی که کار می‌کنند، داده‌ای که تصمیم‌سازی می‌کند، و هوشی که فروش را بالا می‌برد.</p>
+  <section id="contact" class="contact section">
+    <div class="container section-title" data-aos="fade-up">
+      <h2>{% t 'contact.title' %}</h2>
+      <p>{% t 'contact.lead' %}</p>
     </div>
-
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="group relative bg-surface/50 border border-white/5 rounded-3xl p-8 lift hover:border-amber/30" data-reveal data-delay="1">
-        <span class="grid place-items-center w-14 h-14 rounded-2xl bg-amber/15 text-amber text-2xl mb-6"><i class="fas fa-server"></i></span>
-        <h3 class="text-xl font-bold mb-3">بک‌اندِ پایدار و مقیاس‌پذیر</h3>
-        <p class="text-muted leading-relaxed">سامانه‌هایی که زیر بارِ رشد کسب‌وکارت خم نمی‌شوند — با Django، معماری تمیز و پایگاه‌داده‌ی اصولی.</p>
-      </div>
-      <div class="group relative bg-surface/50 border border-white/5 rounded-3xl p-8 lift hover:border-amber/30" data-reveal data-delay="2">
-        <span class="grid place-items-center w-14 h-14 rounded-2xl bg-amber/15 text-amber text-2xl mb-6"><i class="fas fa-diagram-project"></i></span>
-        <h3 class="text-xl font-bold mb-3">جمع‌آوری و یکپارچه‌سازی داده</h3>
-        <p class="text-muted leading-relaxed">داده‌ی پراکنده‌ی بازار را یک‌جا و بلادرنگ در اختیارت می‌گذارم — وب‌اسکرپینگ پیشرفته و اتصال به APIها.</p>
-      </div>
-      <div class="group relative bg-surface/50 border border-white/5 rounded-3xl p-8 lift hover:border-amber/30" data-reveal data-delay="3">
-        <span class="grid place-items-center w-14 h-14 rounded-2xl bg-amber/15 text-amber text-2xl mb-6"><i class="fas fa-brain"></i></span>
-        <h3 class="text-xl font-bold mb-3">راه‌حل‌های هوش مصنوعی</h3>
-        <p class="text-muted leading-relaxed">از چت‌بات‌های دانش‌محور (RAG) تا سیستم‌های توصیه‌گر که تجربه‌ی مشتری و فروش را هوشمند می‌کنند.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== ABOUT teaser ===================== -->
-  <section id="about" class="relative overflow-hidden">
-    <div class="max-w-6xl mx-auto px-5 py-20 md:py-24">
-      <div class="grid lg:grid-cols-2 gap-12 items-center">
-        <div class="relative order-2 lg:order-1" data-reveal>
-          <div class="bg-gradient-to-br from-surface to-bg2 border border-white/5 rounded-3xl p-8 md:p-10">
-            <div class="flex items-center gap-2 text-amber text-sm font-semibold mb-4"><i class="fas fa-quote-right"></i> مسیر من</div>
-            <p class="text-lg md:text-xl leading-loose text-ink/90">
-              مسیرم از دنیای فروش و مدیریت شروع شد، اما همیشه چیزی که جذبم می‌کرد <span class="text-amber">داده</span> بود.
-              امروز همان کاری را که سال‌ها دستی در کسب‌وکار انجام می‌دادم، با کد و هوش مصنوعی <span class="text-amber">خودکار و مقیاس‌پذیر</span> می‌سازم.
-            </p>
+    <div class="container">
+      <div class="row g-4 g-lg-5">
+        <div class="col-lg-5">
+          <div class="info-box">
+            <h3>{% t 'contact.info' %}</h3>
+            <p>{% t 'contact.info_lead' %}</p>
+            {% if profile and profile.location %}
+            <div class="info-item">
+              <div class="icon-box"><i class="bi bi-geo-alt"></i></div>
+              <div class="content">
+                <h4>{% t 'contact.location' %}</h4>
+                <p>{% loc profile 'location' %}</p>
+              </div>
+            </div>
+            {% endif %}
+            {% if profile and profile.show_phone and profile.phone %}
+            <div class="info-item">
+              <div class="icon-box"><i class="bi bi-telephone"></i></div>
+              <div class="content">
+                <h4>{% t 'contact.phone' %}</h4>
+                <p><a href="tel:{{ profile.phone }}">{{ profile.phone }}</a></p>
+              </div>
+            </div>
+            {% endif %}
+            <div class="info-item">
+              <div class="icon-box"><i class="bi bi-envelope"></i></div>
+              <div class="content">
+                <h4>{% t 'contact.email' %}</h4>
+                <p><a href="mailto:{% if profile and profile.email %}{{ profile.email }}{% else %}mohammad.eska34@gmail.com{% endif %}">{% if profile and profile.email %}{{ profile.email }}{% else %}mohammad.eska34@gmail.com{% endif %}</a></p>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="order-1 lg:order-2" data-reveal data-delay="1">
-          <span class="text-amber font-semibold text-sm">درباره‌ی من</span>
-          <h2 class="text-3xl md:text-4xl font-extrabold mt-3 mb-5">چرا با من کار کنی؟</h2>
-          <ul class="space-y-4 text-muted">
-            <li class="flex gap-3"><i class="fas fa-circle-check text-amber mt-1.5"></i><span class="leading-relaxed"><span class="text-ink font-semibold">درکِ کسب‌وکار:</span> سال‌ها تجربه‌ی فروش و مدیریت یعنی زبانِ کارفرما را می‌فهمم.</span></li>
-            <li class="flex gap-3"><i class="fas fa-circle-check text-amber mt-1.5"></i><span class="leading-relaxed"><span class="text-ink font-semibold">حل‌مسئله‌ی واقعی:</span> برای رفع یک محدودیت هاست، کل سرویس را داکرایز کردم — نه دور زدن، بلکه حل ریشه‌ای.</span></li>
-            <li class="flex gap-3"><i class="fas fa-circle-check text-amber mt-1.5"></i><span class="leading-relaxed"><span class="text-ink font-semibold">یادگیرنده‌ی سریع:</span> از صفر تا ساختِ پلتفرم‌های داده‌محور و هوش مصنوعی، خودآموز و مصمم.</span></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== FEATURED PROJECTS ===================== -->
-  <section id="projects" class="max-w-6xl mx-auto px-5 py-20 md:py-24">
-    <div class="flex flex-wrap items-end justify-between gap-4 mb-14" data-reveal>
-      <div class="max-w-2xl">
-        <span class="text-amber font-semibold text-sm">نمونه‌کارها</span>
-        <h2 class="text-3xl md:text-4xl font-extrabold mt-3 mb-4">پروژه‌هایی که حرف می‌زنند</h2>
-        <p class="text-muted text-lg leading-relaxed">گزیده‌ای از کارهای واقعی — از خط‌لوله‌ی داده تا هوش مصنوعی.</p>
-      </div>
-    </div>
-
-    <div class="grid md:grid-cols-2 gap-6">
-      {% for p in projects %}{% if p.is_featured %}
-      <a href="{% url 'my_cv:project_detail' p.slug %}"
-         class="group relative bg-surface/50 border border-white/5 rounded-3xl overflow-hidden lift hover:border-amber/30" data-reveal>
-        <div class="h-40 bg-gradient-to-br from-surface2 to-bg2 relative overflow-hidden">
-          <div class="absolute inset-0 ambient opacity-60"></div>
-          <span class="absolute bottom-4 right-5 grid place-items-center w-12 h-12 rounded-2xl bg-amber/15 text-amber text-xl">
-            {% if p.category == 'ai' %}<i class="fas fa-brain"></i>{% elif p.category == 'data' %}<i class="fas fa-chart-line"></i>{% elif p.category == 'web' %}<i class="fas fa-globe"></i>{% else %}<i class="fas fa-server"></i>{% endif %}
-          </span>
-        </div>
-        <div class="p-7">
-          <div class="flex items-center gap-2 mb-3">
-            <span class="text-xs px-2.5 py-1 rounded-md bg-amber/10 text-amber">{{ p.get_category_display }}</span>
-            {% if p.is_private %}<span class="text-xs text-muted">🔒 خصوصی</span>{% endif %}
+        <div class="col-lg-7">
+          <div class="contact-form">
+            <h3>{% t 'contact.form_title' %}</h3>
+            <p>{% t 'contact.form_lead' %}</p>
+            {% if messages %}
+              {% for message in messages %}
+              <div class="form-alert is-visible {% if 'success' in message.tags %}is-success{% else %}is-error{% endif %}" role="status">{{ message }}</div>
+              {% endfor %}
+            {% endif %}
+            <form action="{% url 'my_cv:index' %}#contact" method="post" class="php-email-form">
+              {% csrf_token %}
+              <div class="row gy-4">
+                <div class="col-md-6">
+                  {{ contact_form.name }}
+                  {{ contact_form.name.errors }}
+                </div>
+                <div class="col-md-6">
+                  {{ contact_form.email }}
+                  {{ contact_form.email.errors }}
+                </div>
+                <div class="col-12">
+                  {{ contact_form.subject }}
+                  {{ contact_form.subject.errors }}
+                </div>
+                <div class="col-12">
+                  {{ contact_form.message }}
+                  {{ contact_form.message.errors }}
+                </div>
+                <div class="col-12 text-center">
+                  <button type="submit" class="btn">{% t 'contact.send' %}</button>
+                </div>
+              </div>
+            </form>
           </div>
-          <h3 class="text-xl font-bold mb-2 group-hover:text-amber transition-colors">{{ p.title }}</h3>
-          <p class="text-muted leading-relaxed mb-5">{{ p.summary }}</p>
-          <div class="flex flex-wrap gap-2 mb-5">
-            {% for s in p.skills.all|slice:":4" %}
-            <span class="text-xs text-muted bg-bg/60 border border-white/5 px-2.5 py-1 rounded-md">{{ s.name }}</span>
-            {% endfor %}
-          </div>
-          <span class="text-amber font-semibold text-sm inline-flex items-center gap-1">مشاهده‌ی جزئیات <span class="group-hover:-translate-x-1 transition-transform inline-block">←</span></span>
-        </div>
-      </a>
-      {% endif %}{% endfor %}
-    </div>
-
-    <div class="text-center mt-12" data-reveal>
-      <a href="#projects" class="inline-flex items-center gap-2 border border-white/15 px-7 py-3.5 rounded-xl hover:border-amber/50 hover:text-amber transition-colors">دیدن همه‌ی پروژه‌ها</a>
-    </div>
-  </section>
-
-  <!-- ===================== CTA ===================== -->
-  <section id="contact" class="max-w-6xl mx-auto px-5 pb-8">
-    <div class="ambient relative overflow-hidden rounded-[2.5rem] border border-amber/20 bg-gradient-to-br from-surface to-bg2 px-7 py-16 md:py-20 text-center" data-reveal>
-      <div class="relative z-10 max-w-2xl mx-auto">
-        <h2 class="text-3xl md:text-5xl font-extrabold mb-5 leading-tight">آماده‌ای کسب‌وکارت را <span class="text-amber">هوشمند</span> کنی؟</h2>
-        <p class="text-muted text-lg mb-9">یک ایده یا پروژه در ذهن داری؟ بیا درباره‌اش حرف بزنیم — اولین گفتگو رایگان است.</p>
-        <div class="flex flex-wrap items-center justify-center gap-4">
-          <a href="mailto:mohammad.eska34@gmail.com" class="inline-flex items-center gap-2 bg-amber text-bg font-semibold px-7 py-3.5 rounded-xl hover:bg-amber2 transition-colors shadow-glow">
-            <i class="fas fa-envelope"></i> mohammad.eska34@gmail.com
-          </a>
-          <a href="https://github.com/Meska75" target="_blank" rel="noopener" class="inline-flex items-center gap-2 border border-white/15 px-7 py-3.5 rounded-xl hover:border-amber/50 hover:text-amber transition-colors">
-            <i class="fab fa-github"></i> گیت‌هاب
-          </a>
         </div>
       </div>
     </div>
   </section>
 
 </main>
+{% endblock %}
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var svg = document.getElementById('neural-net');
-    if (!svg) return;
-    var NS = 'http://www.w3.org/2000/svg', W = 1200, H = 800, N = 60, MAX = 190;
-    function rnd(a, b) { return (a + Math.random() * (b - a)).toFixed(2); }
-    var nodes = [];
-    for (var i = 0; i < N; i++) nodes.push({ x: Math.random() * W, y: Math.random() * H });
-    // connections between nearby nodes
-    for (var i = 0; i < N; i++) {
-      for (var j = i + 1; j < N; j++) {
-        var dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
-        if (Math.sqrt(dx * dx + dy * dy) < MAX && Math.random() > 0.5) {
-          var l = document.createElementNS(NS, 'line');
-          l.setAttribute('x1', nodes[i].x.toFixed(1)); l.setAttribute('y1', nodes[i].y.toFixed(1));
-          l.setAttribute('x2', nodes[j].x.toFixed(1)); l.setAttribute('y2', nodes[j].y.toFixed(1));
-          l.setAttribute('pathLength', '1'); l.setAttribute('class', 'nn-line');
-          l.style.setProperty('--dl', rnd(0, 8) + 's'); l.style.setProperty('--d', rnd(6, 10) + 's');
-          svg.appendChild(l);
-        }
-      }
-    }
-    // nodes
-    nodes.forEach(function (n) {
-      var c = document.createElementNS(NS, 'circle');
-      c.setAttribute('cx', n.x.toFixed(1)); c.setAttribute('cy', n.y.toFixed(1));
-      c.setAttribute('r', (1.4 + Math.random() * 1.6).toFixed(1)); c.setAttribute('class', 'nn-node');
-      c.style.setProperty('--dl', rnd(0, 4) + 's'); c.style.setProperty('--d', rnd(3, 5) + 's');
-      svg.appendChild(c);
-    });
-  });
-</script>
+{% block body_extra %}
+<script src="{% static 'js/pixel-hero.js' %}"></script>
+<script src="{% static 'js/card-stack.js' %}?v=5"></script>
 {% endblock %}

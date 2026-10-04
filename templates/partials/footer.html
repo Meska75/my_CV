@@ -1,44 +1,11 @@
-{% load static %}
-<footer class="relative mt-24 border-t border-white/5 bg-bg2/40">
-  <div class="max-w-6xl mx-auto px-5 py-14 grid gap-10 md:grid-cols-3">
-
-    <div>
-      <a href="/#top" class="flex items-center gap-2.5 mb-4">
-        <span class="grid place-items-center w-9 h-9 rounded-xl bg-gradient-to-br from-amber to-amber2 text-bg font-extrabold">م</span>
-        <span class="font-bold">محمد اسکندرلو</span>
-      </a>
-      <p class="text-muted text-sm leading-relaxed max-w-xs">
-        مهندس بک‌اند و هوش مصنوعی — سازنده‌ی پلتفرم‌های داده‌محور و راه‌حل‌های هوشمند برای کسب‌وکارها.
-      </p>
+{% load cv_extras %}
+<footer id="footer" class="footer position-relative">
+  <div class="container">
+    <div class="copyright text-center">
+      <p>© {% now "Y" %} <strong class="px-1 sitename">{% if nav_profile %}{% loc nav_profile 'full_name' %}{% elif IS_RTL %}محمد اسکندرلو{% else %}Mohammad Eskandarloo{% endif %}</strong> · {% t 'footer.copy' %}</p>
     </div>
-
-    <div>
-      <h4 class="font-semibold mb-4 text-sm">پیمایش</h4>
-      <ul class="space-y-2.5 text-sm text-muted">
-        <li><a href="/#about" class="hover:text-amber transition-colors">درباره‌ی من</a></li>
-        <li><a href="/#services" class="hover:text-amber transition-colors">خدمات</a></li>
-        <li><a href="/#projects" class="hover:text-amber transition-colors">نمونه‌کارها</a></li>
-        <li><a href="/#contact" class="hover:text-amber transition-colors">تماس</a></li>
-      </ul>
-    </div>
-
-    <div>
-      <h4 class="font-semibold mb-4 text-sm">در ارتباط باشیم</h4>
-      <a href="mailto:mohammad.eska34@gmail.com" class="text-muted text-sm hover:text-amber transition-colors block mb-4">mohammad.eska34@gmail.com</a>
-      <div class="flex items-center gap-3">
-        <a href="https://github.com/Meska75" target="_blank" rel="noopener" title="GitHub"
-           class="grid place-items-center w-10 h-10 rounded-xl bg-surface border border-white/5 text-muted hover:text-amber hover:border-amber/40 transition-colors"><i class="fab fa-github"></i></a>
-        <a href="https://www.linkedin.com/" target="_blank" rel="noopener" title="LinkedIn"
-           class="grid place-items-center w-10 h-10 rounded-xl bg-surface border border-white/5 text-muted hover:text-amber hover:border-amber/40 transition-colors"><i class="fab fa-linkedin-in"></i></a>
-        <a href="mailto:mohammad.eska34@gmail.com" title="Email"
-           class="grid place-items-center w-10 h-10 rounded-xl bg-surface border border-white/5 text-muted hover:text-amber hover:border-amber/40 transition-colors"><i class="fas fa-envelope"></i></a>
-      </div>
-    </div>
-  </div>
-
-  <div class="border-t border-white/5">
-    <div class="max-w-6xl mx-auto px-5 py-5 text-center text-xs text-muted">
-      © {% now "Y" %} محمد اسکندرلو · طراحی و توسعه با Django
+    <div class="credits">
+      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
     </div>
   </div>
 </footer>

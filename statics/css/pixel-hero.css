@@ -1,0 +1,304 @@
+.pixel-hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 100dvh;
+  padding: 4.5rem 1.25rem 1.5rem;
+  overflow: hidden;
+  background: var(--background-color, #0f1e3f);
+  color: var(--default-color, #f4efe6);
+}
+
+@media (min-width: 1200px) {
+  .header ~ main .pixel-hero {
+    margin-left: -330px;
+  }
+
+  [dir="rtl"] .header ~ main .pixel-hero {
+    margin-left: 0;
+    margin-right: -330px;
+  }
+
+  .header {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+  }
+
+  .intro-active .header {
+    transform: translateX(-110%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  [dir="rtl"] .intro-active .header {
+    transform: translateX(110%);
+  }
+}
+
+@media (min-width: 768px) {
+  .pixel-hero {
+    justify-content: center;
+    gap: 2.5rem;
+    padding: 3rem 1.5rem 7.5rem;
+  }
+}
+
+.pixel-hero__canvas,
+.pixel-hero__veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.pixel-hero__canvas {
+  z-index: 0;
+}
+
+.pixel-hero__canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pixel-hero__veil {
+  z-index: 1;
+  background: radial-gradient(circle at center, transparent 0%, var(--background-color, #0f1e3f) 78%);
+  opacity: 0.82;
+}
+
+.pixel-hero__title,
+.pixel-hero__copy,
+.pixel-hero__actions,
+.pixel-hero__marquee {
+  position: relative;
+  z-index: 2;
+}
+
+.pixel-hero__title,
+.pixel-hero__copy {
+  pointer-events: none;
+  text-align: center;
+}
+
+.pixel-hero__title h1 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem 0.9rem;
+  margin: 0;
+  line-height: 0.95;
+  font-size: clamp(2.7rem, 8vw, 7.4rem);
+}
+
+.pixel-hero__word {
+  color: transparent;
+  background: linear-gradient(
+    110deg,
+    #f4efe6 0%,
+    rgba(244, 239, 230, 0.45) 28%,
+    #cdaa80 48%,
+    rgba(244, 239, 230, 0.7) 62%,
+    #f4efe6 100%
+  );
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-stroke: 1px rgba(244, 239, 230, 0.28);
+  filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.35));
+  animation: pixel-hero-shimmer 8s linear infinite;
+}
+
+.pixel-hero__word--soft {
+  font-weight: 500;
+}
+
+.pixel-hero__word--strong {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+@keyframes pixel-hero-shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: 0% center; }
+}
+
+.pixel-hero__copy p {
+  max-width: 40rem;
+  margin: 0 auto;
+  font-size: clamp(0.95rem, 2vw, 1.25rem);
+  font-weight: 400;
+  line-height: 1.9;
+  color: color-mix(in srgb, var(--default-color, #f4efe6) 88%, transparent);
+}
+
+.pixel-hero__actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  opacity: 0;
+  transform: translateY(1.25rem);
+  animation: pixel-hero-rise 0.9s ease 0.45s forwards;
+}
+
+.pixel-hero__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 2.75rem;
+  padding: 0 1.1rem;
+  border-radius: 0.85rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.pixel-hero__btn:hover {
+  transform: scale(1.02);
+  color: inherit;
+}
+
+.pixel-hero__btn svg,
+.pixel-hero__btn i {
+  width: 1rem;
+  height: 1rem;
+  font-size: 1rem;
+}
+
+[dir="rtl"] .pixel-hero__btn svg {
+  transform: scaleX(-1);
+}
+
+.pixel-hero__btn--primary {
+  color: #0f1e3f;
+  background: linear-gradient(180deg, #e4c9a4, var(--accent-color, #cdaa80));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), 0 12px 24px rgba(0, 0, 0, 0.18);
+}
+
+.pixel-hero__btn--ghost {
+  color: var(--default-color, #f4efe6);
+  background: color-mix(in srgb, var(--background-color, #0f1e3f) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--default-color, #f4efe6) 28%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.pixel-hero__btn-full { display: none; }
+
+@media (min-width: 768px) {
+  .pixel-hero__btn {
+    min-height: 3rem;
+    padding: 0 1.6rem;
+  }
+
+  .pixel-hero__btn-short { display: none; }
+  .pixel-hero__btn-full { display: inline; }
+}
+
+.pixel-hero__kicker {
+  display: block;
+  margin-bottom: 0.85rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--accent-color, #cdaa80) 80%, white);
+}
+
+.pixel-hero__marquee--mobile {
+  display: block;
+  width: 100%;
+  margin-top: 2.4rem;
+  pointer-events: auto;
+}
+
+.pixel-hero__marquee--desktop {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .pixel-hero__marquee--mobile { display: none; }
+
+  .pixel-hero__marquee--desktop {
+    position: absolute;
+    right: 0;
+    bottom: 1.6rem;
+    left: 0;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(1.25rem);
+    animation: pixel-hero-rise 0.9s ease 0.6s forwards;
+  }
+}
+
+.pixel-hero__track-wrap {
+  width: 100%;
+  max-width: 64rem;
+  margin: 0 auto;
+  overflow: hidden;
+  direction: ltr;
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+
+.pixel-hero__track {
+  display: flex;
+  width: max-content;
+  gap: 0;
+  animation: pixel-hero-marquee 40s linear infinite;
+  will-change: transform;
+}
+
+.pixel-hero__logos {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 3.5rem;
+  /* Trailing space is part of each group so -25% loops without a jump */
+  padding-inline-end: 3.5rem;
+}
+
+.pixel-hero__logos img {
+  height: 28px;
+  width: auto;
+  flex-shrink: 0;
+  opacity: 0.72;
+  filter: brightness(0) invert(1);
+  transition: opacity 0.3s ease;
+}
+
+.pixel-hero__logos img:hover {
+  opacity: 1;
+}
+
+@keyframes pixel-hero-marquee {
+  from { transform: translateX(0); }
+  /* Four identical groups → shift by exactly one group */
+  to { transform: translateX(-25%); }
+}
+
+@keyframes pixel-hero-rise {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pixel-hero__word,
+  .pixel-hero__actions,
+  .pixel-hero__marquee--desktop {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Keep the logo strip moving even with reduced motion; only soften speed */
+  .pixel-hero__track {
+    animation-duration: 80s;
+  }
+}

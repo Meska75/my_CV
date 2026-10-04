@@ -1,0 +1,11 @@
+{
+  "name": "task5-cv",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -i ./statics/css/src/input.css -o ./statics/css/site.css --minify",
+    "watch:css": "tailwindcss -i ./statics/css/src/input.css -o ./statics/css/site.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

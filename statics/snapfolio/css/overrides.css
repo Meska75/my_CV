@@ -1,0 +1,342 @@
+/* SnapFolio local overrides — bilingual RTL/LTR + Django contact form */
+
+:root {
+  --default-font: "Shabnam", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --heading-font: "Shabnam", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --nav-font: "Shabnam", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  font-family: var(--default-font);
+}
+
+[dir="rtl"] body {
+  text-align: right;
+}
+
+[dir="rtl"] .header {
+  left: auto;
+  right: 0;
+}
+
+@media (min-width: 1200px) {
+  [dir="rtl"] .header ~ main,
+  [dir="rtl"] .header ~ #footer {
+    margin-left: 0;
+    margin-right: 330px;
+  }
+}
+
+@media (max-width: 1199px) {
+  [dir="rtl"] .header {
+    right: -100%;
+    left: auto;
+  }
+
+  [dir="rtl"] .header.header-show {
+    right: 0;
+    left: auto;
+  }
+
+  [dir="rtl"] .header .header-toggle {
+    right: auto;
+    left: 15px;
+  }
+}
+
+[dir="rtl"] .navmenu a .navicon,
+[dir="rtl"] .navmenu a:focus .navicon {
+  margin-right: 0;
+  margin-left: 10px;
+}
+
+[dir="rtl"] .hero .hero-text h1 .accent-text::after {
+  left: auto;
+  right: 0;
+}
+
+.lang-switch {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.lang-switch form {
+  flex: 1;
+  margin: 0;
+}
+
+.lang-switch button {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%);
+  background: color-mix(in srgb, var(--default-color), transparent 92%);
+  color: var(--default-color);
+  border-radius: 999px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: var(--nav-font);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.lang-switch button:hover,
+.lang-switch button.active {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  border-color: var(--accent-color);
+}
+
+.form-alert {
+  display: none;
+  margin-bottom: 1rem;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.form-alert.is-visible {
+  display: block;
+}
+
+.form-alert.is-success {
+  background: color-mix(in srgb, #22c55e, transparent 80%);
+  color: #bbf7d0;
+}
+
+.form-alert.is-error {
+  background: color-mix(in srgb, #ef4444, transparent 80%);
+  color: #fecaca;
+}
+
+.resume-item .resume-body {
+  margin: 0;
+  line-height: 1.8;
+}
+
+.header-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+  width: 100%;
+}
+
+.header-identity img,
+.header-identity .header-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.header-identity .header-avatar {
+  display: grid;
+  place-items: center;
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  font-weight: 700;
+}
+
+.header-identity strong {
+  display: block;
+  font-size: 15px;
+  color: var(--heading-color);
+  line-height: 1.3;
+}
+
+.header-identity span {
+  display: block;
+  font-size: 12px;
+  color: var(--nav-color);
+}
+
+.portfolio-empty {
+  color: color-mix(in srgb, var(--default-color), transparent 30%);
+  padding: 2rem 0;
+}
+
+.portfolio-details .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 50px;
+  font-weight: 600;
+  margin: 8px 8px 0 0;
+}
+
+.portfolio-details .btn-primary {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+}
+
+.portfolio-details .btn-outline {
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 60%);
+  color: var(--default-color);
+}
+
+.profile-fallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  background: linear-gradient(145deg, #213a56, #0f1e3f);
+  color: var(--accent-color);
+  font-family: var(--heading-font);
+  font-size: clamp(4rem, 10vw, 7rem);
+  font-weight: 700;
+}
+
+.hero .hero-visual .profile-container .profile-image.profile-fallback {
+  object-fit: unset;
+  border-radius: 50% 50% 50% 8px;
+}
+
+.profile-fallback.square {
+  min-height: 240px;
+  border-radius: 12px;
+  font-size: 5rem;
+}
+
+.contact .errorlist {
+  color: #fecaca;
+  list-style: none;
+  padding: 6px 0 0;
+  margin: 0;
+  font-size: 13px;
+}
+
+/* Content breathing room + justified body copy */
+.main .container {
+  padding-left: clamp(1.25rem, 4vw, 2.5rem);
+  padding-right: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+.section {
+  padding-top: clamp(4rem, 8vw, 5.5rem);
+  padding-bottom: clamp(4rem, 8vw, 5.5rem);
+}
+
+.about .description p,
+.about .about-content p,
+.resume-side p,
+.resume-item p,
+.resume-item li,
+.resume-section p,
+.services p,
+.service-card p,
+.service-summary p,
+.testimonials .testimonial-item p,
+.contact .content p,
+.contact-form p,
+.skills .skills-category p,
+.portfolio .portfolio-info p,
+.section-title p,
+.hero .hero-text p {
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+}
+
+/* Skills: clearer category cards + spacing */
+.skills .row {
+  --bs-gutter-x: 1.75rem;
+  --bs-gutter-y: 1.75rem;
+}
+
+.skills .skills-category {
+  height: 100%;
+  margin-bottom: 0;
+  padding: 1.75rem 1.5rem;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 86%);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--background-color), #ffffff 3%);
+}
+
+.skills .skills-category h3 {
+  margin-bottom: 1.25rem;
+}
+
+.skills .skill-item {
+  margin-bottom: 1.15rem;
+}
+
+.stats .stat-plus {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  margin-inline-start: 2px;
+}
+
+/* Resume page */
+.resume-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.resume-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.resume-actions .btn-primary {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  border: none;
+}
+
+.resume-actions .btn-outline {
+  background: transparent;
+  color: var(--default-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 60%);
+}
+
+.resume-page .resume-main {
+  padding-inline-start: clamp(0.5rem, 2vw, 2rem);
+}
+
+.resume-item ul {
+  text-align: justify;
+  padding-inline-start: 1.2rem;
+}
+
+@media print {
+  .header,
+  .header-toggle,
+  .page-title,
+  .no-print,
+  #footer,
+  .footer {
+    display: none !important;
+  }
+
+  .header ~ main,
+  [dir="rtl"] .header ~ main {
+    margin: 0 !important;
+  }
+
+  body,
+  .main,
+  .resume.section {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  .resume.section {
+    padding-top: 0;
+  }
+}

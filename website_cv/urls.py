@@ -16,11 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import path , include
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('i18n/', include('django.conf.urls.i18n')),
     # Password recovery for admin users (defining the `admin_password_reset`
     # name makes the admin login page show a "forgot password" link).
     path(f'{settings.ADMIN_URL}password_reset/',
