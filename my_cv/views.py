@@ -65,6 +65,15 @@ def resume_view(request):
     return render(request, 'website/resume.html', _shared_context(request))
 
 
+def resume_download_view(request):
+    """Two-page A4 resume, rendered from the current admin data."""
+    preview = request.GET.get('view') == '1'
+    response = render(request, 'website/resume_a4.html', _shared_context(request))
+    if not preview:
+        response['Content-Disposition'] = 'attachment; filename="Mohammad-Eskandarloo-CV.html"'
+    return response
+
+
 def project_detail_view(request, slug):
     project = get_object_or_404(Project.objects.prefetch_related('skills', 'images'), slug=slug)
     return render(request, 'website/project_detail.html', {

@@ -136,23 +136,11 @@ body {
   text-justify: auto;
 }
 
-.section-title .resume-actions {
-  grid-column: 2;
-  grid-row: 4;
-  justify-content: flex-start;
-}
-
-.section-title__tags {
-  grid-column: 2;
-  grid-row: 4;
-  margin: 0.55rem 0 0;
-}
-
 .tag-confidential {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.22rem 0.72rem;
+  margin-inline-start: 0.35rem;
+  padding: 0.12rem 0.55rem;
   border-radius: 999px;
   background: #e8c98a;
   color: #07141f;
@@ -160,12 +148,14 @@ body {
   font-size: 0.78rem;
   font-weight: 700;
   line-height: 1.4;
-  letter-spacing: 0.01em;
 }
 
-.tag-confidential .bi {
-  font-size: 0.72rem;
+.section-title .resume-actions {
+  grid-column: 2;
+  grid-row: 4;
+  justify-content: flex-start;
 }
+
 
 .about .about-content .section-header {
   display: grid;
@@ -428,15 +418,36 @@ body {
   margin-bottom: 1.25rem;
 }
 
+.skills .skills-category h3:after {
+  left: auto;
+  right: auto;
+  inset-inline-start: 0;
+}
+
 .skills .skill-item {
   margin-bottom: 1.15rem;
 }
 
-.stats .stat-plus {
-  font-size: 1.5rem;
+.stats .stats-item .stat-figure {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  direction: ltr;
+  margin-bottom: 10px;
+  line-height: 1;
+}
+
+.stats .stats-item .stat-figure span {
+  display: inline;
+  width: auto;
+  margin-bottom: 0;
+}
+
+.stats .stats-item .stat-figure .stat-plus {
+  font-size: 48px;
   font-weight: 700;
-  color: var(--accent-color);
-  margin-inline-start: 2px;
+  color: var(--heading-color);
+  margin-inline-start: 0;
 }
 
 /* Resume page */
@@ -475,9 +486,114 @@ body {
   padding-inline-start: clamp(0.5rem, 2vw, 2rem);
 }
 
+.resume .resume-section .resume-item {
+  padding-left: 0;
+  padding-inline-start: 1.5rem;
+  border-left: 0;
+  border-inline-start: 2px solid color-mix(in srgb, var(--accent-color), transparent 80%);
+}
+
+.resume .resume-section .resume-item:before {
+  left: auto;
+  inset-inline-start: -9px;
+}
+
+.resume .resume-section .resume-item .company i {
+  margin-right: 0;
+  margin-inline-end: 0.5rem;
+}
+
 .resume-item ul {
   text-align: justify;
   padding-inline-start: 1.2rem;
+}
+
+.resume-intro {
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+  margin-bottom: 2.25rem;
+}
+
+.resume-intro-photo img {
+  width: 148px;
+  height: 176px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.resume-kicker {
+  margin: 0 0 0.35rem;
+  color: var(--accent-color);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.resume-intro-copy h3 {
+  margin: 0 0 0.7rem;
+  font-size: 1.7rem;
+}
+
+.resume-contact-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 1rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resume-contact-row li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.resume-contact-row a {
+  color: var(--accent-color);
+}
+
+.resume-skill-groups,
+.resume-cert-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.5rem;
+}
+
+.resume-skill-group h4 {
+  margin: 0 0 0.45rem;
+  font-size: 1rem;
+}
+
+.resume-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.resume-chips span {
+  padding: 0.18rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent-color), transparent 55%);
+  background: color-mix(in srgb, var(--accent-color), transparent 88%);
+  font-size: 0.84rem;
+}
+
+.resume-cert-grid .resume-item {
+  margin-bottom: 0;
+}
+
+.resume-item h4 a {
+  color: inherit;
+}
+
+@media (max-width: 767px) {
+  .resume-intro,
+  .resume-skill-groups,
+  .resume-cert-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Services: info-card shell (rotating border, title fill) */
@@ -493,9 +609,11 @@ body {
 
 .services a.info-card {
   --rotation: 0deg;
+  --spot-x: 50%;
   --info-accent: var(--accent-color);
   --info-hover-ink: var(--contrast-color);
   width: 100%;
+  height: 100%;
   min-height: 378px;
   margin: 0;
   padding: 14px;
@@ -544,8 +662,10 @@ body {
 .services .info-card__media {
   position: relative;
   width: 100%;
-  flex: 1 1 auto;
-  min-height: 148px;
+  flex: 0 0 168px;
+  height: 168px;
+  min-height: 168px;
+  max-height: 168px;
   overflow: hidden;
 }
 
@@ -554,7 +674,9 @@ body {
   inset: 0;
   width: 100%;
   height: 100%;
+  max-width: none;
   object-fit: cover;
+  object-position: center;
   display: block;
 }
 
@@ -597,10 +719,36 @@ body {
   top: -4px;
   bottom: -4px;
   z-index: 0;
-  background-color: var(--info-accent);
-  clip-path: polygon(0 50%, 100% 50%, 100% 50%, 0 50%);
-  transform-origin: center;
-  transition: clip-path cubic-bezier(0.1, 0.5, 0.5, 1) 0.4s;
+  background:
+    radial-gradient(
+      9rem 2.4rem at var(--spot-x, 50%) 50%,
+      color-mix(in srgb, white 62%, var(--info-accent)),
+      transparent 72%
+    ),
+    linear-gradient(
+      100deg,
+      var(--info-accent) 0%,
+      color-mix(in srgb, var(--info-accent) 72%, white) 48%,
+      var(--info-accent) 100%
+    );
+  box-shadow: inset 0 0 0 1px transparent;
+  clip-path: inset(50% 42% 50% 42% round 999px);
+  opacity: 0;
+  transition:
+    clip-path 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.45s ease,
+    opacity 0.25s ease;
+}
+
+.services .info-card__title-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 42%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: translateX(-180%);
+  pointer-events: none;
 }
 
 .services a.info-card:hover .info-card__title-text,
@@ -610,19 +758,30 @@ body {
 
 .services a.info-card:hover .info-card__title-fill,
 .services a.info-card:focus-visible .info-card__title-fill {
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  opacity: 1;
+  clip-path: inset(0 round 0.4em);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 55%, transparent),
+    inset 0 0 16px color-mix(in srgb, white 28%, transparent);
+}
+
+.services a.info-card:hover .info-card__title-fill::after,
+.services a.info-card:focus-visible .info-card__title-fill::after {
+  animation: info-title-sheen 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
+}
+
+@keyframes info-title-sheen {
+  to {
+    transform: translateX(340%);
+  }
 }
 
 .services .info-card__body p {
   margin: 0;
   font-size: 14px;
-  line-height: 1.55;
+  line-height: 1.65;
   color: var(--info-text);
   text-align: start;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -630,6 +789,11 @@ body {
   .services .info-card__title-fill,
   .services a.info-card {
     transition: none;
+  }
+
+  .services a.info-card:hover .info-card__title-fill::after,
+  .services a.info-card:focus-visible .info-card__title-fill::after {
+    animation: none;
   }
 }
 

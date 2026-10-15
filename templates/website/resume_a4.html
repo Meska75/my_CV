@@ -1,0 +1,336 @@
+{% load cv_extras %}
+<!DOCTYPE html>
+<html lang="{{ HTML_LANG }}" dir="{{ HTML_DIR }}">
+<head>
+  <meta charset="utf-8">
+  <title>{% if profile %}{% loc profile 'full_name' %} — {% endif %}{% t 'resume.title' %}</title>
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/shabnam-font@v5.0.1/dist/font-face.css" rel="stylesheet">
+  <style>
+    @page { size: A4; margin: 0; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: #d7e4df;
+      color: #10242c;
+      font-family: Shabnam, Tahoma, "Segoe UI", sans-serif;
+      font-size: 10.2pt;
+      line-height: 1.45;
+    }
+    a { color: inherit; text-decoration: none; }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      max-width: 210mm;
+      margin: 0 auto;
+      padding: 12px 4px;
+      color: #10242c;
+      font-size: 12px;
+    }
+    .toolbar button {
+      border: 0;
+      background: #1f8a74;
+      color: #fff;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .sheet {
+      width: 210mm;
+      height: 297mm;
+      margin: 0 auto 14px;
+      background: #f7fbfa;
+      color: #10242c;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 12px 40px rgba(16, 36, 44, 0.16);
+    }
+    .sheet-inner {
+      height: 100%;
+      padding: 11mm 12mm 14mm;
+      display: flex;
+      flex-direction: column;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+      padding-bottom: 4mm;
+      border-bottom: 2.5px solid #1f8a74;
+    }
+    .name {
+      margin: 0;
+      font-size: 22pt;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+    .headline {
+      margin: 1.5mm 0 0;
+      color: #1f8a74;
+      font-size: 11pt;
+      font-weight: 700;
+    }
+    .meta {
+      margin: 2.2mm 0 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2mm 4.5mm;
+      color: #3d5c56;
+      font-size: 8.7pt;
+    }
+    .pill {
+      align-self: flex-start;
+      margin: 0 0 1mm;
+      padding: 1.2mm 3mm;
+      border-radius: 999px;
+      background: #1f8a74;
+      color: #fff;
+      font-size: 8pt;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 62mm 1fr;
+      gap: 7mm;
+      padding-top: 5mm;
+      min-height: 0;
+    }
+    .side h2, .main h2, .block h2 {
+      margin: 0 0 2.2mm;
+      font-size: 10.5pt;
+      letter-spacing: 0.04em;
+      color: #1f8a74;
+    }
+    .summary {
+      margin: 0 0 4mm;
+      text-align: justify;
+    }
+    .focus {
+      margin: 0 0 4.5mm;
+      padding: 2.2mm 3mm;
+      background: #e7f4f0;
+      border-inline-start: 2.5px solid #1f8a74;
+      font-size: 9pt;
+    }
+    .focus strong { display: block; margin-bottom: 0.6mm; }
+    .job { margin: 0 0 3.4mm; }
+    .job h3, .work h3, .cert h3 {
+      margin: 0;
+      font-size: 10.4pt;
+      line-height: 1.3;
+    }
+    .when {
+      margin: 0.3mm 0 0;
+      color: #1f8a74;
+      font-size: 8.4pt;
+      font-weight: 700;
+    }
+    .org, .muted {
+      margin: 0.2mm 0 0;
+      color: #3d5c56;
+      font-size: 8.5pt;
+    }
+    .job ul {
+      margin: 1mm 0 0;
+      padding-inline-start: 4mm;
+    }
+    .job li { margin: 0; }
+    .side-block { margin-bottom: 4.5mm; }
+    .side-block p, .side-block li {
+      margin: 0 0 1mm;
+      font-size: 8.7pt;
+      line-height: 1.35;
+    }
+    .side-block ul { margin: 0; padding: 0; list-style: none; }
+    .skill-cat {
+      margin: 0 0 2.2mm;
+    }
+    .skill-cat strong {
+      display: block;
+      margin-bottom: 0.6mm;
+      font-size: 8.6pt;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 1mm; }
+    .chips span {
+      padding: 0.3mm 1.6mm;
+      border: 0.4pt solid #b7d4cb;
+      border-radius: 999px;
+      background: #fff;
+      font-size: 7.7pt;
+      line-height: 1.45;
+    }
+    .works {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3.2mm 5mm;
+    }
+    .work p, .cert p { margin: 0.6mm 0 0; font-size: 8.6pt; }
+    .certs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.8mm 5mm;
+      margin-top: 1mm;
+    }
+    .cert h3 { font-size: 9pt; }
+    .block { margin-top: 4.5mm; }
+    .foot {
+      margin-top: auto;
+      padding-top: 2.5mm;
+      border-top: 0.6pt solid #d5e4df;
+      display: flex;
+      justify-content: space-between;
+      color: #5c726c;
+      font-size: 8pt;
+    }
+    @media print {
+      body { background: #fff; }
+      .toolbar { display: none !important; }
+      .sheet {
+        margin: 0;
+        box-shadow: none;
+        page-break-after: always;
+        break-after: page;
+      }
+      .sheet:last-child {
+        page-break-after: auto;
+        break-after: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <span>{% t 'resume.a4_hint' %}</span>
+    <button type="button" onclick="window.print()">{% t 'resume.a4_print' %}</button>
+  </div>
+
+  <section class="sheet">
+    <div class="sheet-inner">
+      <header class="topbar">
+        <div>
+          <h1 class="name">{% if profile %}{% loc profile 'full_name' %}{% endif %}</h1>
+          <p class="headline">{% if profile %}{% loc profile 'headline' %}{% endif %}</p>
+          <ul class="meta">
+            {% if profile and profile.location %}<li>{% loc profile 'location' %}</li>{% endif %}
+            <li>{% if profile and profile.email %}{{ profile.email }}{% else %}mohammad.eska34@gmail.com{% endif %}</li>
+            {% if profile and profile.show_phone and profile.phone %}<li>{{ profile.phone }}</li>{% endif %}
+            {% for link in social_links %}
+            {% if 'mailto:' not in link.url %}
+            <li><a href="{{ link.url }}">{{ link.label }}</a></li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+        {% if profile and profile.available_for_work %}
+        <span class="pill">{% t 'resume.available' %}</span>
+        {% endif %}
+      </header>
+
+      <div class="layout">
+        <aside class="side">
+          <div class="side-block">
+            <h2>{% t 'resume.languages' %}</h2>
+            <p>{% t 'about.languages_value' %}</p>
+          </div>
+          <div class="side-block">
+            <h2>{% t 'resume.tech_skills' %}</h2>
+            {% for cat in skill_categories %}
+            <div class="skill-cat">
+              <strong>{% loc cat 'name' %}</strong>
+              <div class="chips">
+                {% for skill in cat.skills.all %}
+                {% if skill.featured %}<span>{% loc skill 'name' %}</span>{% endif %}
+                {% endfor %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </aside>
+
+        <div class="main">
+          <h2>{% t 'resume.summary' %}</h2>
+          <p class="summary">{% if profile and profile.about %}{% loc profile 'about' %}{% else %}{% t 'home.about_bio' %}{% endif %}</p>
+          <div class="focus">
+            <strong>{% t 'resume.learn_title' %} · {% t 'resume.learn_period' %}</strong>
+            {% t 'resume.learn_body' %}
+          </div>
+          <h2>{% t 'resume.experience' %}</h2>
+          {% for exp in experiences %}
+          <article class="job">
+            <h3>{% loc exp 'role' %}</h3>
+            <p class="when">{% loc exp 'period' %}</p>
+            <p class="org">{% loc exp 'organization' %}{% if exp.location %} — {% loc exp 'location' %}{% endif %}</p>
+            {% loc exp 'description' as exp_body %}
+            {% if exp_body %}
+            <ul>
+              {% for line in exp_body|nonempty_lines %}
+              <li>{{ line }}</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+
+      <footer class="foot">
+        <span>{% if profile %}{% loc profile 'full_name' %}{% endif %}</span>
+        <span>{% if IS_RTL %}۱ / ۲{% else %}1 / 2{% endif %}</span>
+      </footer>
+    </div>
+  </section>
+
+  <section class="sheet">
+    <div class="sheet-inner">
+      <header class="topbar">
+        <div>
+          <h1 class="name">{% t 'resume.projects' %}</h1>
+          <p class="headline">{% if profile %}{% loc profile 'headline' %}{% endif %}</p>
+        </div>
+      </header>
+
+      <div class="works">
+        {% for project in projects %}
+        <article class="work">
+          <h3>{% loc project 'title' %}</h3>
+          <p class="muted">{{ project.category_label }}{% if project.status != 'completed' %} · {{ project.status_label }}{% endif %}</p>
+          <p>{% loc project 'summary' %}</p>
+        </article>
+        {% endfor %}
+      </div>
+
+      <div class="block">
+        <h2>{% t 'resume.certificates' %}</h2>
+        <div class="certs">
+          {% for cert in certificates %}
+          <article class="cert">
+            <h3>{% loc cert 'title' %}</h3>
+            <p class="muted">
+              {% loc cert 'issuer' %}{% if cert.instructor %}{% if cert.issuer %} — {% endif %}{% loc cert 'instructor' %}{% endif %}
+              {% if cert.year %}{% if cert.issuer or cert.instructor %} · {% endif %}{% loc cert 'year' %}{% endif %}
+              {% if cert.hours %} · {{ cert.hours }} {% t 'resume.hours' %}{% endif %}
+            </p>
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+
+      <footer class="foot">
+        <span>{% if profile %}{% loc profile 'full_name' %}{% endif %} · {{ request.get_host }}</span>
+        <span>{% if IS_RTL %}۲ / ۲{% else %}2 / 2{% endif %}</span>
+      </footer>
+    </div>
+  </section>
+</body>
+</html>

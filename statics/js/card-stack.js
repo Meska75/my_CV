@@ -46,8 +46,8 @@
   function metrics() {
     const width = stage.clientWidth || 320;
     const narrow = width < 680;
-    const cardWidth = Math.round(Math.min(460, Math.max(220, width * (narrow ? 0.72 : 0.5))));
-    const cardHeight = Math.round(Math.max(narrow ? 220 : 250, cardWidth * (narrow ? 0.82 : 0.64)));
+    const cardWidth = Math.round(Math.min(620, Math.max(260, width * (narrow ? 0.86 : 0.64))));
+    const cardHeight = Math.round(Math.max(narrow ? 300 : 380, cardWidth * (narrow ? 0.92 : 0.74)));
     const maxOffset = 1;
     const spreadDeg = narrow ? 10 : 16;
     const rad = (spreadDeg * Math.PI) / 180;
@@ -55,7 +55,7 @@
       (cardWidth * Math.abs(Math.cos(rad)) + cardHeight * Math.abs(Math.sin(rad))) / 2;
     const sideRoom = Math.max(24, width / 2 - aabbHalf - 10);
     const cardSpacing = Math.round(Math.max(28, Math.min(sideRoom, cardWidth * 0.28)));
-    stage.style.height = cardHeight + (narrow ? 36 : 72) + "px";
+    stage.style.height = Math.round(cardHeight * 1.08) + (narrow ? 28 : 56) + "px";
     return { cardWidth, cardHeight, maxOffset, cardSpacing, stepDeg: spreadDeg };
   }
 
@@ -77,7 +77,7 @@
       const y = abs * 10 + (isActive ? -22 : 0);
       const rotZ = off * m.stepDeg * dir;
       const rotX = isActive ? 0 : 12;
-      const scale = isActive ? 1.03 : 0.94;
+      const scale = isActive ? 1.08 : 0.74;
       card.style.zIndex = String(100 - abs);
       card.style.transform =
         "translate3d(" + x + "px, " + y + "px, 0) rotateX(" + rotX + "deg) rotateZ(" + rotZ + "deg) scale(" + scale + ")";

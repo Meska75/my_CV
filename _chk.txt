@@ -1,0 +1,32 @@
+data-title="سامانه پایش و تحلیل پرواز"
+              data-href=""
+            >
+              <div class="card-stack__inner">
+                
+                <img src="/media/projects/flight-monitor-explorer.webp" alt="سامانه پایش و تحلیل پرواز" draggable="false">
+                
+                <div class="card-stack__shade" aria-hidden="true"></div>
+                <div class="card-stack__body">
+                  <span class="card-stack__tags">
+                    
+                    <span class="card-stack__tag">جمع‌آوری داده</span>
+                    
+                    <span class="card-stack__tag">تحلیل داده</span>
+                    
+                    <span class="card-stack__tag">وب‌سایت</span>
+                    
+                    <span class="card-stack__tag">اتوماسیون</span>
+                    
+                    <span class="card-stack__tag">خدمات</span>
+                    
+                    <span class="card-stack__tag card-stack__tag--confidential">محرمانه</span>
+                    
+                  </span>
+                  <div class="card-stack__copy">
+                    <h3>سامانه پایش و تحلیل پرواز</h3>
+                    
+                    <p>جمع‌آوری اطلاعات مشخص پرواز از وب‌اسکرپینگ و API رسمی، تحلیل روند، و داشبورد آنلاین برای کارفرما. شرح دقیق محرمانه است.</p>
+                    
+                    <a class="card-stack__details" href="/projects/%D8%B3%D8%A7%D9%85%D8%A7%D9%86%D9%87-%D9%BE%D8%A7%DB%8C%D8%B4-%D9%88-%D8%AA%D8%AD%D9%84%DB%8C%D9%84-%D9%BE%D8%B1%D9%88%D8%A7%D8%B2/">جزئیات بیشتر</a>
+                  </div>
+          

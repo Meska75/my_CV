@@ -208,6 +208,27 @@
   box-shadow: inset 0 0 0 1px color-mix(in srgb, #e8c98a 45%, var(--accent-color, #3eb89f));
 }
 
+.card-stack__copy {
+  position: relative;
+  margin-top: 0.15rem;
+  padding-top: 1.6rem;
+}
+
+.card-stack__copy::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0 -1.35rem -1.15rem;
+  background: linear-gradient(
+    to top,
+    rgba(7, 16, 28, 0.96) 0%,
+    rgba(7, 16, 28, 0.9) 58%,
+    rgba(7, 16, 28, 0.55) 82%,
+    rgba(7, 16, 28, 0) 100%
+  );
+  pointer-events: none;
+}
+
 .card-stack__body h3 {
   flex-shrink: 0;
   margin: 0;

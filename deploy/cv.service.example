@@ -1,0 +1,19 @@
+# systemd unit for this app only. Copy to /etc/systemd/system/task5-cv.service
+# The other site keeps its own unit and its own port.
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now task5-cv
+
+[Unit]
+Description=Task5 CV (gunicorn)
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/task5_cv
+ExecStart=/var/www/task5_cv/venv/bin/gunicorn website_cv.wsgi:application --bind 127.0.0.1:8015 --workers 2 --timeout 60
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

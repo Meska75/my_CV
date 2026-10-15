@@ -12,10 +12,14 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
-from decouple import Csv, config
+from decouple import AutoConfig, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Read .env from the project root even when the host starts the app
+# from another working directory (Passenger, systemd, a second site).
+config = AutoConfig(search_path=BASE_DIR)
 
 
 # Quick-start development settings - unsuitable for production
@@ -29,6 +33,10 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
+
+# Public origins of THIS site only, including the scheme.
+# Example: https://cv.example.com,https://www.cv.example.com
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='', cast=Csv())
 
 
 # Application definition
@@ -49,6 +57,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # Serves collected static files for this app, so the other site's
+    # web-server static directory is never reused.
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'my_cv.middleware.CookieLanguageMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -164,6 +175,71 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}
+
+# Cookie names are unique to this project. If the other site on the same
+# host is also Django, the two will not overwrite each other's login session
+# even when a reverse proxy accidentally shares a hostname.
+SESSION_COOKIE_NAME = config('SESSION_COOKIE_NAME', default='cv_sessionid')
+CSRF_COOKIE_NAME = config('CSRF_COOKIE_NAME', default='cv_csrftoken')
+LANGUAGE_COOKIE_NAME = config('LANGUAGE_COOKIE_NAME', default='cv_language')
+
+# Leave empty when this site has its own domain or subdomain (the normal case).
+# Set only if the host forces a path prefix such as /cv.
+_script_name = config('FORCE_SCRIPT_NAME', default='').strip()
+if _script_name:
+    FORCE_SCRIPT_NAME = _script_name if _script_name.startswith('/') else f'/{_script_name}'
+    SESSION_COOKIE_PATH = FORCE_SCRIPT_NAME
+    CSRF_COOKIE_PATH = FORCE_SCRIPT_NAME
+    LANGUAGE_COOKIE_PATH = FORCE_SCRIPT_NAME
+
+if not DEBUG:
+    STORAGES['staticfiles']['BACKEND'] = 'whitenoise.storage.CompressedStaticFilesStorage'
+    # The TLS terminator (nginx, Apache, cPanel) talks HTTP to this app and
+    # tells us the visitor's scheme with this header.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    CSRF_COOKIE_HTTPONLY = False
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_REFERRER_POLICY = 'same-origin'
+    X_FRAME_OPTIONS = 'DENY'
+    # Keep this at 0 until HTTPS is confirmed. A long value is cached by
+    # browsers and is hard to undo. It applies only to this site's hostname.
+    SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', default=0, cast=int)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {'class': 'logging.StreamHandler'},
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

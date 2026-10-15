@@ -1,0 +1,65 @@
+دو سایت روی یک هاست
+====================
+
+شدنی است. وب‌سرور با نام دامنه تصمیم می‌گیرد درخواست را به کدام برنامه بدهد.
+سایت فعلی سر جایش می‌ماند. این پروژه پوشه، دیتابیس، پورت و دامنه خودش را دارد.
+
+بازدیدکننده با وارد کردن هر آدرس فقط همان سایت را می‌بیند:
+  سایت قبلی  ->  domain-aval.com
+  این رزومه  ->  domain-cv.com   یا   cv.domain-aval.com
+
+هر دو را داخل یک پوشه public_html نگذارید و این سایت را زیرمسیر سایت دیگر
+(مثل domain-aval.com/cv) نکنید. آن حالت کوکی و مسیر فایل‌ها را قاطی می‌کند.
+
+روی هاست چه چیزهایی آپلود نشود
+==============================
+node_modules  .cursor  .claude  .agents  _preview  venv  __pycache__
+staticfiles (روی خود سرور با collectstatic ساخته می‌شود)
+.env را جدا بسازید؛ فایل محلی را آپلود نکنید.
+
+فایل .env روی سرور
+==================
+از .env.example کپی کنید و حداقل این‌ها را عوض کنید:
+
+  SECRET_KEY=یک مقدار تازه (روی کامپیوتر: py -3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())")
+  DEBUG=False
+  ALLOWED_HOSTS=domain-cv.com,www.domain-cv.com
+  CSRF_TRUSTED_ORIGINS=https://domain-cv.com,https://www.domain-cv.com
+  ADMIN_URL=یک مسیر مخفی که با / تمام شود
+  DB_ENGINE=sqlite
+
+sqlite فایل db.sqlite3 را داخل همین پوشه می‌سازد و به دیتابیس سایت دیگر
+دست نمی‌زند. اگر PostgreSQL دارید، DB_ENGINE=postgresql و یک دیتابیس با
+نام جدا (نه دیتابیس سایت دیگر) بسازید.
+
+اگر محتوای فعلی را می‌خواهید، db.sqlite3 و پوشه media را هم منتقل کنید.
+وگرنه بعد از migrate یک بار createsuperuser بزنید و از پنل محتوا را وارد کنید.
+
+هاست اشتراکی (cPanel)
+=====================
+1. دامنه یا زیردامنه جدید را به‌صورت Addon Domain / Subdomain بسازید.
+   Document Root آن باید پوشه‌ای جدا از سایت فعلی باشد، مثلا home/USER/cv
+2. Setup Python App:
+   - نسخه پایتون 3.11 یا 3.12
+   - Application root = همان پوشه پروژه (جایی که manage.py است)
+   - Application URL = دامنه جدید، بدون زیرپوشه
+   - Startup file = passenger_wsgi.py
+   - Application entry point = application
+3. داخل محیط مجازی همان اپ: pip install -r requirements.txt
+4. از Terminal پنل، داخل پوشه پروژه:
+     bash deploy/prepare.sh
+     python manage.py createsuperuser
+5. اپ را Restart کنید.
+6. اگر مرورگر بین http و https گیر کرد، در .env بگذارید SECURE_SSL_REDIRECT=False
+   (بعضی پنل‌ها هدر X-Forwarded-Proto را نمی‌فرستند).
+
+سرور مجازی (nginx از قبل برای سایت دیگر بالا است)
+=================================================
+فایل سایت دیگر را ویرایش نکنید. یک server block جدید اضافه کنید:
+  deploy/nginx-cv.conf.example
+و یک سرویس جدا:
+  deploy/cv.service.example
+این برنامه فقط روی 127.0.0.1:8015 گوش می‌دهد تا پورت سایت دیگر را نگیرد.
+گواهی SSL هم فقط برای دامنه همین سایت گرفته می‌شود.
+
+CSS از قبل ساخته شده است (statics/css/site.css). روی هاست به Node نیاز نیست.

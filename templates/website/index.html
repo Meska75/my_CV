@@ -5,7 +5,7 @@
 
 {% block head_extra %}
 <link href="{% static 'css/pixel-hero.css' %}?v=palette" rel="stylesheet">
-<link href="{% static 'css/card-stack.css' %}?v=confidential" rel="stylesheet">
+<link href="{% static 'css/card-stack.css' %}?v=confidential2" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
@@ -220,7 +220,7 @@
             </div>
             <div class="stats-item" data-aos="zoom-in" data-aos-delay="200">
               <div class="icon-wrapper"><i class="bi bi-journal-richtext"></i></div>
-              <span data-purecounter-start="0" data-purecounter-end="{{ project_count }}" data-purecounter-duration="1" class="purecounter"></span><span class="stat-plus">+</span>
+              <span class="stat-figure"><span data-purecounter-start="0" data-purecounter-end="{{ project_count }}" data-purecounter-duration="1" class="purecounter"></span><span class="stat-plus">+</span></span>
               <p>{% t 'stats.projects' %}</p>
             </div>
             <div class="stats-item" data-aos="zoom-in" data-aos-delay="250">
@@ -328,18 +328,17 @@
                 <div class="card-stack__shade" aria-hidden="true"></div>
                 <div class="card-stack__body">
                   <span class="card-stack__tags">
-                    {% for label in p.category_labels %}
-                    <span class="card-stack__tag">{{ label }}</span>
+                    {% for item in p.category_items %}
+                    <span class="card-stack__tag{% if item.code == 'confidential' %} card-stack__tag--confidential{% endif %}">{{ item.label }}</span>
                     {% endfor %}
-                    {% if p.is_confidential %}
-                    <span class="card-stack__tag card-stack__tag--confidential">{% t 'tag.confidential' %}</span>
-                    {% endif %}
                   </span>
-                  <h3>{% loc p 'title' %}</h3>
-                  {% if p.summary or p.summary_en %}
-                  <p>{% loc p 'summary' %}</p>
-                  {% endif %}
-                  <a class="card-stack__details" href="{% url 'my_cv:project_detail' p.slug %}">{% t 'portfolio.details' %}</a>
+                  <div class="card-stack__copy">
+                    <h3>{% loc p 'title' %}</h3>
+                    {% if p.summary or p.summary_en %}
+                    <p>{% loc p 'summary' %}</p>
+                    {% endif %}
+                    <a class="card-stack__details" href="{% url 'my_cv:project_detail' p.slug %}">{% t 'portfolio.details' %}</a>
+                  </div>
                 </div>
               </div>
             </article>
@@ -400,9 +399,6 @@
     <div class="container section-title" data-kicker="~/services" data-aos="fade-up">
       <h2>{% t 'services.title' %}</h2>
       <p>{% t 'services.lead' %}</p>
-      <div class="section-title__tags">
-        <span class="tag-confidential"><i class="bi bi-lock-fill" aria-hidden="true"></i>{% t 'tag.confidential' %}</span>
-      </div>
     </div>
     <div class="container" data-aos="fade-up" data-aos-delay="100">
       <div class="row justify-content-center g-4 info-card-grid">
@@ -465,7 +461,7 @@
                   <span class="info-card__title-text">{% t 'home.p1_name' %}</span>
                   <span class="info-card__title-fill" aria-hidden="true"></span>
                 </h3>
-                <p>{% t 'home.p1_fit' %} — {% t 'home.p1_i1' %}. {% t 'home.p1_i2' %}. {% t 'home.p1_i3' %}.</p>
+                <p>{% t 'home.p1_body' %}</p>
               </div>
             </div>
           </a>
@@ -481,7 +477,7 @@
                   <span class="info-card__title-text">{% t 'home.p2_name' %}</span>
                   <span class="info-card__title-fill" aria-hidden="true"></span>
                 </h3>
-                <p>{% t 'home.p2_fit' %} — {% t 'home.p2_i1' %}. {% t 'home.p2_i2' %}. {% t 'home.p2_i3' %}.</p>
+                <p>{% t 'home.p2_body' %}</p>
               </div>
             </div>
           </a>
@@ -497,7 +493,7 @@
                   <span class="info-card__title-text">{% t 'home.p3_name' %}</span>
                   <span class="info-card__title-fill" aria-hidden="true"></span>
                 </h3>
-                <p>{% t 'home.p3_fit' %} — {% t 'home.p3_i1' %}. {% t 'home.p3_i2' %}. {% t 'home.p3_i3' %}.</p>
+                <p>{% t 'home.p3_body' %}</p>
               </div>
             </div>
           </a>
@@ -588,6 +584,6 @@
 
 {% block body_extra %}
 <script src="{% static 'js/pixel-hero.js' %}?v=palette"></script>
-<script src="{% static 'js/card-stack.js' %}?v=multifilter"></script>
-<script src="{% static 'js/info-cards.js' %}"></script>
+<script src="{% static 'js/card-stack.js' %}?v=cardsize"></script>
+<script src="{% static 'js/info-cards.js' %}?v=titleglow"></script>
 {% endblock %}

@@ -91,7 +91,7 @@ class ProjectImageInline(TabularInline):
 
 @admin.register(Project)
 class ProjectAdmin(ModelAdmin):
-    list_display = ('title', 'category', 'categories', 'status', 'is_featured', 'is_private', 'is_confidential', 'order')
+    list_display = ('title', 'category', 'categories', 'status', 'is_featured', 'is_private', 'order')
     list_editable = ('is_featured', 'order')
     list_filter = ('category', 'status', 'is_featured', 'is_private')
     search_fields = ('title', 'title_en', 'summary')
@@ -103,7 +103,7 @@ class ProjectAdmin(ModelAdmin):
             'fields': (
                 'title', 'slug', 'summary', 'problem', 'solution', 'outcome', 'writeup',
                 'category', 'categories', 'status', 'skills', 'cover_image', 'github_url',
-                'live_url', 'is_private', 'is_confidential', 'is_featured', 'order',
+                'live_url', 'is_private', 'is_featured', 'order',
             ),
         }),
         ('English', {

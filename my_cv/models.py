@@ -41,7 +41,13 @@ class Profile(TranslatableMixin, models.Model):
     phone = models.CharField('تلفن', max_length=40, blank=True)
     show_phone = models.BooleanField('نمایش عمومی تلفن', default=False)
     photo = models.ImageField('عکس', upload_to='profile/', blank=True, null=True)
-    resume_file = models.FileField('فایل رزومه', upload_to='resume/', blank=True, null=True)
+    resume_file = models.FileField(
+        'فایل رزومهٔ آرشیو',
+        upload_to='resume/',
+        blank=True,
+        null=True,
+        help_text='دانلود عمومی سایت از همین پروفایل، تجربه‌ها، مهارت‌ها، پروژه‌ها و گواهینامه‌ها ساخته می‌شود.',
+    )
     available_for_work = models.BooleanField('آماده‌ی همکاری', default=True)
 
     class Meta:
@@ -184,6 +190,8 @@ class Project(TranslatableMixin, models.Model):
         AI = 'ai', 'دستیار هوش مصنوعی'
         DATA = 'data', 'تحلیل داده'
         SCRAPE = 'scrape', 'جمع‌آوری داده'
+        SERVICE = 'service', 'خدمات'
+        CONFIDENTIAL = 'confidential', 'محرمانه'
 
     CATEGORY_EN = {
         'web': 'Website',
@@ -191,6 +199,8 @@ class Project(TranslatableMixin, models.Model):
         'ai': 'AI assistant',
         'data': 'Data analysis',
         'scrape': 'Data collection',
+        'service': 'Services',
+        'confidential': 'Confidential',
     }
 
     class Status(models.TextChoices):
@@ -232,7 +242,6 @@ class Project(TranslatableMixin, models.Model):
     github_url = models.URLField('لینک گیت‌هاب', blank=True)
     live_url = models.URLField('لینک زنده', blank=True)
     is_private = models.BooleanField('پروژه‌ی خصوصی (بدون افشای کد)', default=False)
-    is_confidential = models.BooleanField('برچسب محرمانه', default=False)
     is_featured = models.BooleanField('شاخص', default=False)
     order = models.PositiveIntegerField('ترتیب', default=0)
 
@@ -265,6 +274,13 @@ class Project(TranslatableMixin, models.Model):
         if current_lang() == 'en':
             return [self.CATEGORY_EN.get(code, labels.get(code, code)) for code in self.category_codes()]
         return [labels.get(code, code) for code in self.category_codes()]
+
+    def category_items(self):
+        labels = self.category_labels()
+        return [
+            {'code': code, 'label': labels[index]}
+            for index, code in enumerate(self.category_codes())
+        ]
 
     def category_label(self):
         labels = self.category_labels()

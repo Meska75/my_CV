@@ -73,7 +73,7 @@
           <div class="portfolio-info" data-aos="fade-left" data-aos-delay="200">
             <h3>{% t 'project.info' %}</h3>
             <ul>
-              <li><strong>{% t 'project.category' %}</strong>: {% for label in project.category_labels %}{{ label }}{% if not forloop.last %} · {% endif %}{% endfor %}{% if project.is_confidential %} <span class="tag-confidential"><i class="bi bi-lock-fill" aria-hidden="true"></i>{% t 'tag.confidential' %}</span>{% endif %}</li>
+              <li><strong>{% t 'project.category' %}</strong>: {% for item in project.category_items %}{% if item.code == 'confidential' %}<span class="tag-confidential">{{ item.label }}</span>{% else %}{{ item.label }}{% if not forloop.last %} · {% endif %}{% endif %}{% endfor %}</li>
               <li><strong>{% t 'project.status' %}</strong>: {{ project.status_label }}</li>
               {% if project.skills.all %}
               <li><strong>{% t 'project.stack' %}</strong>: {% for s in project.skills.all %}{% loc s 'name' %}{% if not forloop.last %}, {% endif %}{% endfor %}</li>

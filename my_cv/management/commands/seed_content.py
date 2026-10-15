@@ -225,114 +225,6 @@ PROJECTS = [
         "skills": ["n8n", "OpenAI API", "یکپارچه‌سازی API"],
     },
     {
-        "title": "دستیار دانش هوشمند (RAG)",
-        "title_en": "Intelligent Knowledge Assistant (RAG)",
-        "summary": "چت‌بات هوشمند روی کتاب‌های PDF دوزبانه (فارسی/انگلیسی) با خط‌لوله‌ی کامل RAG.",
-        "summary_en": "Smart chatbot over bilingual PDF books (Persian/English) with a full RAG pipeline.",
-        "category": Project.Category.AI,
-        "status": Project.Status.COMPLETED,
-        "problem": "پاسخ‌گویی دقیق به پرسش‌ها از روی محتوای تخصصیِ کتاب‌ها، نه دانش عمومی مدل.",
-        "problem_en": "Answer questions from specialized book content, not the model's general knowledge.",
-        "solution": (
-            "یک خط‌لوله‌ی RAG ساختم: استخراج و قطعه‌بندی متن از PDF، تولید embedding با "
-            "مدل text-embedding-3-large، ذخیره در پایگاه برداری ChromaDB و بازیابی متنی "
-            "برای پاسخ‌گویی با GPT-4o-mini از طریق LangChain."
-        ),
-        "solution_en": (
-            "I built a RAG pipeline: extract and chunk PDF text, embed with "
-            "text-embedding-3-large, store in ChromaDB, and retrieve context for answers "
-            "with GPT-4o-mini via LangChain."
-        ),
-        "outcome": "پاسخ‌های متکی بر منبع و دوزبانه، با امکان گسترش به هر مجموعه‌سند دیگری.",
-        "outcome_en": "Source-grounded bilingual answers, reusable for any other document set.",
-        "github_url": "https://github.com/Meska75/quera-LLM-project-2",
-        "is_featured": True,
-        "is_private": False,
-        "order": 1,
-        "skills": ["LangChain", "RAG", "OpenAI API", "ChromaDB", "Python"],
-    },
-    {
-        "title": "سامانه‌ی تجمیع چند-فروشگاهی",
-        "title_en": "Multi-store aggregation platform",
-        "summary": "دسترسی بلادرنگ کاربران یک فروشگاه به کالای ۱۰ فروشگاه معتبر دیگر.",
-        "summary_en": "Realtime access for one shop's users to products from 10 other trusted stores.",
-        "category": Project.Category.SCRAPE,
-        "status": Project.Status.COMPLETED,
-        "problem": (
-            "یک فروشگاه می‌خواست کاربرانش در لحظه به کالای چندین فروشگاه معتبر دسترسی "
-            "داشته باشند."
-        ),
-        "problem_en": "A shop wanted its users to see products from several trusted stores in realtime.",
-        "solution": (
-            "دو مسیر تأمین داده طراحی کردم: برای فروشگاه‌های دارای API رسمی (باسلام و "
-            "دیجی‌کالا) اتصال مستقیم API، و برای ۸ فروشگاه دیگر وب‌اسکرپینگ منظم. داده‌ها "
-            "در PostgreSQL روی هاست Liara ذخیره می‌شدند تا سریع در دسترس کاربران باشند."
-        ),
-        "solution_en": (
-            "I designed two data paths: official APIs where available (Basalam and Digikala), "
-            "and scheduled scraping for eight other stores. Data lived in PostgreSQL on Liara "
-            "so users could access it quickly."
-        ),
-        "outcome": "تجمیع ۱۰ منبع فروشگاهی (۲ API رسمی + ۸ اسکرپینگ) با دسترسی بلادرنگ.",
-        "outcome_en": "Aggregated 10 store sources (2 official APIs + 8 scrapers) with realtime access.",
-        "is_featured": True,
-        "is_private": True,
-        "order": 2,
-        "skills": ["Django", "PostgreSQL", "Camoufox", "یکپارچه‌سازی API", "Liara"],
-    },
-    {
-        "title": "پلتفرم جمع‌آوری داده‌ی تیمی",
-        "title_en": "Team data-collection platform",
-        "summary": "موتور Core سمت سرور + داشبورد تعریف تسک برای کارمندان یک شرکت.",
-        "summary_en": "Server-side Core engine plus a task dashboard for company staff.",
-        "category": Project.Category.AUTOMATION,
-        "status": Project.Status.COMPLETED,
-        "problem": "نیاز یک شرکت به جمع‌آوری خودکار داده از سامانه‌های مختلف بر اساس تسک‌های تعریف‌شده.",
-        "problem_en": "A company needed automated collection from several systems based on defined tasks.",
-        "solution": (
-            "به‌صورت تیمی یک موتور Core روی سرور و یک داشبورد وب ساختیم که کارمندان از "
-            "طریق آن تسک تعریف می‌کردند؛ Core با ترکیب ۱ API رسمی و ۲ منبع وب‌اسکرپینگ "
-            "(BeautifulSoup و Camoufox) داده را جمع‌آوری و ذخیره می‌کرد. چون هاست اجازه‌ی "
-            "اجرای Camoufox را نمی‌داد، کل سرویس را Dockerize کردم."
-        ),
-        "solution_en": (
-            "As a team we built a Core engine and a web dashboard where staff defined tasks. "
-            "Core combined one official API and two scraping sources (BeautifulSoup and Camoufox). "
-            "Because the host could not run Camoufox, I dockerized the whole service."
-        ),
-        "outcome": "خودکارسازی جمع‌آوری داده با معماری Core + داشبورد و استقرار داکرایزشده.",
-        "outcome_en": "Automated collection with a Core + dashboard architecture, deployed with Docker.",
-        "is_featured": False,
-        "is_private": True,
-        "order": 3,
-        "skills": ["Python", "BeautifulSoup", "Camoufox", "Docker"],
-    },
-    {
-        "title": "نرم‌افزار تحلیل داده‌ی فروش و توصیه‌گر هوشمند",
-        "title_en": "Sales analytics & smart recommender",
-        "summary": "آنالیز داده‌های فروش با Python و نمایش در داشبورد همراه پیشنهادهای مبتنی بر AI.",
-        "summary_en": "Python sales analysis in a dashboard, with AI-based purchase suggestions.",
-        "category": Project.Category.DATA,
-        "status": Project.Status.COMPLETED,
-        "problem": "تبدیل داده‌های خام فروش به بینش قابل‌اقدام و پیشنهادهای خرید برای کاربر.",
-        "problem_en": "Turn raw sales data into actionable insight and purchase suggestions.",
-        "solution": (
-            "داده‌های جمع‌آوری‌شده را با Python تحلیل می‌کردم، نتایج را در داشبورد به "
-            "کاربر نشان می‌دادم و همان داده‌ها را برای تولید پیشنهاد به هوش مصنوعی "
-            "می‌فرستادم (تحلیل رفتار کاربر برای راهنمایی خرید)."
-        ),
-        "solution_en": (
-            "I analyzed collected data in Python, showed results on a dashboard, and sent the "
-            "same data to an AI layer for recommendations based on user behavior."
-        ),
-        "outcome": "نرم‌افزار تحلیل فروش با لایه‌ی توصیه‌گر هوشمند.",
-        "outcome_en": "A sales analytics product with a smart recommendation layer.",
-        "is_featured": False,
-        "is_private": True,
-        "order": 4,
-        "skills": ["Python", "تحلیل داده", "سیستم توصیه‌گر"],
-    },
-    {
         "title": "وب‌سایت مطب دکتر وحید عبدالرحیمی",
         "title_en": "Dr. Vahid Abdolrahimi clinic website",
         "summary": "سایت سه‌زبانه‌ی فوق تخصص شبکیه و لیزر، با رزرو نوبت، خدمات مطب و جراحی، و چت‌بات شخصی پزشک به فارسی، انگلیسی و عربی.",
@@ -506,7 +398,7 @@ PROJECTS = [
         "summary": "جمع‌آوری اطلاعات مشخص پرواز از وب‌اسکرپینگ و API رسمی، تحلیل روند، و داشبورد آنلاین برای کارفرما. شرح دقیق محرمانه است.",
         "summary_en": "Specified flight data collected by scraping and an official API, then trend analysis and an online dashboard. Precise details stay confidential.",
         "category": Project.Category.SCRAPE,
-        "categories": "scrape,data,web,automation",
+        "categories": "scrape,data,web,automation,service,confidential",
         "status": Project.Status.COMPLETED,
         "problem": "اطلاعات پرواز در چند منبع پراکنده بود و کارفرما برای هر پرواز یک تصویر واحد، قابل‌اعتماد و آنلاین می‌خواست.",
         "problem_en": "Flight facts were scattered across sources, and the client needed one trustworthy online view of each flight.",
@@ -602,7 +494,6 @@ PROJECTS = [
         ],
         "is_featured": True,
         "is_private": True,
-        "is_confidential": True,
         "order": 2,
         "skills": ["Python", "BeautifulSoup", "Camoufox", "Docker", "تحلیل داده"],
     },
@@ -777,6 +668,7 @@ class Command(BaseCommand):
             project.skills.set(resolved)
             self._attach_cover(project, cover_file)
             self._attach_gallery(project, gallery)
+        Project.objects.exclude(title__in={p["title"] for p in PROJECTS}).delete()
 
         for order, cert in enumerate(CERTIFICATES, start=1):
             Certificate.objects.update_or_create(
