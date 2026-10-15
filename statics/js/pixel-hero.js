@@ -8,8 +8,8 @@
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const gap = 6;
-  const cream = "rgba(244, 239, 230, 0.55)";
-  let accent = "#cdaa80";
+  const cream = "rgba(228, 242, 244, 0.55)";
+  let accent = "#3eb89f";
   const pixels = [];
   let frame = 0;
   let last = 0;
@@ -61,7 +61,7 @@
   function init() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    accent = getComputedStyle(document.documentElement).getPropertyValue("--accent-color").trim() || "#cdaa80";
+    accent = getComputedStyle(document.documentElement).getPropertyValue("--accent-color").trim() || "#3eb89f";
     const rect = wrap.getBoundingClientRect();
     const width = Math.floor(rect.width);
     const height = Math.floor(rect.height);

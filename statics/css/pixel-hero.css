@@ -8,8 +8,8 @@
   min-height: 100dvh;
   padding: 4.5rem 1.25rem 1.5rem;
   overflow: hidden;
-  background: var(--background-color, #0f1e3f);
-  color: var(--default-color, #f4efe6);
+  background: var(--background-color, #0b1828);
+  color: var(--default-color, #e4f2f4);
 }
 
 @media (min-width: 1200px) {
@@ -64,7 +64,7 @@
 
 .pixel-hero__veil {
   z-index: 1;
-  background: radial-gradient(circle at center, transparent 0%, var(--background-color, #0f1e3f) 78%);
+  background: radial-gradient(circle at center, transparent 0%, var(--background-color, #0b1828) 78%);
   opacity: 0.82;
 }
 
@@ -97,16 +97,16 @@
   color: transparent;
   background: linear-gradient(
     110deg,
-    #f4efe6 0%,
-    rgba(244, 239, 230, 0.45) 28%,
-    #cdaa80 48%,
-    rgba(244, 239, 230, 0.7) 62%,
-    #f4efe6 100%
+    #e4f2f4 0%,
+    rgba(228, 242, 244, 0.45) 28%,
+    #3eb89f 48%,
+    rgba(228, 242, 244, 0.7) 62%,
+    #e4f2f4 100%
   );
   background-size: 220% auto;
   -webkit-background-clip: text;
   background-clip: text;
-  -webkit-text-stroke: 1px rgba(244, 239, 230, 0.28);
+  -webkit-text-stroke: 1px rgba(228, 242, 244, 0.28);
   filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.35));
   animation: pixel-hero-shimmer 8s linear infinite;
 }
@@ -131,7 +131,7 @@
   font-size: clamp(0.95rem, 2vw, 1.25rem);
   font-weight: 400;
   line-height: 1.9;
-  color: color-mix(in srgb, var(--default-color, #f4efe6) 88%, transparent);
+  color: color-mix(in srgb, var(--default-color, #e4f2f4) 88%, transparent);
 }
 
 .pixel-hero__actions {
@@ -174,15 +174,15 @@
 }
 
 .pixel-hero__btn--primary {
-  color: #0f1e3f;
-  background: linear-gradient(180deg, #e4c9a4, var(--accent-color, #cdaa80));
+  color: #07141f;
+  background: linear-gradient(180deg, #8fd4c4, var(--accent-color, #3eb89f));
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), 0 12px 24px rgba(0, 0, 0, 0.18);
 }
 
 .pixel-hero__btn--ghost {
-  color: var(--default-color, #f4efe6);
-  background: color-mix(in srgb, var(--background-color, #0f1e3f) 55%, transparent);
-  border: 1px solid color-mix(in srgb, var(--default-color, #f4efe6) 28%, transparent);
+  color: var(--default-color, #e4f2f4);
+  background: color-mix(in srgb, var(--background-color, #0b1828) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--default-color, #e4f2f4) 28%, transparent);
   backdrop-filter: blur(8px);
 }
 
@@ -204,7 +204,7 @@
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--accent-color, #cdaa80) 80%, white);
+  color: color-mix(in srgb, var(--accent-color, #3eb89f) 80%, white);
 }
 
 .pixel-hero__marquee--mobile {

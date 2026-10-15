@@ -17,7 +17,7 @@
 }
 
 .card-stack__stage:focus-visible {
-  outline: 2px solid var(--accent-color, #cdaa80);
+  outline: 2px solid var(--accent-color, #3eb89f);
   outline-offset: 6px;
   border-radius: 1.25rem;
 }
@@ -35,7 +35,7 @@
   top: 1.5rem;
   width: 70%;
   height: 12rem;
-  background: color-mix(in srgb, var(--accent-color, #cdaa80), transparent 82%);
+  background: color-mix(in srgb, var(--accent-color, #3eb89f), transparent 82%);
 }
 
 .card-stack__wash--bottom {
@@ -61,10 +61,10 @@
   width: 520px;
   height: 320px;
   margin-left: -260px;
-  border: 4px solid color-mix(in srgb, var(--default-color, #f4efe6), transparent 86%);
+  border: 4px solid color-mix(in srgb, var(--default-color, #e4f2f4), transparent 86%);
   border-radius: 1.15rem;
   overflow: hidden;
-  background: var(--surface-color, #213a56);
+  background: var(--surface-color, #163044);
   box-shadow: 0 22px 48px -24px rgba(0, 0, 0, 0.72);
   transform-origin: center bottom;
   transform-style: preserve-3d;
@@ -132,8 +132,8 @@
   margin-bottom: 0.45rem;
   padding: 0.15rem 0.55rem;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--accent-color, #cdaa80), transparent 18%);
-  color: var(--contrast-color, #0f1e3f);
+  background: color-mix(in srgb, var(--accent-color, #3eb89f), transparent 18%);
+  color: var(--contrast-color, #07141f);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -168,7 +168,7 @@
   flex-shrink: 0;
   align-self: flex-start;
   margin-top: 0.7rem;
-  color: var(--accent-color, #cdaa80);
+  color: var(--accent-color, #3eb89f);
   font-size: 0.88rem;
   font-weight: 700;
   text-decoration: none;
@@ -206,24 +206,24 @@
   padding: 0;
   border: 0;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--default-color, #f4efe6), transparent 68%);
+  background: color-mix(in srgb, var(--default-color, #e4f2f4), transparent 68%);
   cursor: pointer;
   transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .card-stack__dot:hover {
-  background: color-mix(in srgb, var(--default-color, #f4efe6), transparent 40%);
+  background: color-mix(in srgb, var(--default-color, #e4f2f4), transparent 40%);
 }
 
 .card-stack__dot.is-on {
-  background: var(--accent-color, #cdaa80);
+  background: var(--accent-color, #3eb89f);
   transform: scale(1.25);
 }
 
 .card-stack__dot:focus-visible,
 .card-stack__open:focus-visible,
 .card-stack__pause:focus-visible {
-  outline: 2px solid var(--accent-color, #cdaa80);
+  outline: 2px solid var(--accent-color, #3eb89f);
   outline-offset: 3px;
 }
 
@@ -238,14 +238,14 @@
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: color-mix(in srgb, var(--default-color, #f4efe6), transparent 28%);
+  color: color-mix(in srgb, var(--default-color, #e4f2f4), transparent 28%);
   cursor: pointer;
   text-decoration: none;
 }
 
 .card-stack__open:hover,
 .card-stack__pause:hover {
-  color: var(--default-color, #f4efe6);
+  color: var(--default-color, #e4f2f4);
 }
 
 .card-stack__open svg,
@@ -269,7 +269,7 @@
 .card-stack__hint {
   margin: 0.85rem 0 0;
   text-align: center;
-  color: color-mix(in srgb, var(--default-color, #f4efe6), transparent 38%);
+  color: color-mix(in srgb, var(--default-color, #e4f2f4), transparent 38%);
   font-size: 0.85rem;
 }
 

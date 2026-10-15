@@ -4,8 +4,8 @@
 {% block body_class %}index-page intro-active{% endblock %}
 
 {% block head_extra %}
-<link href="{% static 'css/pixel-hero.css' %}" rel="stylesheet">
-<link href="{% static 'css/card-stack.css' %}?v=5" rel="stylesheet">
+<link href="{% static 'css/pixel-hero.css' %}?v=palette" rel="stylesheet">
+<link href="{% static 'css/card-stack.css' %}?v=palette" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
@@ -408,124 +408,103 @@
         </div>
       </div>
 
-      <div class="row justify-content-center">
+      <div class="row justify-content-center g-4 info-card-grid">
         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-          <div class="service-card position-relative z-1">
-            <div class="service-icon"><i class="bi bi-code-slash"></i></div>
-            <a href="#contact" class="card-action d-flex align-items-center justify-content-center rounded-circle"><i class="bi bi-arrow-up-right"></i></a>
-            <h3><a href="#contact">{% t 'services.s1_title' %} <span>{% t 'services.s1_span' %}</span></a></h3>
-            <p>{% t 'services.s1_body' %}</p>
-          </div>
+          <a href="#contact" class="info-card" style="--info-accent:var(--accent-color);--info-hover-ink:var(--contrast-color);">
+            <div class="info-card__inner">
+              <div class="info-card__media">
+                <img src="{% static 'snapfolio/img/services/services-1.webp' %}" alt="">
+              </div>
+              <div class="info-card__body">
+                <h3 class="info-card__title">
+                  <span class="info-card__title-text">{% t 'services.s1_title' %} {% t 'services.s1_span' %}</span>
+                  <span class="info-card__title-fill" aria-hidden="true"></span>
+                </h3>
+                <p>{% t 'services.s1_body' %}</p>
+              </div>
+            </div>
+          </a>
         </div>
         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-          <div class="service-card position-relative z-1">
-            <div class="service-icon"><i class="bi bi-database"></i></div>
-            <a href="#contact" class="card-action d-flex align-items-center justify-content-center rounded-circle"><i class="bi bi-arrow-up-right"></i></a>
-            <h3><a href="#contact">{% t 'services.s2_title' %} <span>{% t 'services.s2_span' %}</span></a></h3>
-            <p>{% t 'services.s2_body' %}</p>
-          </div>
+          <a href="#contact" class="info-card" style="--info-accent:var(--default-color);--info-hover-ink:var(--contrast-color);">
+            <div class="info-card__inner">
+              <div class="info-card__media">
+                <img src="{% static 'snapfolio/img/services/services-2.webp' %}" alt="">
+              </div>
+              <div class="info-card__body">
+                <h3 class="info-card__title">
+                  <span class="info-card__title-text">{% t 'services.s2_title' %} {% t 'services.s2_span' %}</span>
+                  <span class="info-card__title-fill" aria-hidden="true"></span>
+                </h3>
+                <p>{% t 'services.s2_body' %}</p>
+              </div>
+            </div>
+          </a>
         </div>
         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-          <div class="service-card position-relative z-1">
-            <div class="service-icon"><i class="bi bi-cpu"></i></div>
-            <a href="#contact" class="card-action d-flex align-items-center justify-content-center rounded-circle"><i class="bi bi-arrow-up-right"></i></a>
-            <h3><a href="#contact">{% t 'services.s3_title' %} <span>{% t 'services.s3_span' %}</span></a></h3>
-            <p>{% t 'services.s3_body' %}</p>
-          </div>
+          <a href="#contact" class="info-card" style="--info-accent:var(--bronze-color);--info-hover-ink:var(--default-color);">
+            <div class="info-card__inner">
+              <div class="info-card__media">
+                <img src="{% static 'snapfolio/img/services/services-3.webp' %}" alt="">
+              </div>
+              <div class="info-card__body">
+                <h3 class="info-card__title">
+                  <span class="info-card__title-text">{% t 'services.s3_title' %} {% t 'services.s3_span' %}</span>
+                  <span class="info-card__title-fill" aria-hidden="true"></span>
+                </h3>
+                <p>{% t 'services.s3_body' %}</p>
+              </div>
+            </div>
+          </a>
         </div>
         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-          <div class="service-card position-relative z-1">
-            <div class="service-icon"><i class="bi bi-search"></i></div>
-            <a href="#contact" class="card-action d-flex align-items-center justify-content-center rounded-circle"><i class="bi bi-arrow-up-right"></i></a>
-            <h3><a href="#contact">{% t 'home.p1_name' %}</a></h3>
-            <p>{% t 'home.p1_fit' %} — {% t 'home.p1_i1' %}. {% t 'home.p1_i2' %}. {% t 'home.p1_i3' %}.</p>
-          </div>
+          <a href="#contact" class="info-card" style="--info-accent:var(--accent-color);--info-hover-ink:var(--contrast-color);">
+            <div class="info-card__inner">
+              <div class="info-card__media">
+                <img src="{% static 'snapfolio/img/portfolio/portfolio-1.webp' %}" alt="">
+              </div>
+              <div class="info-card__body">
+                <h3 class="info-card__title">
+                  <span class="info-card__title-text">{% t 'home.p1_name' %}</span>
+                  <span class="info-card__title-fill" aria-hidden="true"></span>
+                </h3>
+                <p>{% t 'home.p1_fit' %} — {% t 'home.p1_i1' %}. {% t 'home.p1_i2' %}. {% t 'home.p1_i3' %}.</p>
+              </div>
+            </div>
+          </a>
         </div>
         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-          <div class="service-card position-relative z-1">
-            <div class="service-icon"><i class="bi bi-hammer"></i></div>
-            <a href="#contact" class="card-action d-flex align-items-center justify-content-center rounded-circle"><i class="bi bi-arrow-up-right"></i></a>
-            <h3><a href="#contact">{% t 'home.p2_name' %}</a></h3>
-            <p>{% t 'home.p2_fit' %} — {% t 'home.p2_i1' %}. {% t 'home.p2_i2' %}. {% t 'home.p2_i3' %}.</p>
-          </div>
+          <a href="#contact" class="info-card" style="--info-accent:var(--default-color);--info-hover-ink:var(--contrast-color);">
+            <div class="info-card__inner">
+              <div class="info-card__media">
+                <img src="{% static 'snapfolio/img/portfolio/portfolio-2.webp' %}" alt="">
+              </div>
+              <div class="info-card__body">
+                <h3 class="info-card__title">
+                  <span class="info-card__title-text">{% t 'home.p2_name' %}</span>
+                  <span class="info-card__title-fill" aria-hidden="true"></span>
+                </h3>
+                <p>{% t 'home.p2_fit' %} — {% t 'home.p2_i1' %}. {% t 'home.p2_i2' %}. {% t 'home.p2_i3' %}.</p>
+              </div>
+            </div>
+          </a>
         </div>
         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-          <div class="service-card position-relative z-1">
-            <div class="service-icon"><i class="bi bi-arrow-repeat"></i></div>
-            <a href="#contact" class="card-action d-flex align-items-center justify-content-center rounded-circle"><i class="bi bi-arrow-up-right"></i></a>
-            <h3><a href="#contact">{% t 'home.p3_name' %}</a></h3>
-            <p>{% t 'home.p3_fit' %} — {% t 'home.p3_i1' %}. {% t 'home.p3_i2' %}. {% t 'home.p3_i3' %}.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="testimonials" class="testimonials section light-background">
-    <div class="container section-title" data-aos="fade-up">
-      <h2>{% t 'home.quote_title' %}</h2>
-      <p>{% t 'home.scale_lead' %}</p>
-    </div>
-    <div class="container">
-      <div class="testimonial-masonry">
-        <div class="testimonial-item" data-aos="fade-up">
-          <div class="testimonial-content">
-            <div class="quote-pattern"><i class="bi bi-quote"></i></div>
-            <p>{% t 'home.q1' %}</p>
-            <div class="client-info">
-              <div class="client-image">
-                {% if profile and profile.photo %}
-                <img src="{{ profile.photo.url }}" alt="{% loc profile 'full_name' %}">
-                {% else %}
-                <img src="{% static 'snapfolio/img/person/person-m-7.webp' %}" alt="">
-                {% endif %}
+          <a href="#contact" class="info-card" style="--info-accent:var(--bronze-color);--info-hover-ink:var(--default-color);">
+            <div class="info-card__inner">
+              <div class="info-card__media">
+                <img src="{% static 'snapfolio/img/portfolio/portfolio-5.webp' %}" alt="">
               </div>
-              <div class="client-details">
-                <h3>{% if profile %}{% loc profile 'full_name' %}{% elif IS_RTL %}محمد اسکندرلو{% else %}Mohammad Eskandarloo{% endif %}</h3>
-                <span class="position">{% if profile and profile.headline %}{% loc profile 'headline' %}{% else %}{% t 'home.quote_role' %}{% endif %}</span>
+              <div class="info-card__body">
+                <h3 class="info-card__title">
+                  <span class="info-card__title-text">{% t 'home.p3_name' %}</span>
+                  <span class="info-card__title-fill" aria-hidden="true"></span>
+                </h3>
+                <p>{% t 'home.p3_fit' %} — {% t 'home.p3_i1' %}. {% t 'home.p3_i2' %}. {% t 'home.p3_i3' %}.</p>
               </div>
             </div>
-          </div>
+          </a>
         </div>
-        <div class="testimonial-item highlight" data-aos="fade-up" data-aos-delay="100">
-          <div class="testimonial-content">
-            <div class="quote-pattern"><i class="bi bi-quote"></i></div>
-            <p>{% t 'home.q2' %}</p>
-            <div class="client-info">
-              <div class="client-image">
-                {% if profile and profile.photo %}
-                <img src="{{ profile.photo.url }}" alt="">
-                {% else %}
-                <img src="{% static 'snapfolio/img/person/person-m-8.webp' %}" alt="">
-                {% endif %}
-              </div>
-              <div class="client-details">
-                <h3>{% if profile %}{% loc profile 'full_name' %}{% elif IS_RTL %}محمد اسکندرلو{% else %}Mohammad Eskandarloo{% endif %}</h3>
-                <span class="position">{% t 'home.quote_role' %}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-item" data-aos="fade-up" data-aos-delay="200">
-          <div class="testimonial-content">
-            <div class="quote-pattern"><i class="bi bi-quote"></i></div>
-            <p>{% t 'home.q3' %}</p>
-            <div class="client-info">
-              <div class="client-image">
-                {% if profile and profile.photo %}
-                <img src="{{ profile.photo.url }}" alt="">
-                {% else %}
-                <img src="{% static 'snapfolio/img/person/person-m-13.webp' %}" alt="">
-                {% endif %}
-              </div>
-              <div class="client-details">
-                <h3>{% if profile %}{% loc profile 'full_name' %}{% elif IS_RTL %}محمد اسکندرلو{% else %}Mohammad Eskandarloo{% endif %}</h3>
-                <span class="position">{% t 'home.quote_role' %}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   </section>
@@ -611,6 +590,7 @@
 {% endblock %}
 
 {% block body_extra %}
-<script src="{% static 'js/pixel-hero.js' %}"></script>
-<script src="{% static 'js/card-stack.js' %}?v=5"></script>
+<script src="{% static 'js/pixel-hero.js' %}?v=palette"></script>
+<script src="{% static 'js/card-stack.js' %}?v=palette"></script>
+<script src="{% static 'js/info-cards.js' %}"></script>
 {% endblock %}
