@@ -587,11 +587,9 @@ ul {
 .hero-bg {
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(180deg, rgba(18, 18, 18, 0.84), rgba(18, 18, 18, 0.9)),
-    url("../img/hero-meeting.png");
+  background-image: linear-gradient(180deg, rgba(18, 18, 18, 0.84), rgba(18, 18, 18, 0.9));
   background-size: cover;
-  background-position: center center, 52% 40%;
+  background-position: center center;
   background-repeat: no-repeat;
   pointer-events: none;
 }

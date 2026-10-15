@@ -5,6 +5,18 @@ from .models import ContactMessage
 
 
 class ContactForm(forms.ModelForm):
+    # Hidden trap for bots. People never see or fill it.
+    website = forms.CharField(
+        required=False,
+        label='',
+        widget=forms.TextInput(attrs={
+            'class': 'hp-field',
+            'tabindex': '-1',
+            'autocomplete': 'off',
+            'aria-hidden': 'true',
+        }),
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         placeholders = {
@@ -14,6 +26,8 @@ class ContactForm(forms.ModelForm):
             'message': t('contact.message'),
         }
         for name, field in self.fields.items():
+            if name == 'website':
+                continue
             field.widget.attrs['placeholder'] = placeholders.get(name, '')
             field.widget.attrs['required'] = True
             field.label = ''

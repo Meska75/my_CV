@@ -876,6 +876,31 @@ body {
   overflow: hidden;
 }
 
+.services .info-card__fallback {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(80% 80% at 100% 0%, rgba(255, 255, 255, 0.18), transparent 55%),
+    linear-gradient(145deg, #1a3c48, #243028 70%);
+}
+
+.hp-field {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.project-fallback {
+  min-height: 220px;
+  border-radius: 1rem;
+  background:
+    radial-gradient(80% 80% at 0% 0%, rgba(255, 255, 255, 0.12), transparent 50%),
+    linear-gradient(155deg, #1a3c48, #101820 60%, #3a3226);
+}
+
 .services .info-card__media img {
   position: absolute;
   inset: 0;
@@ -988,7 +1013,8 @@ body {
   font-size: 14px;
   line-height: 1.65;
   color: var(--info-text);
-  text-align: start;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -315,17 +315,6 @@ class Project(TranslatableMixin, models.Model):
             return self.STATUS_EN.get(self.status, self.status)
         return self.get_status_display()
 
-    @property
-    def placeholder_image(self):
-        mapping = {
-            'ai': 'snapfolio/img/portfolio/portfolio-1.webp',
-            'automation': 'snapfolio/img/portfolio/portfolio-2.webp',
-            'data': 'snapfolio/img/portfolio/portfolio-7.webp',
-            'web': 'snapfolio/img/portfolio/portfolio-10.webp',
-            'scrape': 'snapfolio/img/portfolio/portfolio-5.webp',
-        }
-        return mapping.get(self.category, 'snapfolio/img/portfolio/portfolio-5.webp')
-
 
 class ProjectImage(TranslatableMixin, models.Model):
     project = models.ForeignKey(
@@ -428,7 +417,7 @@ class ServiceCard(TranslatableMixin, models.Model):
     image = models.ImageField('تصویر', upload_to='services/', blank=True, null=True)
     static_image = models.CharField(
         'تصویر پیش‌فرض', max_length=180, blank=True,
-        help_text='مسیر داخل static، اگر تصویر بالا خالی باشد. مثلاً snapfolio/img/services/services-1.webp',
+        help_text='مسیر داخل static، فقط اگر خودتان فایلی در statics گذاشته باشید. تصاویر قالب استفاده نمی‌شوند.',
     )
     link = models.CharField('لینک', max_length=200, default='#contact', blank=True)
     accent = models.CharField('رنگ کارت', max_length=20, choices=Accent.choices, default=Accent.TEAL)

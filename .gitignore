@@ -162,6 +162,8 @@ cython_debug/
 # Project-specific
 # .claude/ = uipro design skill + local Claude tooling (reinstall via uipro-cli)
 .claude/
+# Local browser profile. Do not upload; it can contain cookies.
+_preview/
 # user-uploaded media (served from MEDIA_ROOT)
 media/
 # collectstatic output

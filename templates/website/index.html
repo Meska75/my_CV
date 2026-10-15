@@ -110,7 +110,7 @@
                 {% if profile and profile.photo %}
                 <img src="{{ profile.photo.url }}" alt="{% loc profile 'full_name' %}" class="img-fluid">
                 {% else %}
-                <img src="{% static 'snapfolio/img/profile/profile-square-3.webp' %}" alt="" class="img-fluid">
+                <img src="{% static 'snapfolio/img/profile/profile-2.webp' %}" alt="{% if profile %}{% loc profile 'full_name' %}{% endif %}" class="img-fluid">
                 {% endif %}
               </div>
               {% if profile and profile.available_for_work %}
@@ -323,7 +323,7 @@
                 {% if p.cover_image %}
                 <img src="{{ p.cover_image.url }}" alt="{% loc p 'title' %}" draggable="false">
                 {% else %}
-                <img src="{% static p.placeholder_image %}" alt="{% loc p 'title' %}" draggable="false">
+                <div class="card-stack__fallback" aria-hidden="true"></div>
                 {% endif %}
                 <div class="card-stack__shade" aria-hidden="true"></div>
                 <div class="card-stack__body">
@@ -411,6 +411,8 @@
                 <img src="{{ card.image.url }}" alt="{% loc card 'title' %}">
                 {% elif card.static_image %}
                 <img src="{% static card.static_image %}" alt="{% loc card 'title' %}">
+                {% else %}
+                <div class="info-card__fallback" aria-hidden="true"></div>
                 {% endif %}
               </div>
               <div class="info-card__body">
@@ -477,6 +479,7 @@
             {% endif %}
             <form action="{% url 'my_cv:index' %}#contact" method="post" class="php-email-form">
               {% csrf_token %}
+              {{ contact_form.website }}
               <div class="row gy-4">
                 <div class="col-md-6">
                   {{ contact_form.name }}

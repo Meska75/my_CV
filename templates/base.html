@@ -32,12 +32,12 @@
   <link href="{% static 'snapfolio/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
   <link href="{% static 'snapfolio/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
   <link href="{% static 'snapfolio/css/main.css' %}?v=palette" rel="stylesheet">
-  <link href="{% static 'snapfolio/css/overrides.css' %}?v=cv-paper2" rel="stylesheet">
+  <link href="{% static 'snapfolio/css/overrides.css' %}?v=svc-justify" rel="stylesheet">
 
   {% block head_extra %}{% endblock %}
 
   {% block structured_data %}
-  <script type="application/ld+json">
+  <script type="application/ld+json" nonce="{{ request.csp_nonce }}">
   {
     "@context": "https://schema.org",
     "@type": "Person",

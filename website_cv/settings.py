@@ -36,7 +36,13 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv(
 
 # Public origins of THIS site only, including the scheme.
 # Example: https://cv.example.com,https://www.cv.example.com
-CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='', cast=Csv())
+CSRF_TRUSTED_ORIGINS = [
+    origin for origin in config('CSRF_TRUSTED_ORIGINS', default='', cast=Csv()) if origin
+]
+
+# Set True only when this domain is proxied by Cloudflare. Then the Iran/not-Iran
+# check uses CF-IPCountry, which the visitor cannot forge.
+TRUST_CLOUDFLARE = config('TRUST_CLOUDFLARE', default=False, cast=bool)
 
 
 # Application definition
@@ -57,6 +63,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'my_cv.middleware.SecurityHeadersMiddleware',
     # Serves collected static files for this app, so the other site's
     # web-server static directory is never reused.
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -210,7 +217,7 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
-    CSRF_COOKIE_HTTPONLY = False
+    CSRF_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
     CSRF_COOKIE_SAMESITE = 'Lax'
     SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -268,6 +275,23 @@ AXES_FAILURE_LIMIT = config('AXES_FAILURE_LIMIT', default=5, cast=int)
 AXES_COOLOFF_TIME = 1  # hours before a locked-out client may try again
 AXES_RESET_ON_SUCCESS = True
 AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]
+AXES_CLIENT_IP_CALLABLE = 'my_cv.geo.client_ip'
+
+# Admin session ends after 8 hours. The language cookie is separate.
+SESSION_COOKIE_AGE = 60 * 60 * 8
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+
+# Contact-form rate limit and axes lockouts share this cache.
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'task5-cv',
+    }
+}
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 8 * 1024 * 1024
+FILE_UPLOAD_MAX_MEMORY_SIZE = 8 * 1024 * 1024
 
 
 # Email — used for admin password recovery. Credentials live in .env.

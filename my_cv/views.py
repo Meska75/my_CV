@@ -5,8 +5,11 @@ from pathlib import Path
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.contrib import messages
+from django.core.cache import cache
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
+
+from .geo import client_ip
 
 from .forms import ContactForm
 from .i18n import t
@@ -43,17 +46,36 @@ def _shared_context(request, form=None):
     }
 
 
+def _contact_limited(request):
+    """At most 5 real messages per hour from one address."""
+    ip = client_ip(request) or 'unknown'
+    key = f'contact-rate:{ip}'
+    count = cache.get(key, 0)
+    if count >= 5:
+        return True
+    cache.set(key, count + 1, 3600)
+    return False
+
+
 def index_view(request):
     if request.method == 'POST':
+        # Bots that fill the hidden field get the same reply as a real send.
+        if (request.POST.get('website') or '').strip():
+            messages.success(request, t('contact.success'))
+            return redirect(f"{request.path}#contact")
         form = ContactForm(request.POST)
         if form.is_valid():
+            if _contact_limited(request):
+                messages.error(request, t('contact.limited'))
+                return redirect(f"{request.path}#contact")
             msg = form.save()
             profile = Profile.objects.first()
             to_email = (profile.email if profile and profile.email else '') or settings.DEFAULT_FROM_EMAIL
+            subject = ' '.join((msg.subject or '').split())[:180] or 'Message'
             try:
                 if to_email:
                     send_mail(
-                        subject=f'[CV] {msg.subject}',
+                        subject=f'[CV] {subject}',
                         message=f'{msg.name} <{msg.email}>\n\n{msg.message}',
                         from_email=settings.DEFAULT_FROM_EMAIL or None,
                         recipient_list=[to_email],

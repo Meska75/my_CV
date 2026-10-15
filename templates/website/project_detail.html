@@ -66,7 +66,7 @@
           {% elif project.cover_image %}
           <img src="{{ project.cover_image.url }}" alt="{% loc project 'title' %}" class="img-fluid rounded">
           {% else %}
-          <img src="{% static project.placeholder_image %}" alt="{% loc project 'title' %}" class="img-fluid rounded">
+          <div class="project-fallback" aria-hidden="true"></div>
           {% endif %}
         </div>
         <div class="col-lg-4">
