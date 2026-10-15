@@ -22,7 +22,7 @@ def _shared_context(request, form=None):
     return {
         'profile': profile,
         'skill_categories': skill_categories,
-        'projects': Project.objects.exclude(live_url='').prefetch_related('skills'),
+        'projects': Project.objects.prefetch_related('skills', 'images'),
         'experiences': Experience.objects.all(),
         'certificates': Certificate.objects.all(),
         'social_links': SocialLink.objects.all(),
@@ -66,7 +66,7 @@ def resume_view(request):
 
 
 def project_detail_view(request, slug):
-    project = get_object_or_404(Project.objects.prefetch_related('skills'), slug=slug)
+    project = get_object_or_404(Project.objects.prefetch_related('skills', 'images'), slug=slug)
     return render(request, 'website/project_detail.html', {
         'project': project,
         'profile': Profile.objects.first(),

@@ -3,12 +3,17 @@
   if (!root) return;
 
   const stage = root.querySelector(".card-stack__stage");
-  const cards = Array.from(root.querySelectorAll(".card-stack__card"));
-  const dots = Array.from(root.querySelectorAll(".card-stack__dot"));
+  const allCards = Array.from(root.querySelectorAll(".card-stack__card"));
+  const allDots = Array.from(root.querySelectorAll(".card-stack__dot"));
   const openLink = root.querySelector(".card-stack__open");
   const pauseBtn = root.querySelector(".card-stack__pause");
   const live = root.querySelector("[data-card-stack-live]");
-  const len = cards.length;
+  const empty = root.querySelector("[data-portfolio-empty]");
+  const nav = root.querySelector(".card-stack__nav");
+  const hint = root.querySelector(".card-stack__hint");
+  let cards = allCards.slice();
+  let dots = allDots.slice();
+  let len = cards.length;
   if (!stage || !len) return;
 
   const loop = root.dataset.loop !== "false";
@@ -143,7 +148,7 @@
     arm();
   }
 
-  cards.forEach(function (card) {
+  allCards.forEach(function (card) {
     card.addEventListener("click", function (event) {
       if (suppressClick) {
         suppressClick = false;
@@ -151,14 +156,49 @@
         return;
       }
       if (event.target.closest("a")) return;
-      const index = Number(card.dataset.index);
-      if (index !== active) go(index);
+      const index = cards.indexOf(card);
+      if (index >= 0 && index !== active) go(index);
     });
   });
 
-  dots.forEach(function (dot) {
+  allDots.forEach(function (dot) {
     dot.addEventListener("click", function () {
-      go(Number(dot.dataset.index));
+      const index = dots.indexOf(dot);
+      if (index >= 0) go(index);
+    });
+  });
+
+  function applyFilter(category) {
+    allCards.forEach(function (card, i) {
+      const codes = (card.dataset.categories || card.dataset.category || "").split(/\s+/);
+      const show = category === "all" || codes.indexOf(category) !== -1;
+      card.hidden = !show;
+      card.classList.toggle("is-filtered-out", !show);
+      if (allDots[i]) {
+        allDots[i].hidden = !show;
+        allDots[i].classList.toggle("is-filtered-out", !show);
+      }
+    });
+    cards = allCards.filter(function (card) { return !card.hidden; });
+    dots = allDots.filter(function (dot) { return !dot.hidden; });
+    len = cards.length;
+    active = 0;
+    stage.hidden = len === 0;
+    if (nav) nav.hidden = len === 0;
+    if (hint) hint.hidden = len === 0;
+    if (empty) empty.hidden = len !== 0;
+    if (len) paint(0);
+    arm();
+  }
+
+  document.querySelectorAll("[data-portfolio-filter]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      document.querySelectorAll("[data-portfolio-filter]").forEach(function (other) {
+        const on = other === button;
+        other.classList.toggle("is-on", on);
+        other.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      applyFilter(button.dataset.portfolioFilter || "all");
     });
   });
 

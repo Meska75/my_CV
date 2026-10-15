@@ -5,7 +5,7 @@
 
 {% block head_extra %}
 <link href="{% static 'css/pixel-hero.css' %}?v=palette" rel="stylesheet">
-<link href="{% static 'css/card-stack.css' %}?v=palette" rel="stylesheet">
+<link href="{% static 'css/card-stack.css' %}?v=confidential" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
@@ -147,7 +147,7 @@
         <div class="col-lg-7" data-aos="fade-left" data-aos-delay="300">
           <div class="about-content">
             <div class="section-header">
-              <span class="badge-text">{% t 'about.badge' %}</span>
+              <span class="badge-text">~/about</span>
               <h2>{% t 'about.heading' %}</h2>
             </div>
             <div class="description">
@@ -240,9 +240,8 @@
   </section>
 
   <section id="skills" class="skills section">
-    <div class="container section-title" data-aos="fade-up">
+    <div class="container section-title" data-kicker="~/skills" data-aos="fade-up">
       <h2>{% t 'skills.title' %}</h2>
-      <p>{% t 'skills.lead' %}</p>
     </div>
     <div class="container" data-aos="fade-up" data-aos-delay="100">
       <div class="row">
@@ -280,9 +279,17 @@
   </section>
 
   <section id="portfolio" class="portfolio section card-stack-section">
-    <div class="container section-title" data-aos="fade-up">
+    <div class="container section-title" data-kicker="~/work" data-aos="fade-up">
       <h2>{% t 'portfolio.title' %}</h2>
       <p>{% t 'portfolio.lead' %}</p>
+      <div class="work-filter" role="tablist" aria-label="{% t 'portfolio.title' %}">
+        <button type="button" class="is-on" role="tab" aria-selected="true" data-portfolio-filter="all">{% t 'portfolio.all' %}</button>
+        <button type="button" role="tab" aria-selected="false" data-portfolio-filter="web">{% t 'portfolio.filter_web' %}</button>
+        <button type="button" role="tab" aria-selected="false" data-portfolio-filter="automation">{% t 'portfolio.filter_automation' %}</button>
+        <button type="button" role="tab" aria-selected="false" data-portfolio-filter="ai">{% t 'portfolio.filter_ai' %}</button>
+        <button type="button" role="tab" aria-selected="false" data-portfolio-filter="data">{% t 'portfolio.filter_data' %}</button>
+        <button type="button" role="tab" aria-selected="false" data-portfolio-filter="scrape">{% t 'portfolio.filter_scrape' %}</button>
+      </div>
     </div>
     <div class="container" data-aos="fade-up" data-aos-delay="100">
       {% if projects %}
@@ -307,6 +314,8 @@
             <article
               class="card-stack__card"
               data-index="{{ forloop.counter0 }}"
+              data-category="{{ p.category }}"
+              data-categories="{{ p.category_codes|join:' ' }}"
               data-title="{% loc p 'title' %}"
               data-href="{{ p.live_url }}"
             >
@@ -314,15 +323,18 @@
                 {% if p.cover_image %}
                 <img src="{{ p.cover_image.url }}" alt="{% loc p 'title' %}" draggable="false">
                 {% else %}
-                <img
-                  src="{% cycle 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1400&q=80' 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1400&q=80' 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=1400&q=80' 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=1400&q=80' 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=80' %}"
-                  alt="{% loc p 'title' %}"
-                  draggable="false"
-                >
+                <img src="{% static p.placeholder_image %}" alt="{% loc p 'title' %}" draggable="false">
                 {% endif %}
                 <div class="card-stack__shade" aria-hidden="true"></div>
                 <div class="card-stack__body">
-                  <span class="card-stack__tag">{{ p.category_label }}</span>
+                  <span class="card-stack__tags">
+                    {% for label in p.category_labels %}
+                    <span class="card-stack__tag">{{ label }}</span>
+                    {% endfor %}
+                    {% if p.is_confidential %}
+                    <span class="card-stack__tag card-stack__tag--confidential">{% t 'tag.confidential' %}</span>
+                    {% endif %}
+                  </span>
                   <h3>{% loc p 'title' %}</h3>
                   {% if p.summary or p.summary_en %}
                   <p>{% loc p 'summary' %}</p>
@@ -342,6 +354,8 @@
               type="button"
               class="card-stack__dot"
               data-index="{{ forloop.counter0 }}"
+              data-category="{{ p.category }}"
+              data-categories="{{ p.category_codes|join:' ' }}"
               aria-label="{% loc p 'title' %}"
             ></button>
             {% endfor %}
@@ -352,6 +366,7 @@
             target="_blank"
             rel="noopener noreferrer"
             aria-label="{% t 'portfolio.open_site' %}"
+            {% if not projects.0.live_url %}hidden{% endif %}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M15 3h6v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -372,6 +387,7 @@
           </button>
         </div>
         <p class="card-stack__hint">{% t 'portfolio.hint' %}</p>
+        <p class="portfolio-filter-empty" data-portfolio-empty hidden>{% t 'portfolio.filter_empty' %}</p>
         <p class="visually-hidden" aria-live="polite" data-card-stack-live></p>
       </div>
       {% else %}
@@ -381,33 +397,14 @@
   </section>
 
   <section id="services" class="services section">
-    <div class="container section-title" data-aos="fade-up">
+    <div class="container section-title" data-kicker="~/services" data-aos="fade-up">
       <h2>{% t 'services.title' %}</h2>
       <p>{% t 'services.lead' %}</p>
+      <div class="section-title__tags">
+        <span class="tag-confidential"><i class="bi bi-lock-fill" aria-hidden="true"></i>{% t 'tag.confidential' %}</span>
+      </div>
     </div>
     <div class="container" data-aos="fade-up" data-aos-delay="100">
-      <div class="service-header">
-        <div class="row align-items-center">
-          <div class="col-lg-8 col-md-12">
-            <div class="service-intro">
-              <h2 class="service-heading">
-                <div>{% t 'services.title' %}</div>
-                <div><span>{% t 'home.scale_title' %}</span></div>
-              </h2>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-12">
-            <div class="service-summary">
-              <p>{% t 'home.scale_lead' %}</p>
-              <a href="#contact" class="service-btn">
-                {% t 'hero.cta_contact' %}
-                <i class="bi bi-arrow-right"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div class="row justify-content-center g-4 info-card-grid">
         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
           <a href="#contact" class="info-card" style="--info-accent:var(--accent-color);--info-hover-ink:var(--contrast-color);">
@@ -510,7 +507,7 @@
   </section>
 
   <section id="contact" class="contact section">
-    <div class="container section-title" data-aos="fade-up">
+    <div class="container section-title" data-kicker="~/contact" data-aos="fade-up">
       <h2>{% t 'contact.title' %}</h2>
       <p>{% t 'contact.lead' %}</p>
     </div>
@@ -591,6 +588,6 @@
 
 {% block body_extra %}
 <script src="{% static 'js/pixel-hero.js' %}?v=palette"></script>
-<script src="{% static 'js/card-stack.js' %}?v=palette"></script>
+<script src="{% static 'js/card-stack.js' %}?v=multifilter"></script>
 <script src="{% static 'js/info-cards.js' %}"></script>
 {% endblock %}

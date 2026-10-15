@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نمونه‌کارهای اتوماسیون n8n</title>
+  <style>
+    :root {
+      --background-color: #0b1828;
+      --surface: #163044;
+      --default-color: #e4f2f4;
+      --heading-color: #8fd4c4;
+      --accent-color: #3eb89f;
+      --muted: #9bb8c4;
+      --line: rgba(228, 242, 244, 0.16);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #061018;
+      color: var(--default-color);
+      font-family: Tahoma, "Segoe UI", sans-serif;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .deck {
+      width: min(100vw, calc(100vh * 16 / 9));
+      height: min(100vh, calc(100vw * 9 / 16));
+      margin: auto;
+      position: absolute;
+      inset: 0;
+      background: var(--background-color);
+      overflow: hidden;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 48px 56px 72px;
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .slide.active { display: flex; }
+    .kicker {
+      color: var(--accent-color);
+      font-size: 14px;
+      letter-spacing: 0.04em;
+    }
+    h1 { color: var(--heading-color); font-size: 40px; line-height: 1.35; font-weight: 700; }
+    h2 { color: var(--heading-color); font-size: 28px; line-height: 1.4; }
+    p, li { font-size: 18px; line-height: 1.7; }
+    .muted { color: var(--muted); }
+    .layout { display: grid; grid-template-columns: 1.4fr 0.8fr; gap: 22px; flex: 1; min-height: 0; }
+    .card, .info {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 22px 24px;
+    }
+    .info h3 { color: #fff; margin-bottom: 12px; font-size: 18px; }
+    .info li { list-style: none; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 16px; }
+    .info strong { color: var(--heading-color); }
+    .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .cols article h3 { font-size: 18px; margin-bottom: 8px; color: #fff; }
+    .flow { display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap; }
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      min-width: 140px;
+      font-size: 15px;
+    }
+    .step b { display: block; color: var(--accent-color); margin-bottom: 4px; }
+    .nav {
+      position: absolute;
+      bottom: 18px;
+      left: 24px;
+      right: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    button {
+      background: transparent;
+      color: var(--default-color);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    button:hover { border-color: var(--accent-color); color: var(--accent-color); }
+    .cover { justify-content: center; }
+    .cover h1 { font-size: 48px; max-width: 16ch; }
+  </style>
+</head>
+<body>
+  <div class="deck" id="deck">
+    <section class="slide cover active">
+      <p class="kicker">نمونه‌کار اتوماسیون</p>
+      <h1>دو گردش‌کار n8n برای پذیرش کلینیک و تصمیم بازاریابی</h1>
+      <p class="muted">ظاهر کامل برای وارد کردن در n8n و اسکرین‌شات. اعتبارنامه‌ها نمونه هستند و اجرا لازم نیست.</p>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">پروژه ۰۱ · اتوماسیون</p>
+      <div class="layout">
+        <div>
+          <h2>پذیرش ایمیل و نوبت‌دهی کلینیک</h2>
+          <p style="margin-top:12px">ایمیل بیمار خوانده می‌شود، هوش مصنوعی آن را به سه حالت تقسیم می‌کند و پاسخ با متن ثابت یا دانش خدمات برمی‌گردد.</p>
+          <div class="cols" style="margin-top:18px">
+            <article class="card"><h3>مشکل</h3><p>پذیرش برای هر ایمیل باید تشخیص دهد نوبت آزاد است، ساعت مشخص ممکن است، یا متن اصلاً قابل فهم نیست.</p></article>
+            <article class="card"><h3>راه‌حل</h3><p>یک سویچ بعد از تحلیل مدل، تقویم قابل‌ویرایش بیمارستان، و قالب‌های ایمیل ثابت برای هر خروجی.</p></article>
+            <article class="card"><h3>نتیجه</h3><p>سه پاسخ مشخص: پیشنهاد نزدیک‌ترین وقت، تأیید یا جایگزینی وقت، و پاسخ خدمات یا راهنمای بازنویسی.</p></article>
+          </div>
+        </div>
+        <aside class="info">
+          <h3>اطلاعات پروژه</h3>
+          <ul>
+            <li><strong>دسته:</strong> اتوماسیون</li>
+            <li><strong>وضعیت:</strong> نمونه نمایشی</li>
+            <li><strong>استک:</strong> n8n، Gmail، OpenAI</li>
+            <li><strong>مالک تقویم:</strong> بیمارستان، نه بیمار</li>
+            <li><strong>فایل:</strong> 01-clinic-inbox-appointments.json</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">نمای کلی پروژه ۰۱</p>
+      <h2>سه شاخه بعد از یک تحلیل</h2>
+      <div class="flow">
+        <div class="step"><b>۱</b>دریافت ایمیل</div>
+        <div class="step"><b>۲</b>چسباندن تقویم ثابت</div>
+        <div class="step"><b>۳</b>استخراج نیت با مدل</div>
+        <div class="step"><b>۴</b>سویچ سه‌حالته</div>
+      </div>
+      <div class="cols" style="margin-top:8px">
+        <article class="card">
+          <h3>وقت بدون ساعت</h3>
+          <p>نزدیک‌ترین اسلات خالی از لیست بیمارستان انتخاب می‌شود و با متن ثابت «نزدیک‌ترین نوبت آزاد» ایمیل می‌شود.</p>
+        </article>
+        <article class="card">
+          <h3>ساعت مشخص</h3>
+          <p>اگر همان اسلات آزاد باشد تأیید ثابت می‌رود. اگر رزرو باشد، متن دیگری نزدیک‌ترین نوبت بعدی را پیشنهاد می‌دهد.</p>
+        </article>
+        <article class="card">
+          <h3>متن نامفهوم</h3>
+          <p>مدل فقط با دانش خدمات کلینیک جواب می‌دهد. اگر سؤال خارج از آن باشد، ساختار درست ایمیل مؤدبانه توضیح داده می‌شود.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">پروژه ۰۲ · اتوماسیون</p>
+      <div class="layout">
+        <div>
+          <h2>نبض جست‌وجو — بریف رقابتی کلینیک آریا</h2>
+          <p style="margin-top:12px">نسخه بیزینسی پایش رتبه. به‌جای ذخیره خام نتایج، هر دوشنبه یک بریف سه اقدام برای مدیر بازاریابی ساخته می‌شود.</p>
+          <p class="muted" style="margin-top:8px">ایده از قالب ردیابی رتبه با Bright Data و تحلیل هوش مصنوعی گرفته شده و برای تصمیم جذب بیمار شخصی شده است.</p>
+          <div class="cols" style="margin-top:18px">
+            <article class="card"><h3>مشکل</h3><p>لاگ رتبه به مدیر نمی‌گوید این هفته کدام صفحه را عوض کند یا چرا اسنیپت از دست رفته.</p></article>
+            <article class="card"><h3>راه‌حل</h3><p>شیت کلمات تیم بازاریابی، نتایج گوگل، سهم صدا، قواعد تصمیم ثابت، و یک بریف ایمیلی.</p></article>
+            <article class="card"><h3>نتیجه</h3><p>گزارش هفتگی ذخیره‌شده به‌همراه ایمیل «سه کار این هفته» برای بازاریابی کلینیک.</p></article>
+          </div>
+        </div>
+        <aside class="info">
+          <h3>اطلاعات پروژه</h3>
+          <ul>
+            <li><strong>دسته:</strong> اتوماسیون</li>
+            <li><strong>وضعیت:</strong> نمونه نمایشی</li>
+            <li><strong>استک:</strong> n8n، Sheets، Bright Data، OpenAI، Gmail</li>
+            <li><strong>زمان‌بندی:</strong> دوشنبه‌ها ساعت ۸</li>
+            <li><strong>فایل:</strong> 02-brand-search-pulse.json</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="kicker">نمای کلی پروژه ۰۲</p>
+      <h2>از کلمه کلیدی تا اقدام هفته</h2>
+      <div class="flow">
+        <div class="step"><b>شیت</b>کلمات برند، خدمت و رقیب</div>
+        <div class="step"><b>SERP</b>ده نتیجه اول گوگل</div>
+        <div class="step"><b>شاخص</b>رتبه برند و سهم صدا</div>
+        <div class="step"><b>قاعده</b>افت رتبه، اسنیپت، نقشه محلی</div>
+        <div class="step"><b>خروجی</b>بریف مدیر + ذخیره هفته</div>
+      </div>
+      <div class="cols" style="margin-top:22px">
+        <article class="card"><h3>ورودی تیم</h3><p>بازاریابی کلمات را در گوگل‌شیت عوض می‌کند؛ گردش‌کار دست نمی‌خورد.</p></article>
+        <article class="card"><h3>قواعد ثابت</h3><p>افت بیش از سه پله، از دست رفتن اسنیپت، و نبودن در بسته محلی هر کدام یک اقدام مشخص دارند.</p></article>
+        <article class="card"><h3>نامه دوشنبه</h3><p>موضوع ثابت: «بریف دوشنبه — نبض جست‌وجوی کلینیک آریا» برای مدیر بازاریابی.</p></article>
+      </div>
+    </section>
+
+    <section class="slide cover">
+      <p class="kicker">اسکرین‌شات</p>
+      <h2>در n8n از منوی گردش‌کار، Import from File را بزنید</h2>
+      <p>بوم را تا دیدن یادداشت‌های رنگی کوچک کنید. اعتبارنامه لازم نیست؛ نودها برای نمایش چیده شده‌اند.</p>
+      <p class="muted">portfolio-samples/n8n/</p>
+    </section>
+
+    <div class="nav">
+      <button type="button" id="prev">قبلی</button>
+      <span id="count"></span>
+      <button type="button" id="next">بعدی</button>
+    </div>
+  </div>
+  <script>
+    const slides = [...document.querySelectorAll(".slide")];
+    let i = 0;
+    const show = (n) => {
+      i = (n + slides.length) % slides.length;
+      slides.forEach((s, idx) => s.classList.toggle("active", idx === i));
+      document.getElementById("count").textContent = (i + 1) + " / " + slides.length;
+    };
+    document.getElementById("next").onclick = () => show(i + 1);
+    document.getElementById("prev").onclick = () => show(i - 1);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft" || e.key === "ArrowDown") show(i + 1);
+      if (e.key === "ArrowRight" || e.key === "ArrowUp") show(i - 1);
+    });
+    show(0);
+  </script>
+</body>
+</html>

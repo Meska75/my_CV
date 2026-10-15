@@ -8,6 +8,7 @@ from .models import (
     Experience,
     Profile,
     Project,
+    ProjectImage,
     Skill,
     SkillCategory,
     SocialLink,
@@ -82,26 +83,33 @@ class ExperienceAdmin(ModelAdmin):
     )
 
 
+class ProjectImageInline(TabularInline):
+    model = ProjectImage
+    extra = 1
+    fields = ('image', 'caption', 'caption_en', 'order')
+
+
 @admin.register(Project)
 class ProjectAdmin(ModelAdmin):
-    list_display = ('title', 'category', 'status', 'is_featured', 'is_private', 'order')
+    list_display = ('title', 'category', 'categories', 'status', 'is_featured', 'is_private', 'is_confidential', 'order')
     list_editable = ('is_featured', 'order')
     list_filter = ('category', 'status', 'is_featured', 'is_private')
     search_fields = ('title', 'title_en', 'summary')
     prepopulated_fields = {'slug': ('title',)}
     filter_horizontal = ('skills',)
+    inlines = (ProjectImageInline,)
     fieldsets = (
         (None, {
             'fields': (
-                'title', 'slug', 'summary', 'problem', 'solution', 'outcome',
-                'category', 'status', 'skills', 'cover_image', 'github_url',
-                'live_url', 'is_private', 'is_featured', 'order',
+                'title', 'slug', 'summary', 'problem', 'solution', 'outcome', 'writeup',
+                'category', 'categories', 'status', 'skills', 'cover_image', 'github_url',
+                'live_url', 'is_private', 'is_confidential', 'is_featured', 'order',
             ),
         }),
         ('English', {
             'classes': ('collapse',),
             'fields': (
-                'title_en', 'summary_en', 'problem_en', 'solution_en', 'outcome_en',
+                'title_en', 'summary_en', 'problem_en', 'solution_en', 'outcome_en', 'writeup_en',
             ),
         }),
     )

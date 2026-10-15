@@ -24,7 +24,46 @@
     <div class="container" data-aos="fade-up" data-aos-delay="100">
       <div class="row gy-4">
         <div class="col-lg-8">
-          {% if project.cover_image %}
+          {% if project.images.all %}
+          {% with shots=project.images.all %}
+          <div class="project-gallery" data-project-gallery>
+            <div class="project-gallery__frame">
+              <img
+                class="img-fluid rounded"
+                data-gallery-shot
+                src="{{ shots.0.image.url }}"
+                alt="{% loc shots.0 'caption' %}"
+              >
+              {% if shots|length > 1 %}
+              <button type="button" class="project-gallery__nav project-gallery__nav--prev" data-gallery-prev aria-label="{% t 'project.gallery_prev' %}">
+                <i class="bi bi-chevron-left" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="project-gallery__nav project-gallery__nav--next" data-gallery-next aria-label="{% t 'project.gallery_next' %}">
+                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+              </button>
+              {% endif %}
+            </div>
+            <p class="project-gallery__caption" data-gallery-caption>{% loc shots.0 'caption' %}</p>
+            {% if shots|length > 1 %}
+            <div class="project-gallery__thumbs" role="tablist" aria-label="{% t 'project.gallery_label' %}">
+              {% for shot in shots %}
+              <button
+                type="button"
+                class="project-gallery__thumb{% if forloop.first %} is-on{% endif %}"
+                role="tab"
+                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                data-gallery-thumb
+                data-src="{{ shot.image.url }}"
+                data-caption="{% loc shot 'caption' %}"
+              >
+                <img src="{{ shot.image.url }}" alt="{% loc shot 'caption' %}">
+              </button>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          {% endwith %}
+          {% elif project.cover_image %}
           <img src="{{ project.cover_image.url }}" alt="{% loc project 'title' %}" class="img-fluid rounded">
           {% else %}
           <img src="{% static project.placeholder_image %}" alt="{% loc project 'title' %}" class="img-fluid rounded">
@@ -34,7 +73,7 @@
           <div class="portfolio-info" data-aos="fade-left" data-aos-delay="200">
             <h3>{% t 'project.info' %}</h3>
             <ul>
-              <li><strong>{% t 'project.category' %}</strong>: {{ project.category_label }}</li>
+              <li><strong>{% t 'project.category' %}</strong>: {% for label in project.category_labels %}{{ label }}{% if not forloop.last %} · {% endif %}{% endfor %}{% if project.is_confidential %} <span class="tag-confidential"><i class="bi bi-lock-fill" aria-hidden="true"></i>{% t 'tag.confidential' %}</span>{% endif %}</li>
               <li><strong>{% t 'project.status' %}</strong>: {{ project.status_label }}</li>
               {% if project.skills.all %}
               <li><strong>{% t 'project.stack' %}</strong>: {% for s in project.skills.all %}{% loc s 'name' %}{% if not forloop.last %}, {% endif %}{% endfor %}</li>
@@ -55,6 +94,14 @@
           <div class="portfolio-description" data-aos="fade-up" data-aos-delay="300">
             <h2>{% t 'project.overview' %}</h2>
             <p>{% loc project 'summary' %}</p>
+            {% for section in project.writeup_sections %}
+            <div class="project-writeup">
+              {% if section.heading %}<h3>{{ section.heading }}</h3>{% endif %}
+              {% for paragraph in section.paragraphs %}
+              <p>{{ paragraph }}</p>
+              {% endfor %}
+            </div>
+            {% endfor %}
             <div class="features mt-4">
               <div class="row gy-3">
                 {% if project.problem %}
@@ -98,4 +145,39 @@
     </div>
   </section>
 </main>
+{% endblock %}
+
+{% block body_extra %}
+<script>
+(function () {
+  var root = document.querySelector("[data-project-gallery]");
+  if (!root) return;
+  var shot = root.querySelector("[data-gallery-shot]");
+  var caption = root.querySelector("[data-gallery-caption]");
+  var thumbs = Array.prototype.slice.call(root.querySelectorAll("[data-gallery-thumb]"));
+  if (!shot || thumbs.length < 2) return;
+  var index = 0;
+
+  function show(next) {
+    index = (next + thumbs.length) % thumbs.length;
+    var thumb = thumbs[index];
+    shot.src = thumb.dataset.src;
+    shot.alt = thumb.dataset.caption || "";
+    if (caption) caption.textContent = thumb.dataset.caption || "";
+    thumbs.forEach(function (item, i) {
+      var on = i === index;
+      item.classList.toggle("is-on", on);
+      item.setAttribute("aria-selected", on ? "true" : "false");
+    });
+  }
+
+  var prev = root.querySelector("[data-gallery-prev]");
+  var next = root.querySelector("[data-gallery-next]");
+  if (prev) prev.addEventListener("click", function () { show(index - 1); });
+  if (next) next.addEventListener("click", function () { show(index + 1); });
+  thumbs.forEach(function (thumb, i) {
+    thumb.addEventListener("click", function () { show(i); });
+  });
+})();
+</script>
 {% endblock %}

@@ -179,16 +179,18 @@ class Experience(TranslatableMixin, models.Model):
 
 class Project(TranslatableMixin, models.Model):
     class Category(models.TextChoices):
-        AI = 'ai', 'هوش مصنوعی'
-        BACKEND = 'backend', 'بک‌اند'
-        DATA = 'data', 'داده'
-        WEB = 'web', 'وب'
+        WEB = 'web', 'وب‌سایت'
+        AUTOMATION = 'automation', 'اتوماسیون'
+        AI = 'ai', 'دستیار هوش مصنوعی'
+        DATA = 'data', 'تحلیل داده'
+        SCRAPE = 'scrape', 'جمع‌آوری داده'
 
     CATEGORY_EN = {
-        'ai': 'Artificial Intelligence',
-        'backend': 'Backend',
-        'data': 'Data',
-        'web': 'Web',
+        'web': 'Website',
+        'automation': 'Automation',
+        'ai': 'AI assistant',
+        'data': 'Data analysis',
+        'scrape': 'Data collection',
     }
 
     class Status(models.TextChoices):
@@ -211,13 +213,26 @@ class Project(TranslatableMixin, models.Model):
     solution_en = models.TextField('Solution (EN)', blank=True)
     outcome = models.TextField('نتیجه', blank=True)
     outcome_en = models.TextField('Outcome (EN)', blank=True)
-    category = models.CharField('دسته', max_length=20, choices=Category.choices, default=Category.BACKEND)
+    writeup = models.TextField(
+        'شرح صفحه مشخصات',
+        blank=True,
+        help_text='هر بخش با یک خط «# عنوان» شروع می‌شود. پاراگراف‌ها را با یک خط خالی جدا کنید.',
+    )
+    writeup_en = models.TextField('Write-up (EN)', blank=True)
+    category = models.CharField('دسته', max_length=20, choices=Category.choices, default=Category.WEB)
+    categories = models.CharField(
+        'برچسب‌ها',
+        max_length=80,
+        blank=True,
+        help_text='چند دسته با ویرگول: scrape,data,web,automation — اگر خالی باشد فقط دسته اصلی نشان داده می‌شود.',
+    )
     status = models.CharField('وضعیت', max_length=20, choices=Status.choices, default=Status.COMPLETED)
     skills = models.ManyToManyField(Skill, related_name='projects', blank=True, verbose_name='تک‌استک')
     cover_image = models.ImageField('تصویر کاور', upload_to='projects/', blank=True, null=True)
     github_url = models.URLField('لینک گیت‌هاب', blank=True)
     live_url = models.URLField('لینک زنده', blank=True)
     is_private = models.BooleanField('پروژه‌ی خصوصی (بدون افشای کد)', default=False)
+    is_confidential = models.BooleanField('برچسب محرمانه', default=False)
     is_featured = models.BooleanField('شاخص', default=False)
     order = models.PositiveIntegerField('ترتیب', default=0)
 
@@ -234,10 +249,50 @@ class Project(TranslatableMixin, models.Model):
     def __str__(self):
         return self.title
 
-    def category_label(self):
+    def category_codes(self):
+        codes = []
+        raw = (self.categories or '').replace('،', ',')
+        for part in raw.split(','):
+            code = part.strip()
+            if code and code not in codes:
+                codes.append(code)
+        if self.category and self.category not in codes:
+            codes.insert(0, self.category)
+        return codes or [self.category]
+
+    def category_labels(self):
+        labels = dict(self.Category.choices)
         if current_lang() == 'en':
-            return self.CATEGORY_EN.get(self.category, self.category)
-        return self.get_category_display()
+            return [self.CATEGORY_EN.get(code, labels.get(code, code)) for code in self.category_codes()]
+        return [labels.get(code, code) for code in self.category_codes()]
+
+    def category_label(self):
+        labels = self.category_labels()
+        return labels[0] if labels else ''
+
+    def writeup_sections(self):
+        text = (self.loc('writeup') or '').replace('\r\n', '\n').strip()
+        if not text:
+            return []
+        sections = []
+        heading = ''
+        buf = []
+
+        def flush():
+            body = '\n'.join(buf).strip()
+            paragraphs = [part.strip() for part in body.split('\n\n') if part.strip()]
+            if heading or paragraphs:
+                sections.append({'heading': heading, 'paragraphs': paragraphs})
+
+        for line in text.split('\n'):
+            if line.startswith('# '):
+                flush()
+                heading = line[2:].strip()
+                buf = []
+            else:
+                buf.append(line)
+        flush()
+        return sections
 
     def status_label(self):
         if current_lang() == 'en':
@@ -248,11 +303,30 @@ class Project(TranslatableMixin, models.Model):
     def placeholder_image(self):
         mapping = {
             'ai': 'snapfolio/img/portfolio/portfolio-1.webp',
-            'backend': 'snapfolio/img/portfolio/portfolio-2.webp',
+            'automation': 'snapfolio/img/portfolio/portfolio-2.webp',
             'data': 'snapfolio/img/portfolio/portfolio-7.webp',
             'web': 'snapfolio/img/portfolio/portfolio-10.webp',
+            'scrape': 'snapfolio/img/portfolio/portfolio-5.webp',
         }
         return mapping.get(self.category, 'snapfolio/img/portfolio/portfolio-5.webp')
+
+
+class ProjectImage(TranslatableMixin, models.Model):
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name='images', verbose_name='پروژه',
+    )
+    image = models.ImageField('تصویر', upload_to='projects/gallery/')
+    caption = models.CharField('شرح تصویر', max_length=180, blank=True)
+    caption_en = models.CharField('Caption (EN)', max_length=180, blank=True)
+    order = models.PositiveIntegerField('ترتیب', default=0)
+
+    class Meta:
+        ordering = ['order', 'id']
+        verbose_name = 'تصویر پروژه'
+        verbose_name_plural = 'تصاویر پروژه'
+
+    def __str__(self):
+        return self.caption or f'{self.project} — {self.order}'
 
 
 class Certificate(TranslatableMixin, models.Model):

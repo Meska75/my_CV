@@ -2,6 +2,62 @@
   overflow: hidden;
 }
 
+.section-title .work-filter {
+  grid-column: 2;
+  grid-row: 4;
+}
+
+.work-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1.15rem;
+}
+
+.work-filter button {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0.48rem 0.95rem;
+  border: 1px solid color-mix(in srgb, var(--default-color, #e4f2f4) 38%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-color, #163044) 88%, transparent);
+  color: var(--heading-color, #fff);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.35;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.work-filter button:hover {
+  border-color: var(--accent-color, #3eb89f);
+  background: color-mix(in srgb, var(--accent-color, #3eb89f) 18%, transparent);
+  color: var(--heading-color, #fff);
+}
+
+.work-filter button.is-on {
+  background: var(--accent-color, #3eb89f);
+  border-color: var(--accent-color, #3eb89f);
+  color: var(--contrast-color, #07141f);
+}
+
+.work-filter button:focus-visible {
+  outline: 2px solid var(--typed-color, #ffc14d);
+  outline-offset: 3px;
+}
+
+.card-stack__card.is-filtered-out,
+.card-stack__dot.is-filtered-out {
+  display: none;
+}
+
+.portfolio-filter-empty {
+  margin: 1.5rem 0 0;
+  text-align: center;
+  color: color-mix(in srgb, var(--default-color, #e4f2f4) 72%, transparent);
+}
+
 .card-stack {
   position: relative;
   width: min(100%, 72rem);
@@ -126,10 +182,17 @@
   color: #fff;
 }
 
+.card-stack__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.28rem;
+  margin-bottom: 0.45rem;
+}
+
 .card-stack__tag {
   flex-shrink: 0;
   align-self: flex-start;
-  margin-bottom: 0.45rem;
+  margin-bottom: 0;
   padding: 0.15rem 0.55rem;
   border-radius: 999px;
   background: color-mix(in srgb, var(--accent-color, #3eb89f), transparent 18%);
@@ -137,6 +200,12 @@
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.01em;
+}
+
+.card-stack__tag--confidential {
+  background: #e8c98a;
+  color: #07141f;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #e8c98a 45%, var(--accent-color, #3eb89f));
 }
 
 .card-stack__body h3 {
