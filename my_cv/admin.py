@@ -9,6 +9,7 @@ from .models import (
     Profile,
     Project,
     ProjectImage,
+    ServiceCard,
     Skill,
     SkillCategory,
     SocialLink,
@@ -142,3 +143,24 @@ class ContactMessageAdmin(ModelAdmin):
     list_filter = ('is_read', 'created_at')
     search_fields = ('name', 'email', 'subject', 'message')
     readonly_fields = ('name', 'email', 'subject', 'message', 'created_at')
+
+
+@admin.register(ServiceCard)
+class ServiceCardAdmin(ModelAdmin):
+    list_display = ('title', 'highlight', 'accent', 'is_visible', 'order')
+    list_editable = ('is_visible', 'order')
+    list_filter = ('is_visible', 'accent')
+    search_fields = ('title', 'title_en', 'body')
+    ordering = ('order',)
+    fieldsets = (
+        (None, {
+            'fields': (
+                'title', 'highlight', 'body', 'image', 'static_image',
+                'link', 'accent', 'is_visible', 'order',
+            ),
+        }),
+        ('English', {
+            'classes': ('collapse',),
+            'fields': ('title_en', 'highlight_en', 'body_en'),
+        }),
+    )

@@ -400,3 +400,55 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f'{self.name} — {self.subject}'
+
+
+class ServiceCard(TranslatableMixin, models.Model):
+    """Homepage service and process cards, edited from the admin."""
+
+    class Accent(models.TextChoices):
+        TEAL = 'accent', 'سبز'
+        LIGHT = 'light', 'روشن'
+        BRONZE = 'bronze', 'برنزی'
+
+    ACCENT_STYLE = {
+        'accent': '--info-accent:var(--accent-color);--info-hover-ink:var(--contrast-color);',
+        'light': '--info-accent:var(--default-color);--info-hover-ink:var(--contrast-color);',
+        'bronze': '--info-accent:var(--bronze-color);--info-hover-ink:var(--default-color);',
+    }
+
+    title = models.CharField('عنوان', max_length=160)
+    title_en = models.CharField('Title (EN)', max_length=160, blank=True)
+    highlight = models.CharField(
+        'ادامه‌ی عنوان', max_length=80, blank=True,
+        help_text='بخش دوم عنوان، مثلاً «و مقیاس‌پذیر». اگر خالی باشد فقط عنوان نشان داده می‌شود.',
+    )
+    highlight_en = models.CharField('Highlight (EN)', max_length=80, blank=True)
+    body = models.TextField('متن کارت')
+    body_en = models.TextField('Body (EN)', blank=True)
+    image = models.ImageField('تصویر', upload_to='services/', blank=True, null=True)
+    static_image = models.CharField(
+        'تصویر پیش‌فرض', max_length=180, blank=True,
+        help_text='مسیر داخل static، اگر تصویر بالا خالی باشد. مثلاً snapfolio/img/services/services-1.webp',
+    )
+    link = models.CharField('لینک', max_length=200, default='#contact', blank=True)
+    accent = models.CharField('رنگ کارت', max_length=20, choices=Accent.choices, default=Accent.TEAL)
+    is_visible = models.BooleanField('نمایش در سایت', default=True)
+    order = models.PositiveIntegerField('ترتیب', default=0)
+
+    class Meta:
+        ordering = ['order', 'id']
+        verbose_name = 'کارت خدمات'
+        verbose_name_plural = 'کارت‌های خدمات'
+
+    def __str__(self):
+        return self.title
+
+    def accent_style(self):
+        return self.ACCENT_STYLE.get(self.accent, self.ACCENT_STYLE['accent'])
+
+    def display_title(self):
+        title = self.loc('title')
+        highlight = self.loc('highlight')
+        if highlight:
+            return f'{title} {highlight}'.strip()
+        return title

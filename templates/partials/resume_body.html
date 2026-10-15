@@ -1,116 +1,140 @@
-{% load static cv_extras %}
-<div class="resume-intro">
-  <div class="resume-intro-photo">
-    {% if profile and profile.photo %}
-    <img src="{{ profile.photo.url }}" alt="{% loc profile 'full_name' %}">
-    {% else %}
-    <img src="{% static 'snapfolio/img/profile/profile-square-2.webp' %}" alt="">
-    {% endif %}
-  </div>
-  <div class="resume-intro-copy">
-    {% if profile %}
-    <p class="resume-kicker">{% loc profile 'headline' %}</p>
-    <h3>{% loc profile 'full_name' %}</h3>
-    {% endif %}
-    <p>{% if profile and profile.about %}{% loc profile 'about' %}{% else %}{% t 'home.about_bio' %}{% endif %}</p>
-    <ul class="resume-contact-row">
-      {% if profile and profile.location %}
-      <li><i class="bi bi-geo-alt"></i> {% loc profile 'location' %}</li>
+{% load static cv_extras custom_filters %}
+<div class="cv-paper">
+  <aside class="cv-side">
+    <div class="cv-photo">
+      {% if profile and profile.photo %}
+      <img src="{{ profile.photo.url }}" alt="{% loc profile 'full_name' %}">
+      {% else %}
+      <img src="{% static 'snapfolio/img/profile/profile-2.webp' %}" alt="{% if profile %}{% loc profile 'full_name' %}{% endif %}">
       {% endif %}
-      <li><i class="bi bi-envelope"></i> {% if profile and profile.email %}{{ profile.email }}{% else %}mohammad.eska34@gmail.com{% endif %}</li>
-      {% if profile and profile.show_phone and profile.phone %}
-      <li><i class="bi bi-phone"></i> {{ profile.phone }}</li>
+    </div>
+    <div class="cv-identity">
+      {% if profile %}
+      <h3>{% loc profile 'full_name' %}</h3>
+      <p>{% loc profile 'headline' %}</p>
       {% endif %}
-      <li><i class="bi bi-translate"></i> {% t 'about.languages_value' %}</li>
-      {% if profile and profile.available_for_work %}
-      <li><i class="bi bi-briefcase"></i> {% t 'resume.available' %}</li>
-      {% endif %}
-      {% for link in social_links %}
-      {% if 'mailto:' not in link.url %}
-      <li><i class="bi {{ link.bootstrap_icon }}"></i> <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.label }}</a></li>
-      {% endif %}
-      {% endfor %}
-    </ul>
-  </div>
-</div>
+    </div>
 
-{% if skill_categories %}
-<div class="resume-section resume-skills-block">
-  <h3><i class="bi bi-cpu me-2"></i>{% t 'resume.tech_skills' %}</h3>
-  <div class="resume-skill-groups">
-    {% for cat in skill_categories %}
-    <div class="resume-skill-group">
-      <h4>{% loc cat 'name' %}</h4>
-      <div class="resume-chips">
-        {% for skill in cat.skills.all %}
-        {% if skill.featured %}
-        <span>{% loc skill 'name' %}</span>
+    <section>
+      <h4>{% t 'resume.contact_info' %}</h4>
+      <ul class="cv-contact">
+        <li><span>✉</span> <span class="ltr">{% if profile and profile.email %}{{ profile.email }}{% else %}mohammad.eska34@gmail.com{% endif %}</span></li>
+        {% if profile and profile.show_phone and profile.phone %}
+        <li><span>☎</span> {{ profile.phone }}</li>
+        {% endif %}
+        {% if profile and profile.location %}
+        <li><span>⌖</span> {% loc profile 'location' %}</li>
+        {% endif %}
+        {% for link in social_links %}
+        {% if 'mailto:' not in link.url %}
+        <li><span>↗</span> <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.label }}</a></li>
         {% endif %}
         {% endfor %}
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-</div>
-{% endif %}
-
-<div class="row gy-4">
-  <div class="col-lg-7">
-    <div class="resume-section">
-      <h3><i class="bi bi-briefcase me-2"></i>{% t 'resume.experience' %}</h3>
-      {% for exp in experiences %}
-      <div class="resume-item">
-        <h4>{% loc exp 'role' %}</h4>
-        <h5>{% loc exp 'period' %}</h5>
-        <p class="company"><i class="bi bi-building"></i> {% loc exp 'organization' %}{% if exp.location %} — {% loc exp 'location' %}{% endif %}</p>
-        {% loc exp 'description' as exp_body %}
-        {% if exp_body %}
-        <ul>
-          {% for line in exp_body|nonempty_lines %}
-          <li>{{ line }}</li>
-          {% endfor %}
-        </ul>
+        {% if profile and profile.available_for_work %}
+        <li><span>●</span> {% t 'resume.available' %}</li>
         {% endif %}
-      </div>
-      {% endfor %}
+      </ul>
+    </section>
 
-      <div class="resume-item">
-        <h4>{% t 'resume.learn_title' %}</h4>
-        <h5>{% t 'resume.learn_period' %}</h5>
-        <p>{% t 'resume.learn_body' %}</p>
-      </div>
-    </div>
-  </div>
+    {% if top_skills %}
+    <section>
+      <h4>{% t 'resume.tech_skills' %}</h4>
+      <ul class="cv-bars">
+        {% for skill in top_skills %}
+        <li>
+          <div><span>{% loc skill 'name' %}</span><b>{% if IS_RTL %}{{ skill.percent|to_persian_numbers }}٪{% else %}{{ skill.percent }}%{% endif %}</b></div>
+          <i style="width: {{ skill.percent }}%"></i>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
 
-  <div class="col-lg-5">
-    <div class="resume-section">
-      <h3><i class="bi bi-journal-richtext me-2"></i>{% t 'resume.projects' %}</h3>
-      {% for project in projects %}
-      <div class="resume-item">
-        <h4><a href="{% url 'my_cv:project_detail' project.slug %}">{% loc project 'title' %}</a></h4>
-        <p class="company">{{ project.category_label }}{% if project.status != 'completed' %} · {{ project.status_label }}{% endif %}</p>
-        <p>{% loc project 'summary' %}</p>
-      </div>
-      {% empty %}
-      <p>{% t 'portfolio.empty' %}</p>
-      {% endfor %}
-    </div>
-  </div>
-</div>
+    <section>
+      <h4>{% t 'resume.languages' %}</h4>
+      <p class="cv-lang">{% t 'about.languages_value' %}</p>
+    </section>
+  </aside>
 
-<div class="resume-section">
-  <h3><i class="bi bi-award me-2"></i>{% t 'resume.certificates' %}</h3>
-  <div class="resume-cert-grid">
-    {% for cert in certificates %}
-    <div class="resume-item">
-      <h4>{% loc cert 'title' %}</h4>
-      {% if cert.year or cert.hours %}
-      <h5>{% loc cert 'year' %}{% if cert.hours %}{% if cert.year %} · {% endif %}{{ cert.hours }} {% t 'resume.hours' %}{% endif %}</h5>
-      {% endif %}
-      {% if cert.issuer or cert.instructor %}
-      <p class="company">{% loc cert 'issuer' %}{% if cert.instructor %} — {% loc cert 'instructor' %}{% endif %}</p>
-      {% endif %}
-    </div>
-    {% endfor %}
+  <div class="cv-main">
+    <section class="cv-block">
+      <h3>{% t 'resume.summary' %}</h3>
+      <p class="cv-about">{% if profile and profile.about %}{% loc profile 'about' %}{% else %}{% t 'home.about_bio' %}{% endif %}</p>
+      <p class="cv-focus"><strong>{% t 'resume.learn_title' %}</strong> · {% t 'resume.learn_period' %} — {% t 'resume.learn_body' %}</p>
+    </section>
+
+    <section class="cv-block">
+      <h3>{% t 'resume.experience' %}</h3>
+      <div class="cv-timeline">
+        {% for exp in experiences %}
+        <article>
+          <div class="cv-head">
+            <h4>{% loc exp 'role' %}</h4>
+            <span>{% loc exp 'period' %}</span>
+          </div>
+          <p class="cv-org">{% loc exp 'organization' %}{% if exp.location %} — {% loc exp 'location' %}{% endif %}</p>
+          {% loc exp 'description' as exp_body %}
+          {% if exp_body %}
+          <ul>
+            {% for line in exp_body|nonempty_lines %}
+            <li>{{ line }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="cv-block">
+      <h3>{% t 'resume.projects' %}</h3>
+      <div class="cv-cards">
+        {% for project in projects %}
+        <article>
+          <div class="cv-head">
+            <h4><a href="{% url 'my_cv:project_detail' project.slug %}">{% loc project 'title' %}</a></h4>
+            <span>{{ project.category_label }}</span>
+          </div>
+          <p>{% loc project 'summary' %}</p>
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    {% if skill_categories %}
+    <section class="cv-block">
+      <h3>{% t 'skills.title' %}</h3>
+      <div class="cv-groups">
+        {% for cat in skill_categories %}
+        <div>
+          <h4>{% loc cat 'name' %}</h4>
+          <p>
+            {% for skill in cat.skills.all %}{% if skill.featured %}{% loc skill 'name' %}{% if not forloop.last %} · {% endif %}{% endif %}{% endfor %}
+          </p>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    <section class="cv-block">
+      <h3>{% t 'resume.certificates' %}</h3>
+      <div class="cv-cards">
+        {% for cert in certificates %}
+        <article>
+          <div class="cv-head">
+            <h4>{% loc cert 'title' %}</h4>
+            {% if cert.year %}<span>{% loc cert 'year' %}</span>{% endif %}
+          </div>
+          {% if cert.issuer or cert.instructor or cert.hours %}
+          <p class="cv-org">
+            {% loc cert 'issuer' %}{% if cert.instructor %}{% if cert.issuer %} — {% endif %}{% loc cert 'instructor' %}{% endif %}
+            {% if cert.hours %}{% if cert.issuer or cert.instructor %} · {% endif %}{{ cert.hours }} {% t 'resume.hours' %}{% endif %}
+          </p>
+          {% endif %}
+        </article>
+        {% endfor %}
+      </div>
+    </section>
   </div>
 </div>

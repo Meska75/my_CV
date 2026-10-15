@@ -402,102 +402,28 @@
     </div>
     <div class="container" data-aos="fade-up" data-aos-delay="100">
       <div class="row justify-content-center g-4 info-card-grid">
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-          <a href="#contact" class="info-card" style="--info-accent:var(--accent-color);--info-hover-ink:var(--contrast-color);">
+        {% for card in service_cards %}
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{% cycle '100' '200' '300' %}">
+          <a href="{{ card.link|default:'#contact' }}" class="info-card" style="{{ card.accent_style }}">
             <div class="info-card__inner">
               <div class="info-card__media">
-                <img src="{% static 'snapfolio/img/services/services-1.webp' %}" alt="">
+                {% if card.image %}
+                <img src="{{ card.image.url }}" alt="{% loc card 'title' %}">
+                {% elif card.static_image %}
+                <img src="{% static card.static_image %}" alt="{% loc card 'title' %}">
+                {% endif %}
               </div>
               <div class="info-card__body">
                 <h3 class="info-card__title">
-                  <span class="info-card__title-text">{% t 'services.s1_title' %} {% t 'services.s1_span' %}</span>
+                  <span class="info-card__title-text">{{ card.display_title }}</span>
                   <span class="info-card__title-fill" aria-hidden="true"></span>
                 </h3>
-                <p>{% t 'services.s1_body' %}</p>
+                <p>{% loc card 'body' %}</p>
               </div>
             </div>
           </a>
         </div>
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-          <a href="#contact" class="info-card" style="--info-accent:var(--default-color);--info-hover-ink:var(--contrast-color);">
-            <div class="info-card__inner">
-              <div class="info-card__media">
-                <img src="{% static 'snapfolio/img/services/services-2.webp' %}" alt="">
-              </div>
-              <div class="info-card__body">
-                <h3 class="info-card__title">
-                  <span class="info-card__title-text">{% t 'services.s2_title' %} {% t 'services.s2_span' %}</span>
-                  <span class="info-card__title-fill" aria-hidden="true"></span>
-                </h3>
-                <p>{% t 'services.s2_body' %}</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-          <a href="#contact" class="info-card" style="--info-accent:var(--bronze-color);--info-hover-ink:var(--default-color);">
-            <div class="info-card__inner">
-              <div class="info-card__media">
-                <img src="{% static 'snapfolio/img/services/services-3.webp' %}" alt="">
-              </div>
-              <div class="info-card__body">
-                <h3 class="info-card__title">
-                  <span class="info-card__title-text">{% t 'services.s3_title' %} {% t 'services.s3_span' %}</span>
-                  <span class="info-card__title-fill" aria-hidden="true"></span>
-                </h3>
-                <p>{% t 'services.s3_body' %}</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-          <a href="#contact" class="info-card" style="--info-accent:var(--accent-color);--info-hover-ink:var(--contrast-color);">
-            <div class="info-card__inner">
-              <div class="info-card__media">
-                <img src="{% static 'snapfolio/img/portfolio/portfolio-1.webp' %}" alt="">
-              </div>
-              <div class="info-card__body">
-                <h3 class="info-card__title">
-                  <span class="info-card__title-text">{% t 'home.p1_name' %}</span>
-                  <span class="info-card__title-fill" aria-hidden="true"></span>
-                </h3>
-                <p>{% t 'home.p1_body' %}</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-          <a href="#contact" class="info-card" style="--info-accent:var(--default-color);--info-hover-ink:var(--contrast-color);">
-            <div class="info-card__inner">
-              <div class="info-card__media">
-                <img src="{% static 'snapfolio/img/portfolio/portfolio-2.webp' %}" alt="">
-              </div>
-              <div class="info-card__body">
-                <h3 class="info-card__title">
-                  <span class="info-card__title-text">{% t 'home.p2_name' %}</span>
-                  <span class="info-card__title-fill" aria-hidden="true"></span>
-                </h3>
-                <p>{% t 'home.p2_body' %}</p>
-              </div>
-            </div>
-          </a>
-        </div>
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-          <a href="#contact" class="info-card" style="--info-accent:var(--bronze-color);--info-hover-ink:var(--default-color);">
-            <div class="info-card__inner">
-              <div class="info-card__media">
-                <img src="{% static 'snapfolio/img/portfolio/portfolio-5.webp' %}" alt="">
-              </div>
-              <div class="info-card__body">
-                <h3 class="info-card__title">
-                  <span class="info-card__title-text">{% t 'home.p3_name' %}</span>
-                  <span class="info-card__title-fill" aria-hidden="true"></span>
-                </h3>
-                <p>{% t 'home.p3_body' %}</p>
-              </div>
-            </div>
-          </a>
-        </div>
+        {% endfor %}
       </div>
     </div>
   </section>

@@ -1,4 +1,9 @@
+import base64
+import mimetypes
+from pathlib import Path
+
 from django.conf import settings
+from django.contrib.staticfiles import finders
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
@@ -12,6 +17,7 @@ from .models import (
     Project,
     Skill,
     SkillCategory,
+    ServiceCard,
     SocialLink,
 )
 
@@ -26,6 +32,7 @@ def _shared_context(request, form=None):
         'experiences': Experience.objects.all(),
         'certificates': Certificate.objects.all(),
         'social_links': SocialLink.objects.all(),
+        'service_cards': ServiceCard.objects.filter(is_visible=True),
         'contact_form': form or ContactForm(),
         'years_experience': 4,
         # Public portfolio is smaller; total delivered work is shown as 20+.
@@ -65,10 +72,34 @@ def resume_view(request):
     return render(request, 'website/resume.html', _shared_context(request))
 
 
+def _photo_data_uri(profile):
+    """Embed the admin photo, or the public site portrait when none is uploaded."""
+    raw = b''
+    name = ''
+    if profile and profile.photo:
+        try:
+            with profile.photo.open('rb') as handle:
+                raw = handle.read()
+            name = profile.photo.name
+        except Exception:
+            raw = b''
+    if not raw:
+        found = finders.find('snapfolio/img/profile/profile-2.webp')
+        if found:
+            name = found
+            raw = Path(found).read_bytes()
+    if not raw:
+        return ''
+    mime = mimetypes.guess_type(name)[0] or 'image/webp'
+    return f'data:{mime};base64,{base64.b64encode(raw).decode("ascii")}'
+
+
 def resume_download_view(request):
     """Two-page A4 resume, rendered from the current admin data."""
     preview = request.GET.get('view') == '1'
-    response = render(request, 'website/resume_a4.html', _shared_context(request))
+    context = _shared_context(request)
+    context['photo_data_uri'] = _photo_data_uri(context['profile'])
+    response = render(request, 'website/resume_a4.html', context)
     if not preview:
         response['Content-Disposition'] = 'attachment; filename="Mohammad-Eskandarloo-CV.html"'
     return response
