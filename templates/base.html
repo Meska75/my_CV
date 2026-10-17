@@ -4,8 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="{% static 'snapfolio/img/favicon.png' %}" rel="icon">
-  <link href="{% static 'snapfolio/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+  <link href="{% static 'img/favicon.svg' %}?v=2" rel="icon" type="image/svg+xml">
 
   <title>{% block title %}{% if nav_profile %}{% loc nav_profile 'full_name' %} — {% endif %}{% t 'meta.title_suffix' %}{% endblock %}</title>
   <meta name="description" content="{% block description %}{% t 'meta.description' %}{% endblock %}">
@@ -32,7 +31,7 @@
   <link href="{% static 'snapfolio/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
   <link href="{% static 'snapfolio/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
   <link href="{% static 'snapfolio/css/main.css' %}?v=palette" rel="stylesheet">
-  <link href="{% static 'snapfolio/css/overrides.css' %}?v=svc-justify" rel="stylesheet">
+  <link href="{% static 'snapfolio/css/overrides.css' %}?v=mobile-fit" rel="stylesheet">
 
   {% block head_extra %}{% endblock %}
 
@@ -71,7 +70,7 @@
   <script src="{% static 'snapfolio/vendor/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
   <script src="{% static 'snapfolio/vendor/glightbox/js/glightbox.min.js' %}"></script>
   <script src="{% static 'snapfolio/vendor/swiper/swiper-bundle.min.js' %}"></script>
-  <script src="{% static 'snapfolio/js/main.js' %}"></script>
+  <script src="{% static 'snapfolio/js/main.js' %}?v=skills-now"></script>
   {% block body_extra %}{% endblock %}
 </body>
 </html>

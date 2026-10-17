@@ -111,21 +111,26 @@
   new PureCounter();
 
   /**
-   * Animate the skills items on reveal
+   * Fill each skill bar as soon as that bar enters the viewport.
    */
-  let skillsAnimation = document.querySelectorAll('.skills-animation');
-  skillsAnimation.forEach((item) => {
-    new Waypoint({
-      element: item,
-      offset: '80%',
-      handler: function(direction) {
-        let progress = item.querySelectorAll('.progress .progress-bar');
-        progress.forEach(el => {
-          el.style.width = el.getAttribute('aria-valuenow') + '%';
-        });
-      }
+  const skillItems = document.querySelectorAll('.skills-animation .skill-item');
+  const fillSkill = (item) => {
+    item.querySelectorAll('.progress .progress-bar').forEach((el) => {
+      el.style.width = el.getAttribute('aria-valuenow') + '%';
     });
-  });
+  };
+  if (skillItems.length && 'IntersectionObserver' in window) {
+    const skillObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        fillSkill(entry.target);
+        skillObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.2 });
+    skillItems.forEach((item) => skillObserver.observe(item));
+  } else {
+    skillItems.forEach(fillSkill);
+  }
 
   /**
    * Initiate glightbox

@@ -428,6 +428,11 @@ body {
   margin-bottom: 1.15rem;
 }
 
+.skills .skill-item .progress .progress-bar {
+  transition-duration: 0.55s;
+  transition-timing-function: ease-out;
+}
+
 .stats .stats-item .stat-figure {
   display: inline-flex;
   align-items: center;
@@ -886,11 +891,15 @@ body {
 
 .hp-field {
   position: absolute;
-  left: -10000px;
-  top: auto;
   width: 1px;
   height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 .project-fallback {
