@@ -1,0 +1,6 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Matplotlib">
+  <path d="M8 50h48" stroke="#11557C" stroke-width="3" fill="none"/>
+  <path d="M12 50V14" stroke="#11557C" stroke-width="3" fill="none"/>
+  <path d="M12 42c8-16 10-6 16-14s8 4 12-8 8-10 16-16" stroke="#1F77B4" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M12 46c10-4 12 2 18-2s8-8 14-6 10 2 16-4" stroke="#FF7F0E" stroke-width="4" fill="none" stroke-linecap="round"/>
+</svg>

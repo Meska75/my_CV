@@ -1,0 +1,186 @@
+{
+  "name": "نبض جست‌وجو — بریف رقابتی کلینیک آریا",
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "meta": { "templateCredsSetupCompleted": false },
+  "nodes": [
+    {
+      "id": "note-input",
+      "name": "یادداشت ورودی",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [180, 40],
+      "parameters": {
+        "content": "## ورودی قابل ویرایش تیم بازاریابی\nکلمات برند، خدمات و نام رقبا در شیت است. هر دوشنبه ساعت ۸ خوانده می‌شود. این نسخه به‌جای لاگ خام رتبه، یک بریف تصمیم برای مدیر می‌سازد.",
+        "height": 170,
+        "width": 460,
+        "color": 4
+      }
+    },
+    {
+      "id": "note-serp",
+      "name": "یادداشت serp",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [860, 40],
+      "parameters": {
+        "content": "## جمع‌آوری نتایج\nBright Data صفحه نتایج گوگل را بدون محدودیت می‌خواند. رتبه، دامنه و اسنیپت نرمال می‌شود.",
+        "height": 150,
+        "width": 420,
+        "color": 5
+      }
+    },
+    {
+      "id": "note-decision",
+      "name": "یادداشت تصمیم",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1540, 40],
+      "parameters": {
+        "content": "## خروجی بیزینسی\nسهم صدا، افت رتبه و از دست رفتن اسنیپت به سه اقدام مشخص تبدیل می‌شود و دوشنبه برای مدیر بازاریابی ایمیل می‌شود.",
+        "height": 160,
+        "width": 460,
+        "color": 6
+      }
+    },
+    {
+      "id": "schedule",
+      "name": "هر دوشنبه ساعت ۸",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300],
+      "parameters": { "rule": { "interval": [{ "field": "weeks", "triggerAtDay": [1], "triggerAtHour": 8 }] } }
+    },
+    {
+      "id": "sheet-keywords",
+      "name": "شیت کلمات و رقبا",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [500, 300],
+      "notes": "ستون‌ها: keyword, type (brand/service/competitor), owner",
+      "notesInFlow": true,
+      "parameters": {
+        "documentId": { "__rl": true, "mode": "id", "value": "ARIA_KEYWORDS" },
+        "sheetName": { "__rl": true, "mode": "name", "value": "keywords" },
+        "options": {}
+      },
+      "credentials": { "googleSheetsOAuth2Api": { "id": "sheets-demo", "name": "Google Sheets" } }
+    },
+    {
+      "id": "serp",
+      "name": "Bright Data — نتایج گوگل",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [780, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.brightdata.com/request",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"zone\": \"serp_api\",\n  \"format\": \"raw\",\n  \"country\": \"ir\",\n  \"url\": \"https://www.google.com/search?q={{ encodeURIComponent($json.keyword) }}&hl=fa&gl=ir&num=10\"\n}",
+        "options": {}
+      },
+      "credentials": { "httpHeaderAuth": { "id": "bd-demo", "name": "Bright Data" } }
+    },
+    {
+      "id": "normalize",
+      "name": "نرمال رتبه و سهم صدا",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1060, 300],
+      "parameters": {
+        "jsCode": "const brand = 'aria-clinic.ir';\nconst rows = $input.all().map(i => i.json);\nconst top = rows.flatMap(r => (r.organic || []).slice(0, 10));\nconst owned = top.filter(r => String(r.link || '').includes(brand)).length;\nconst share = top.length ? Math.round((owned / top.length) * 100) : 0;\nreturn [{\n  json: {\n    keyword: rows[0]?.keyword || 'کلینیک قلب تهران',\n    our_rank: (rows[0]?.organic || []).findIndex(r => String(r.link || '').includes(brand)) + 1,\n    share_of_voice: share,\n    snippet_owner: rows[0]?.organic?.[0]?.domain || 'رقیب',\n    sample: 'رتبه برند در کلمه هدف و سهم نتایج ده تای اول'\n  }\n}];"
+      }
+    },
+    {
+      "id": "sheet-history",
+      "name": "سابقه هفته قبل",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1320, 300],
+      "parameters": {
+        "operation": "read",
+        "documentId": { "__rl": true, "mode": "id", "value": "ARIA_RANK_LOG" },
+        "sheetName": { "__rl": true, "mode": "name", "value": "history" },
+        "options": {}
+      },
+      "credentials": { "googleSheetsOAuth2Api": { "id": "sheets-demo", "name": "Google Sheets" } }
+    },
+    {
+      "id": "rules",
+      "name": "قواعد تصمیم",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1580, 300],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "r1", "name": "rule_drop", "value": "اگر رتبه بیش از ۳ پله بدتر شد: به‌روزرسانی صفحه خدمت همان کلمه", "type": "string" },
+            { "id": "r2", "name": "rule_snippet", "value": "اگر اسنیپت دست رقیب است: یک FAQ کوتاه برای همان پرسش", "type": "string" },
+            { "id": "r3", "name": "rule_local", "value": "اگر برند در بسته محلی نیست: تکمیل گوگل بیزینس و نظرات", "type": "string" }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "ai-brief",
+      "name": "بریف مدیر بازاریابی",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [1840, 300],
+      "parameters": {
+        "modelId": { "__rl": true, "value": "gpt-4o-mini", "mode": "list", "cachedResultName": "gpt-4o-mini" },
+        "messages": {
+          "values": [
+            { "role": "system", "content": "برای مدیر بازاریابی کلینیک آریا یک بریف فارسی کوتاه بنویس: چه چیزی عوض شده، اثرش روی جذب بیمار چیست، و دقیقاً سه اقدام این هفته. از قواعد تصمیم استفاده کن. لحن اجرایی، بدون اصطلاح اضافه." },
+            { "content": "={{ JSON.stringify($json) }}" }
+          ]
+        },
+        "simplifyOutput": true
+      },
+      "credentials": { "openAiApi": { "id": "openai-demo", "name": "OpenAI" } }
+    },
+    {
+      "id": "sheet-save",
+      "name": "ذخیره گزارش هفته",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2100, 300],
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "mode": "id", "value": "ARIA_RANK_LOG" },
+        "sheetName": { "__rl": true, "mode": "name", "value": "weekly_brief" },
+        "options": {}
+      },
+      "credentials": { "googleSheetsOAuth2Api": { "id": "sheets-demo", "name": "Google Sheets" } }
+    },
+    {
+      "id": "send-brief",
+      "name": "ایمیل بریف دوشنبه",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [2360, 300],
+      "parameters": {
+        "sendTo": "marketing@aria-clinic.example",
+        "subject": "بریف دوشنبه — نبض جست‌وجوی کلینیک آریا",
+        "message": "={{ $json.message?.content || $json.text || $json.output }}",
+        "options": {}
+      },
+      "credentials": { "gmailOAuth2": { "id": "gmail-demo", "name": "Gmail بازاریابی" } }
+    }
+  ],
+  "connections": {
+    "هر دوشنبه ساعت ۸": { "main": [[{ "node": "شیت کلمات و رقبا", "type": "main", "index": 0 }]] },
+    "شیت کلمات و رقبا": { "main": [[{ "node": "Bright Data — نتایج گوگل", "type": "main", "index": 0 }]] },
+    "Bright Data — نتایج گوگل": { "main": [[{ "node": "نرمال رتبه و سهم صدا", "type": "main", "index": 0 }]] },
+    "نرمال رتبه و سهم صدا": { "main": [[{ "node": "سابقه هفته قبل", "type": "main", "index": 0 }]] },
+    "سابقه هفته قبل": { "main": [[{ "node": "قواعد تصمیم", "type": "main", "index": 0 }]] },
+    "قواعد تصمیم": { "main": [[{ "node": "بریف مدیر بازاریابی", "type": "main", "index": 0 }]] },
+    "بریف مدیر بازاریابی": { "main": [[{ "node": "ذخیره گزارش هفته", "type": "main", "index": 0 }]] },
+    "ذخیره گزارش هفته": { "main": [[{ "node": "ایمیل بریف دوشنبه", "type": "main", "index": 0 }]] }
+  },
+  "pinData": {},
+  "tags": []
+}

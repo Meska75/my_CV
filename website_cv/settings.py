@@ -12,10 +12,14 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
-from decouple import Csv, config
+from decouple import AutoConfig, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Read .env from the project root even when the host starts the app
+# from another working directory (Passenger, systemd, a second site).
+config = AutoConfig(search_path=BASE_DIR)
 
 
 # Quick-start development settings - unsuitable for production
@@ -29,6 +33,16 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
+
+# Public origins of THIS site only, including the scheme.
+# Example: https://cv.example.com,https://www.cv.example.com
+CSRF_TRUSTED_ORIGINS = [
+    origin for origin in config('CSRF_TRUSTED_ORIGINS', default='', cast=Csv()) if origin
+]
+
+# Set True only when this domain is proxied by Cloudflare. Then the Iran/not-Iran
+# check uses CF-IPCountry, which the visitor cannot forge.
+TRUST_CLOUDFLARE = config('TRUST_CLOUDFLARE', default=False, cast=bool)
 
 
 # Application definition
@@ -49,7 +63,12 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'my_cv.middleware.SecurityHeadersMiddleware',
+    # Serves collected static files for this app, so the other site's
+    # web-server static directory is never reused.
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'my_cv.middleware.CookieLanguageMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -75,8 +94,10 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
+                'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'my_cv.context_processors.language',
             ],
         },
     },
@@ -86,14 +107,29 @@ WSGI_APPLICATION = 'website_cv.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# Local .env uses sqlite. On the server set DB_ENGINE=postgresql; Postgres
+# runs on that same host (127.0.0.1), not on a separate database service.
+DB_ENGINE = config('DB_ENGINE', default='sqlite')
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DB_ENGINE == 'postgresql':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME'),
+            'USER': config('DB_USER'),
+            'PASSWORD': config('DB_PASSWORD'),
+            'HOST': config('DB_HOST', default='127.0.0.1'),
+            'PORT': config('DB_PORT', default='5432'),
+            'CONN_MAX_AGE': config('DB_CONN_MAX_AGE', default=60, cast=int),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -118,7 +154,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'fa-ir'
+LANGUAGE_CODE = 'fa'
+
+LANGUAGES = [
+    ('fa', 'فارسی'),
+    ('en', 'English'),
+]
 
 TIME_ZONE = 'Asia/Tehran'
 
@@ -141,6 +182,71 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}
+
+# Cookie names are unique to this project. If the other site on the same
+# host is also Django, the two will not overwrite each other's login session
+# even when a reverse proxy accidentally shares a hostname.
+SESSION_COOKIE_NAME = config('SESSION_COOKIE_NAME', default='cv_sessionid')
+CSRF_COOKIE_NAME = config('CSRF_COOKIE_NAME', default='cv_csrftoken')
+LANGUAGE_COOKIE_NAME = config('LANGUAGE_COOKIE_NAME', default='cv_language')
+
+# Leave empty when this site has its own domain or subdomain (the normal case).
+# Set only if the host forces a path prefix such as /cv.
+_script_name = config('FORCE_SCRIPT_NAME', default='').strip()
+if _script_name:
+    FORCE_SCRIPT_NAME = _script_name if _script_name.startswith('/') else f'/{_script_name}'
+    SESSION_COOKIE_PATH = FORCE_SCRIPT_NAME
+    CSRF_COOKIE_PATH = FORCE_SCRIPT_NAME
+    LANGUAGE_COOKIE_PATH = FORCE_SCRIPT_NAME
+
+if not DEBUG:
+    STORAGES['staticfiles']['BACKEND'] = 'whitenoise.storage.CompressedStaticFilesStorage'
+    # The TLS terminator (nginx, Apache, cPanel) talks HTTP to this app and
+    # tells us the visitor's scheme with this header.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    CSRF_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_REFERRER_POLICY = 'same-origin'
+    X_FRAME_OPTIONS = 'DENY'
+    # Keep this at 0 until HTTPS is confirmed. A long value is cached by
+    # browsers and is hard to undo. It applies only to this site's hostname.
+    SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', default=0, cast=int)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {'class': 'logging.StreamHandler'},
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -169,6 +275,23 @@ AXES_FAILURE_LIMIT = config('AXES_FAILURE_LIMIT', default=5, cast=int)
 AXES_COOLOFF_TIME = 1  # hours before a locked-out client may try again
 AXES_RESET_ON_SUCCESS = True
 AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]
+AXES_CLIENT_IP_CALLABLE = 'my_cv.geo.client_ip'
+
+# Admin session ends after 8 hours. The language cookie is separate.
+SESSION_COOKIE_AGE = 60 * 60 * 8
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+
+# Contact-form rate limit and axes lockouts share this cache.
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'task5-cv',
+    }
+}
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 8 * 1024 * 1024
+FILE_UPLOAD_MAX_MEMORY_SIZE = 8 * 1024 * 1024
 
 
 # Email — used for admin password recovery. Credentials live in .env.

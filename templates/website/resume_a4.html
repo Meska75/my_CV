@@ -1,0 +1,519 @@
+{% load cv_extras custom_filters %}
+<!DOCTYPE html>
+<html lang="{{ HTML_LANG }}" dir="{{ HTML_DIR }}">
+<head>
+  <meta charset="utf-8">
+  <title>{% if profile %}{% loc profile 'full_name' %} — {% endif %}{% t 'resume.title' %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #0f766e;
+      --accent-soft: #ccfbf1;
+      --side-bg: #134e4a;
+      --side-text: #f0fdfa;
+      --side-muted: #99f6e4;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --page-bg: #eef2f3;
+      --paper: #ffffff;
+    }
+    :root[data-theme="indigo"] {
+      --accent: #4338ca;
+      --accent-soft: #e0e7ff;
+      --side-bg: #1e1b4b;
+      --side-text: #eef2ff;
+      --side-muted: #a5b4fc;
+    }
+    :root[data-theme="rose"] {
+      --accent: #be123c;
+      --accent-soft: #ffe4e6;
+      --side-bg: #4c0519;
+      --side-text: #fff1f2;
+      --side-muted: #fda4af;
+    }
+    :root[data-theme="slate"] {
+      --accent: #334155;
+      --accent-soft: #e2e8f0;
+      --side-bg: #0f172a;
+      --side-text: #f8fafc;
+      --side-muted: #94a3b8;
+    }
+    @page { size: A4; margin: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: Vazirmatn, Tahoma, "Segoe UI", sans-serif;
+      background: var(--page-bg);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.55;
+      padding: 16px 12px 40px;
+    }
+    a { color: inherit; text-decoration: none; }
+    .toolbar {
+      max-width: 210mm;
+      margin: 0 auto 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .toolbar p {
+      flex: 1;
+      min-width: 180px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .toolbar button {
+      font-family: inherit;
+      font-size: 13px;
+      padding: 8px 16px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      line-height: 1.6;
+    }
+    .toolbar button.ghost { background: var(--side-bg); }
+    .sheet {
+      width: 210mm;
+      height: 297mm;
+      margin: 0 auto 16px;
+      background: var(--paper);
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(15, 23, 42, .12);
+    }
+    .resume {
+      height: 100%;
+      display: grid;
+      grid-template-columns: 68mm 1fr;
+    }
+    .sidebar {
+      background: var(--side-bg);
+      color: var(--side-text);
+      padding: 8mm 5.5mm 7mm;
+      height: 100%;
+    }
+    .photo-wrap {
+      width: 34mm;
+      height: 34mm;
+      margin: 0 auto 3.5mm;
+      border-radius: 50%;
+      padding: 1.2mm;
+      background: linear-gradient(135deg, var(--side-muted), transparent 70%);
+      position: relative;
+    }
+    .photo-wrap img,
+    .photo-fallback {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      border: 1.1mm solid var(--side-bg);
+      background: var(--accent);
+    }
+    .photo-fallback {
+      position: absolute;
+      inset: 1.2mm;
+      width: auto;
+      height: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18pt;
+      font-weight: 800;
+      color: #fff;
+    }
+    .photo-fallback[hidden], .photo-wrap img[hidden] { display: none; }
+    .identity { text-align: center; margin-bottom: 4.5mm; }
+    .identity h1 { font-size: 14.5pt; font-weight: 800; line-height: 1.35; }
+    .identity .title { color: var(--side-muted); font-size: 8.4pt; margin-top: 1mm; line-height: 1.55; }
+    .side-section { margin-bottom: 4.2mm; }
+    .side-section h2 {
+      font-size: 9pt;
+      font-weight: 700;
+      color: var(--side-muted);
+      padding-bottom: 1.2mm;
+      margin-bottom: 2mm;
+      border-bottom: 1px solid rgba(255, 255, 255, .18);
+    }
+    .contact { list-style: none; }
+    .contact li {
+      display: flex;
+      align-items: flex-start;
+      gap: 2mm;
+      font-size: 8pt;
+      line-height: 1.45;
+      margin-bottom: 1.4mm;
+      word-break: break-word;
+    }
+    .contact .ico {
+      flex: none;
+      width: 4.6mm;
+      height: 4.6mm;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .12);
+      font-size: 8px;
+    }
+    .skills { list-style: none; }
+    .skills li { margin-bottom: 2.2mm; }
+    .skill-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 2mm;
+      font-size: 8pt;
+      line-height: 1.35;
+      margin-bottom: 0.7mm;
+    }
+    .skill-head b { font-weight: 500; color: var(--side-muted); }
+    .bar {
+      height: 1.5mm;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, .15);
+      overflow: hidden;
+    }
+    .bar i {
+      display: block;
+      height: 100%;
+      border-radius: 99px;
+      background: var(--side-muted);
+    }
+    .plain { list-style: none; }
+    .plain li {
+      display: flex;
+      justify-content: space-between;
+      font-size: 8.4pt;
+      margin-bottom: 1mm;
+    }
+    .content {
+      padding: 8mm 7mm 8mm;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .block { margin-bottom: 4mm; }
+    .block-title {
+      display: flex;
+      align-items: center;
+      gap: 3mm;
+      font-size: 11.5pt;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 2.4mm;
+    }
+    .block-title::after {
+      content: "";
+      flex: 1;
+      height: 2px;
+      background: var(--accent-soft);
+      border-radius: 2px;
+    }
+    .about { font-size: 8.7pt; line-height: 1.7; text-align: justify; }
+    .focus {
+      margin-top: 2mm;
+      padding: 1.6mm 2.4mm;
+      background: var(--accent-soft);
+      border-inline-start: 2px solid var(--accent);
+      font-size: 8pt;
+      line-height: 1.55;
+    }
+    .timeline { position: relative; padding-inline-start: 4.5mm; }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      inset-block: 2mm 2mm;
+      inset-inline-start: 1.1mm;
+      width: 1.5px;
+      background: var(--accent-soft);
+    }
+    .item { position: relative; margin-bottom: 2.6mm; }
+    .item:last-child { margin-bottom: 0; }
+    .item::before {
+      content: "";
+      position: absolute;
+      inset-inline-start: -4.15mm;
+      top: 1.5mm;
+      width: 2.3mm;
+      height: 2.3mm;
+      border-radius: 50%;
+      background: var(--paper);
+      border: 2px solid var(--accent);
+    }
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1.5mm 2mm;
+      flex-wrap: wrap;
+    }
+    .item h3 { font-size: 9.3pt; font-weight: 700; line-height: 1.4; min-width: 0; }
+    .date, .tag {
+      flex: none;
+      font-size: 7.4pt;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 0 2mm;
+      border-radius: 99px;
+      line-height: 1.7;
+    }
+    .cols .item { min-width: 0; }
+    .org { font-size: 8pt; color: var(--muted); line-height: 1.4; }
+    .desc { font-size: 8.2pt; color: #374151; line-height: 1.5; }
+    .item ul { list-style: none; margin-top: 0.6mm; }
+    .item ul li {
+      position: relative;
+      padding-inline-start: 3.2mm;
+      font-size: 8pt;
+      line-height: 1.45;
+      color: #374151;
+    }
+    .item ul li::before {
+      content: "";
+      position: absolute;
+      inset-inline-start: 0;
+      top: 1.7mm;
+      width: 1.4mm;
+      height: 1.4mm;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .sheet-2 .content { padding-bottom: 10mm; }
+    .mini {
+      display: flex;
+      align-items: center;
+      gap: 3mm;
+      margin-bottom: 4mm;
+      padding-bottom: 2.5mm;
+      border-bottom: 2px solid var(--accent);
+    }
+    .mini img, .mini .avatar {
+      width: 12mm;
+      height: 12mm;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+    }
+    .mini strong { display: block; font-size: 11pt; line-height: 1.3; }
+    .mini span { color: var(--accent); font-size: 8.2pt; }
+    .mini .grow { flex: 1; }
+    .cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.4mm 5mm;
+    }
+    .cols .item { margin: 0; padding-inline-start: 0; }
+    .cols .item::before { display: none; }
+    .foot {
+      margin-top: auto;
+      padding-top: 2mm;
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 8pt;
+    }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .no-print { display: none !important; }
+      .sheet {
+        margin: 0;
+        box-shadow: none;
+        page-break-after: always;
+        break-after: page;
+      }
+      .sheet:last-child { page-break-after: auto; break-after: auto; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar no-print">
+    <p>{% t 'resume.a4_hint' %}</p>
+    <button id="printBtn" type="button">{% t 'resume.a4_print' %}</button>
+    <button id="themeBtn" class="ghost" type="button">{% t 'resume.theme' %}</button>
+  </div>
+
+  <section class="sheet">
+    <div class="resume">
+      <aside class="sidebar">
+        <div class="photo-wrap">
+          {% if photo_data_uri %}
+          <img id="photo" src="{{ photo_data_uri }}" alt="{% if profile %}{% loc profile 'full_name' %}{% endif %}">
+          {% endif %}
+          <span class="photo-fallback" {% if photo_data_uri %}hidden{% endif %}>{% if profile %}{{ profile.first_name|slice:":1" }}{% endif %}</span>
+        </div>
+        <div class="identity">
+          <h1>{% if profile %}{% loc profile 'full_name' %}{% endif %}</h1>
+          <p class="title">{% if profile %}{% loc profile 'headline' %}{% endif %}</p>
+        </div>
+
+        <section class="side-section">
+          <h2>{% t 'resume.contact_info' %}</h2>
+          <ul class="contact">
+            <li><span class="ico">✉</span><span dir="ltr">{% if profile and profile.email %}{{ profile.email }}{% else %}mohammad.eska34@gmail.com{% endif %}</span></li>
+            {% if profile and profile.show_phone and profile.phone %}
+            <li><span class="ico">☎</span><span dir="ltr">{{ profile.phone }}</span></li>
+            {% endif %}
+            <li><span class="ico">🌐</span><span dir="ltr">{{ request.get_host }}</span></li>
+            {% if profile and profile.location %}
+            <li><span class="ico">⌖</span><span>{% loc profile 'location' %}</span></li>
+            {% endif %}
+            {% for link in social_links %}
+            {% if 'mailto:' not in link.url %}
+            <li><span class="ico">↗</span><a href="{{ link.url }}">{{ link.label }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if profile and profile.available_for_work %}
+            <li><span class="ico">●</span><span>{% t 'resume.available' %}</span></li>
+            {% endif %}
+          </ul>
+        </section>
+
+        <section class="side-section">
+          <h2>{% t 'resume.tech_skills' %}</h2>
+          <ul class="skills">
+            {% for skill in top_skills %}
+            <li>
+              <div class="skill-head">
+                <span>{% loc skill 'name' %}</span>
+                <b>{% if IS_RTL %}{{ skill.percent|to_persian_numbers }}٪{% else %}{{ skill.percent }}%{% endif %}</b>
+              </div>
+              <div class="bar"><i style="width: {{ skill.percent }}%"></i></div>
+            </li>
+            {% endfor %}
+          </ul>
+        </section>
+
+        <section class="side-section">
+          <h2>{% t 'resume.languages' %}</h2>
+          <ul class="plain">
+            <li><span>{% t 'about.languages_value' %}</span></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="content">
+        <section class="block">
+          <h2 class="block-title">{% t 'resume.summary' %}</h2>
+          <p class="about">{% if profile and profile.about %}{% loc profile 'about' %}{% else %}{% t 'home.about_bio' %}{% endif %}</p>
+          <p class="focus"><strong>{% t 'resume.learn_title' %}</strong> · {% t 'resume.learn_period' %} — {% t 'resume.learn_body' %}</p>
+        </section>
+
+        <section class="block">
+          <h2 class="block-title">{% t 'resume.experience' %}</h2>
+          <div class="timeline">
+            {% for exp in experiences %}
+            <article class="item">
+              <div class="item-head">
+                <h3>{% loc exp 'role' %}</h3>
+                <span class="date">{% loc exp 'period' %}</span>
+              </div>
+              <p class="org">{% loc exp 'organization' %}{% if exp.location %} — {% loc exp 'location' %}{% endif %}</p>
+              {% loc exp 'description' as exp_body %}
+              {% if exp_body %}
+              <ul>
+                {% for line in exp_body|nonempty_lines %}
+                <li>{{ line }}</li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+            </article>
+            {% endfor %}
+          </div>
+        </section>
+        <footer class="foot"><span>{% if profile %}{% loc profile 'full_name' %}{% endif %}</span><span>{% if IS_RTL %}۱ / ۲{% else %}1 / 2{% endif %}</span></footer>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet sheet-2">
+    <div class="content">
+      <header class="mini">
+        {% if photo_data_uri %}
+        <img src="{{ photo_data_uri }}" alt="">
+        {% else %}
+        <span class="avatar">{% if profile %}{{ profile.first_name|slice:":1" }}{% endif %}</span>
+        {% endif %}
+        <div class="grow">
+          <strong>{% if profile %}{% loc profile 'full_name' %}{% endif %}</strong>
+          <span>{% if profile %}{% loc profile 'headline' %}{% endif %}</span>
+        </div>
+        <span class="date">{% if IS_RTL %}۲ / ۲{% else %}2 / 2{% endif %}</span>
+      </header>
+
+      <section class="block">
+        <h2 class="block-title">{% t 'resume.projects' %}</h2>
+        <div class="cols">
+          {% for project in projects %}
+          <article class="item">
+            <div class="item-head">
+              <h3>{% loc project 'title' %}</h3>
+              <span class="tag">{{ project.category_label }}</span>
+            </div>
+            <p class="desc">{% loc project 'summary' %}</p>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="block">
+        <h2 class="block-title">{% t 'resume.certificates' %}</h2>
+        <div class="cols">
+          {% for cert in certificates %}
+          <article class="item">
+            <div class="item-head">
+              <h3>{% loc cert 'title' %}</h3>
+              {% if cert.year %}<span class="date">{% loc cert 'year' %}</span>{% endif %}
+            </div>
+            {% if cert.issuer or cert.instructor or cert.hours %}
+            <p class="org">
+              {% loc cert 'issuer' %}{% if cert.instructor %}{% if cert.issuer %} — {% endif %}{% loc cert 'instructor' %}{% endif %}
+              {% if cert.hours %}{% if cert.issuer or cert.instructor %} · {% endif %}{{ cert.hours }} {% t 'resume.hours' %}{% endif %}
+            </p>
+            {% endif %}
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+
+      <footer class="foot">
+        <span>{{ request.get_host }}</span>
+        <span>{% if profile %}{% loc profile 'full_name' %}{% endif %}</span>
+      </footer>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var themes = ["teal", "indigo", "rose", "slate"];
+      var current = "teal";
+      try { current = localStorage.getItem("resume-theme") || "teal"; } catch (err) {}
+      function applyTheme(name) {
+        if (name === "teal") root.removeAttribute("data-theme");
+        else root.setAttribute("data-theme", name);
+        current = name;
+        try { localStorage.setItem("resume-theme", name); } catch (err) {}
+      }
+      applyTheme(themes.indexOf(current) > -1 ? current : "teal");
+      document.getElementById("themeBtn").addEventListener("click", function () {
+        applyTheme(themes[(themes.indexOf(current) + 1) % themes.length]);
+      });
+      document.getElementById("printBtn").addEventListener("click", function () { window.print(); });
+    })();
+  </script>
+</body>
+</html>

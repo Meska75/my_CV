@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <title>مقایسه فونت</title>
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/shabnam-font@v5.0.1/dist/font-face.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lalezar&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: Estedad;
+      src: url("https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad-Regular.woff2") format("woff2");
+      font-weight: 400;
+      font-display: block;
+    }
+    @font-face {
+      font-family: Estedad;
+      src: url("https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad-Bold.woff2") format("woff2");
+      font-weight: 700;
+      font-display: block;
+    }
+    @font-face {
+      font-family: Estedad;
+      src: url("https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@master/fonts/webfonts/Estedad-ExtraBold.woff2") format("woff2");
+      font-weight: 800;
+      font-display: block;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #0c0c0c;
+      color: #f4f1ec;
+      font-family: Vazirmatn, sans-serif;
+      padding: 28px 32px 40px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .lead {
+      margin: 0 0 22px;
+      color: #b7b1a8;
+      font-size: 14px;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 18px;
+      align-items: center;
+      background: #161616;
+      border: 1px solid rgba(227, 98, 42, 0.35);
+      border-radius: 18px;
+      padding: 18px 22px;
+      margin-bottom: 14px;
+    }
+    .label {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .label small {
+      display: block;
+      margin-top: 4px;
+      color: #b7b1a8;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .big {
+      margin: 0;
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+    .small {
+      margin: 8px 0 0;
+      color: #b7b1a8;
+      font-size: 22px;
+      font-weight: 500;
+    }
+    em {
+      font-style: normal;
+      color: #e37a45;
+      text-shadow: 0 0 18px rgba(227, 122, 69, 0.42);
+    }
+    .note {
+      margin: 0;
+      color: #d7c3b4;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+  <h1>مقایسه فونت برای متن وسط</h1>
+  <p class="lead">روی سایت اعمال نشده. فقط برای انتخاب است.</p>
+
+  <article class="row">
+    <div class="label">وزیرمتن<small>فونت فعلی سایت</small></div>
+    <div style="font-family: Vazirmatn, sans-serif">
+      <p class="big">سلام من <em>محمد اسکندرلو</em> هستم</p>
+      <p class="small">من <em>برنامه‌نویس پایتون</em> هستم</p>
+    </div>
+  </article>
+
+  <article class="row">
+    <div class="label">استعداد<small>پیشنهاد برای کل متن</small></div>
+    <div style="font-family: Estedad, sans-serif">
+      <p class="big">سلام من <em>محمد اسکندرلو</em> هستم</p>
+      <p class="small">من <em>برنامه‌نویس پایتون</em> هستم</p>
+    </div>
+  </article>
+
+  <article class="row">
+    <div class="label">لاله‌زار<small>فقط روی اسم</small></div>
+    <div style="font-family: Vazirmatn, sans-serif">
+      <p class="big">سلام من <em style="font-family: Lalezar, sans-serif; font-weight: 400">محمد اسکندرلو</em> هستم</p>
+      <p class="small">من <em>برنامه‌نویس پایتون</em> هستم</p>
+    </div>
+  </article>
+
+  <article class="row">
+    <div class="label">شبنم<small>Shabnam</small></div>
+    <div style="font-family: Shabnam, sans-serif">
+      <p class="big">سلام من <em>محمد اسکندرلو</em> هستم</p>
+      <p class="small">من <em>برنامه‌نویس پایتون</em> هستم</p>
+    </div>
+  </article>
+
+  <article class="row">
+    <div class="label">پیدا<small>Peyda</small></div>
+    <p class="note">فایل این فونت روی سیستم نیست. فونت تجاری فونت‌ایران است و بدون فایل لایسنس‌شده شکل حروفش را نمی‌کشم.</p>
+  </article>
+  <article class="row">
+    <div class="label">دانا<small>Dana</small></div>
+    <p class="note">فایل این فونت روی سیستم نیست. فونت تجاری فونت‌ایران است و بدون فایل لایسنس‌شده شکل حروفش را نمی‌کشم.</p>
+  </article>
+  <article class="row">
+    <div class="label">یکان‌بخ<small>Yekan Bakh</small></div>
+    <p class="note">فایل این فونت روی سیستم نیست. فونت تجاری فونت‌ایران است و بدون فایل لایسنس‌شده شکل حروفش را نمی‌کشم.</p>
+  </article>
+  <article class="row">
+    <div class="label">پلاک<small>Pelak</small></div>
+    <p class="note">فایل این فونت روی سیستم نیست. فونت تجاری فونت‌ایران است و بدون فایل لایسنس‌شده شکل حروفش را نمی‌کشم.</p>
+  </article>
+  <article class="row">
+    <div class="label">کلمه<small>Kalameh</small></div>
+    <p class="note">فایل این فونت روی سیستم نیست. فونت تجاری فونت‌ایران است و بدون فایل لایسنس‌شده شکل حروفش را نمی‌کشم.</p>
+  </article>
+</body>
+</html>

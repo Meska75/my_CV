@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django.utils.translation import get_language
 
 
 def _unicode_slug(value):
@@ -7,20 +8,46 @@ def _unicode_slug(value):
     return slugify(value, allow_unicode=True)
 
 
-class Profile(models.Model):
+def current_lang():
+    return (get_language() or 'fa').split('-')[0]
+
+
+class TranslatableMixin:
+    """Read `{field}_en` when the active language is English."""
+
+    def loc(self, field):
+        if current_lang() == 'en':
+            value = getattr(self, f'{field}_en', None)
+            if value:
+                return value
+        return getattr(self, field) or ''
+
+
+class Profile(TranslatableMixin, models.Model):
     """Single-row site identity / hero content."""
 
     full_name = models.CharField('نام کامل', max_length=120)
+    full_name_en = models.CharField('Full name (EN)', max_length=120, blank=True)
     headline = models.CharField('عنوان شغلی', max_length=160,
                                 help_text='مثلاً: مهندس بک‌اند پایتون و هوش مصنوعی')
+    headline_en = models.CharField('Headline (EN)', max_length=160, blank=True)
     tagline = models.CharField('شعار کوتاه', max_length=255, blank=True)
+    tagline_en = models.CharField('Tagline (EN)', max_length=255, blank=True)
     about = models.TextField('درباره‌ی من', blank=True)
+    about_en = models.TextField('About (EN)', blank=True)
     location = models.CharField('محل سکونت', max_length=120, blank=True)
+    location_en = models.CharField('Location (EN)', max_length=120, blank=True)
     email = models.EmailField('ایمیل', blank=True)
     phone = models.CharField('تلفن', max_length=40, blank=True)
     show_phone = models.BooleanField('نمایش عمومی تلفن', default=False)
     photo = models.ImageField('عکس', upload_to='profile/', blank=True, null=True)
-    resume_file = models.FileField('فایل رزومه', upload_to='resume/', blank=True, null=True)
+    resume_file = models.FileField(
+        'فایل رزومهٔ آرشیو',
+        upload_to='resume/',
+        blank=True,
+        null=True,
+        help_text='دانلود عمومی سایت از همین پروفایل، تجربه‌ها، مهارت‌ها، پروژه‌ها و گواهینامه‌ها ساخته می‌شود.',
+    )
     available_for_work = models.BooleanField('آماده‌ی همکاری', default=True)
 
     class Meta:
@@ -29,6 +56,20 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.full_name
+
+    @property
+    def display_name(self):
+        return self.loc('full_name') or self.full_name
+
+    @property
+    def first_name(self):
+        parts = self.display_name.split()
+        return parts[0] if parts else self.display_name
+
+    @property
+    def last_name(self):
+        parts = self.display_name.split()
+        return ' '.join(parts[1:]) if len(parts) > 1 else ''
 
 
 class SocialLink(models.Model):
@@ -48,9 +89,32 @@ class SocialLink(models.Model):
     def __str__(self):
         return self.label
 
+    @property
+    def bootstrap_icon(self):
+        mapping = {
+            'github': 'bi-github',
+            'linkedin': 'bi-linkedin',
+            'email': 'bi-envelope',
+            'mail': 'bi-envelope',
+            'twitter': 'bi-twitter-x',
+            'x': 'bi-twitter-x',
+            'instagram': 'bi-instagram',
+            'telegram': 'bi-telegram',
+            'whatsapp': 'bi-whatsapp',
+        }
+        key = (self.label or '').strip().lower()
+        if key in mapping:
+            return mapping[key]
+        icon = (self.icon or '').lower()
+        for token, bi in mapping.items():
+            if token in icon:
+                return bi
+        return 'bi-link-45deg'
 
-class SkillCategory(models.Model):
+
+class SkillCategory(TranslatableMixin, models.Model):
     name = models.CharField('نام دسته', max_length=80)
+    name_en = models.CharField('Category name (EN)', max_length=80, blank=True)
     slug = models.SlugField('اسلاگ', max_length=90, unique=True, blank=True, allow_unicode=True)
     icon = models.CharField('کلاس آیکن', max_length=60, blank=True)
     order = models.PositiveIntegerField('ترتیب', default=0)
@@ -69,11 +133,11 @@ class SkillCategory(models.Model):
         return self.name
 
 
-class Skill(models.Model):
+class Skill(TranslatableMixin, models.Model):
     category = models.ForeignKey(SkillCategory, on_delete=models.CASCADE,
                                  related_name='skills', verbose_name='دسته')
     name = models.CharField('نام مهارت', max_length=80)
-    # 1..5 self-assessed proficiency; optional.
+    name_en = models.CharField('Skill name (EN)', max_length=80, blank=True)
     level = models.PositiveSmallIntegerField('سطح (۱ تا ۵)', default=3)
     featured = models.BooleanField('نمایش در بخش مهارت‌ها', default=True,
                                    help_text='اگر خاموش باشد فقط به‌عنوان تگ پروژه استفاده می‌شود.')
@@ -87,16 +151,27 @@ class Skill(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def percent(self):
+        # Cap below 100 so bars read as strong but not exaggerated.
+        mapping = {1: 48, 2: 62, 3: 74, 4: 84, 5: 92}
+        return mapping.get(int(self.level), 70)
 
-class Experience(models.Model):
+
+class Experience(TranslatableMixin, models.Model):
     role = models.CharField('عنوان شغلی', max_length=160)
+    role_en = models.CharField('Role (EN)', max_length=160, blank=True)
     organization = models.CharField('سازمان', max_length=160)
+    organization_en = models.CharField('Organization (EN)', max_length=160, blank=True)
     location = models.CharField('مکان', max_length=120, blank=True)
+    location_en = models.CharField('Location (EN)', max_length=120, blank=True)
     period = models.CharField('بازه‌ی زمانی', max_length=120,
                               help_text='متن نمایشی، مثلاً: خرداد ۱۴۰۲ – اکنون')
+    period_en = models.CharField('Period (EN)', max_length=120, blank=True)
     start_date = models.DateField('تاریخ شروع (برای مرتب‌سازی)', null=True, blank=True)
     is_current = models.BooleanField('شغل فعلی', default=False)
     description = models.TextField('توضیحات', blank=True)
+    description_en = models.TextField('Description (EN)', blank=True)
     order = models.PositiveIntegerField('ترتیب', default=0)
 
     class Meta:
@@ -108,25 +183,59 @@ class Experience(models.Model):
         return f'{self.role} — {self.organization}'
 
 
-class Project(models.Model):
+class Project(TranslatableMixin, models.Model):
     class Category(models.TextChoices):
-        AI = 'ai', 'هوش مصنوعی'
-        BACKEND = 'backend', 'بک‌اند'
-        DATA = 'data', 'داده'
-        WEB = 'web', 'وب'
+        WEB = 'web', 'وب‌سایت'
+        AUTOMATION = 'automation', 'اتوماسیون'
+        AI = 'ai', 'دستیار هوش مصنوعی'
+        DATA = 'data', 'تحلیل داده'
+        SCRAPE = 'scrape', 'جمع‌آوری داده'
+        SERVICE = 'service', 'خدمات'
+        CONFIDENTIAL = 'confidential', 'محرمانه'
+
+    CATEGORY_EN = {
+        'web': 'Website',
+        'automation': 'Automation',
+        'ai': 'AI assistant',
+        'data': 'Data analysis',
+        'scrape': 'Data collection',
+        'service': 'Services',
+        'confidential': 'Confidential',
+    }
 
     class Status(models.TextChoices):
         COMPLETED = 'completed', 'تکمیل‌شده'
         IN_PROGRESS = 'in_progress', 'در حال توسعه'
 
+    STATUS_EN = {
+        'completed': 'Completed',
+        'in_progress': 'In progress',
+    }
+
     title = models.CharField('عنوان', max_length=160)
+    title_en = models.CharField('Title (EN)', max_length=160, blank=True)
     slug = models.SlugField('اسلاگ', max_length=180, unique=True, blank=True, allow_unicode=True)
     summary = models.CharField('خلاصه‌ی یک‌خطی', max_length=255)
-    # Case-study structure.
+    summary_en = models.CharField('Summary (EN)', max_length=255, blank=True)
     problem = models.TextField('مشکل', blank=True)
+    problem_en = models.TextField('Problem (EN)', blank=True)
     solution = models.TextField('راه‌حل', blank=True)
+    solution_en = models.TextField('Solution (EN)', blank=True)
     outcome = models.TextField('نتیجه', blank=True)
-    category = models.CharField('دسته', max_length=20, choices=Category.choices, default=Category.BACKEND)
+    outcome_en = models.TextField('Outcome (EN)', blank=True)
+    writeup = models.TextField(
+        'شرح صفحه مشخصات',
+        blank=True,
+        help_text='هر بخش با یک خط «# عنوان» شروع می‌شود. پاراگراف‌ها را با یک خط خالی جدا کنید.',
+    )
+    writeup_en = models.TextField('Write-up (EN)', blank=True)
+    category = models.CharField('دسته', max_length=20, choices=Category.choices, default=Category.WEB)
+    categories = models.CharField(
+        'برچسب‌ها',
+        max_length=80,
+        blank=True,
+        help_text='چند دسته با ویرگول: scrape,data,web,automation — اگر خالی باشد فقط دسته اصلی نشان داده می‌شود.',
+    )
     status = models.CharField('وضعیت', max_length=20, choices=Status.choices, default=Status.COMPLETED)
     skills = models.ManyToManyField(Skill, related_name='projects', blank=True, verbose_name='تک‌استک')
     cover_image = models.ImageField('تصویر کاور', upload_to='projects/', blank=True, null=True)
@@ -149,17 +258,102 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
+    def category_codes(self):
+        codes = []
+        raw = (self.categories or '').replace('،', ',')
+        for part in raw.split(','):
+            code = part.strip()
+            if code and code not in codes:
+                codes.append(code)
+        if self.category and self.category not in codes:
+            codes.insert(0, self.category)
+        return codes or [self.category]
 
-class Certificate(models.Model):
+    def category_labels(self):
+        labels = dict(self.Category.choices)
+        if current_lang() == 'en':
+            return [self.CATEGORY_EN.get(code, labels.get(code, code)) for code in self.category_codes()]
+        return [labels.get(code, code) for code in self.category_codes()]
+
+    def category_items(self):
+        labels = self.category_labels()
+        return [
+            {'code': code, 'label': labels[index]}
+            for index, code in enumerate(self.category_codes())
+        ]
+
+    def category_label(self):
+        labels = self.category_labels()
+        return labels[0] if labels else ''
+
+    def writeup_sections(self):
+        text = (self.loc('writeup') or '').replace('\r\n', '\n').strip()
+        if not text:
+            return []
+        sections = []
+        heading = ''
+        buf = []
+
+        def flush():
+            body = '\n'.join(buf).strip()
+            paragraphs = [part.strip() for part in body.split('\n\n') if part.strip()]
+            if heading or paragraphs:
+                sections.append({'heading': heading, 'paragraphs': paragraphs})
+
+        for line in text.split('\n'):
+            if line.startswith('# '):
+                flush()
+                heading = line[2:].strip()
+                buf = []
+            else:
+                buf.append(line)
+        flush()
+        return sections
+
+    def status_label(self):
+        if current_lang() == 'en':
+            return self.STATUS_EN.get(self.status, self.status)
+        return self.get_status_display()
+
+
+class ProjectImage(TranslatableMixin, models.Model):
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name='images', verbose_name='پروژه',
+    )
+    image = models.ImageField('تصویر', upload_to='projects/gallery/')
+    caption = models.CharField('شرح تصویر', max_length=180, blank=True)
+    caption_en = models.CharField('Caption (EN)', max_length=180, blank=True)
+    order = models.PositiveIntegerField('ترتیب', default=0)
+
+    class Meta:
+        ordering = ['order', 'id']
+        verbose_name = 'تصویر پروژه'
+        verbose_name_plural = 'تصاویر پروژه'
+
+    def __str__(self):
+        return self.caption or f'{self.project} — {self.order}'
+
+
+class Certificate(TranslatableMixin, models.Model):
     class Category(models.TextChoices):
         BACKEND = 'backend', 'بک‌اند'
         AI_DATA = 'ai_data', 'هوش مصنوعی و داده'
         OTHER = 'other', 'سایر'
 
+    CATEGORY_EN = {
+        'backend': 'Backend',
+        'ai_data': 'AI & Data',
+        'other': 'Other',
+    }
+
     title = models.CharField('عنوان دوره', max_length=200)
+    title_en = models.CharField('Title (EN)', max_length=200, blank=True)
     issuer = models.CharField('برگزارکننده', max_length=160, blank=True)
+    issuer_en = models.CharField('Issuer (EN)', max_length=160, blank=True)
     instructor = models.CharField('مدرس', max_length=120, blank=True)
+    instructor_en = models.CharField('Instructor (EN)', max_length=120, blank=True)
     year = models.CharField('سال', max_length=20, blank=True)
+    year_en = models.CharField('Year (EN)', max_length=20, blank=True)
     hours = models.PositiveIntegerField('ساعت', null=True, blank=True)
     category = models.CharField('دسته', max_length=20, choices=Category.choices, default=Category.OTHER)
     url = models.URLField('لینک مدرک', blank=True)
@@ -173,3 +367,77 @@ class Certificate(models.Model):
 
     def __str__(self):
         return self.title
+
+    def category_label(self):
+        if current_lang() == 'en':
+            return self.CATEGORY_EN.get(self.category, self.category)
+        return self.get_category_display()
+
+
+class ContactMessage(models.Model):
+    name = models.CharField('نام', max_length=120)
+    email = models.EmailField('ایمیل')
+    subject = models.CharField('موضوع', max_length=200)
+    message = models.TextField('پیام')
+    created_at = models.DateTimeField('تاریخ', auto_now_add=True)
+    is_read = models.BooleanField('خوانده‌شده', default=False)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'پیام تماس'
+        verbose_name_plural = 'پیام‌های تماس'
+
+    def __str__(self):
+        return f'{self.name} — {self.subject}'
+
+
+class ServiceCard(TranslatableMixin, models.Model):
+    """Homepage service and process cards, edited from the admin."""
+
+    class Accent(models.TextChoices):
+        TEAL = 'accent', 'سبز'
+        LIGHT = 'light', 'روشن'
+        BRONZE = 'bronze', 'برنزی'
+
+    ACCENT_STYLE = {
+        'accent': '--info-accent:var(--accent-color);--info-hover-ink:var(--contrast-color);',
+        'light': '--info-accent:var(--default-color);--info-hover-ink:var(--contrast-color);',
+        'bronze': '--info-accent:var(--bronze-color);--info-hover-ink:var(--default-color);',
+    }
+
+    title = models.CharField('عنوان', max_length=160)
+    title_en = models.CharField('Title (EN)', max_length=160, blank=True)
+    highlight = models.CharField(
+        'ادامه‌ی عنوان', max_length=80, blank=True,
+        help_text='بخش دوم عنوان، مثلاً «و مقیاس‌پذیر». اگر خالی باشد فقط عنوان نشان داده می‌شود.',
+    )
+    highlight_en = models.CharField('Highlight (EN)', max_length=80, blank=True)
+    body = models.TextField('متن کارت')
+    body_en = models.TextField('Body (EN)', blank=True)
+    image = models.ImageField('تصویر', upload_to='services/', blank=True, null=True)
+    static_image = models.CharField(
+        'تصویر پیش‌فرض', max_length=180, blank=True,
+        help_text='مسیر داخل static، فقط اگر خودتان فایلی در statics گذاشته باشید. تصاویر قالب استفاده نمی‌شوند.',
+    )
+    link = models.CharField('لینک', max_length=200, default='#contact', blank=True)
+    accent = models.CharField('رنگ کارت', max_length=20, choices=Accent.choices, default=Accent.TEAL)
+    is_visible = models.BooleanField('نمایش در سایت', default=True)
+    order = models.PositiveIntegerField('ترتیب', default=0)
+
+    class Meta:
+        ordering = ['order', 'id']
+        verbose_name = 'کارت خدمات'
+        verbose_name_plural = 'کارت‌های خدمات'
+
+    def __str__(self):
+        return self.title
+
+    def accent_style(self):
+        return self.ACCENT_STYLE.get(self.accent, self.ACCENT_STYLE['accent'])
+
+    def display_title(self):
+        title = self.loc('title')
+        highlight = self.loc('highlight')
+        if highlight:
+            return f'{title} {highlight}'.strip()
+        return title
